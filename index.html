@@ -29,6 +29,11 @@ h1{font-weight:800;letter-spacing:-.03em;font-size:clamp(34px,4.5vw,60px);line-h
 <div class="brief"><span>7 or 8</span><span>swirling feeling</span><span class="r">red like the posters</span><span>black toy characters</span><span>lost in the universe of digital marketing</span><span>inside: swirling, tangled</span></div>
 <p class="note">Sue's reply to the first round: start from 07 Bento or 08 Mascot, add the ring of 3D objects from her mood slide ("Choose Your Way", "Cluep"), but in the red and with the black vinyl-toy characters of the right-side posters. Six takes below; every object and character is red, white or black only.</p></div>
 <div class="grid" id="g2"></div>
+<div class="top" id="faceless" style="padding-top:20px"><div class="lbl">Round 3 · 5 Nov 18:51</div>
+<h1>Playful, friendly, no literal faces.</h1>
+<div class="brief"><span>wow factor</span><span>cleaner hero</span><span class="r">red / white / black</span><span>3D toy objects</span><span>black toy characters</span><span>hands at most</span></div>
+<p class="note">Sue: "do we want so literal human?" David: if the sections below carry the team photos, the hero can be cleaner and go for wow. Ten heroes with no human faces or bodies: objects, characters, type, and in one case a pair of hands.</p></div>
+<div class="grid" id="g3"></div>
 <div class="zoom" id="z"><img alt=""></div>
 <p class="foot">Pick one or two to develop into a full homepage (hero, proof strip, services, cases, team, contact) with the real photos and real copy. Mixing is fine: e.g. 07's bento structure with 02's sticker energy, or 16's chair inside 13's wall.</p>
 <script>
@@ -63,7 +68,21 @@ const C2 = [
  ['26','tangled-ribbon','Tangled Ribbon','One red ribbon loops across the page with the objects and characters tangled in it. Sue\'s "getting tangled" as the hero itself; made for scroll motion.',['fun','bright red']],
 ];
 const g = document.getElementById('g'), z = document.getElementById('z');
+const C3 = [
+ ['27','hands-only','Hands Only','Two hands enter from the edges: one holds the megaphone, one catches a leaping character. Human warmth with no face to argue about.',['human','fun']],
+ ['28','mascot-squad','Mascot Squad','Six black toy characters lined up like a team photo, each holding one red tool of the trade; the red one leads. The team, without the team.',['fun','professional']],
+ ['29','big-red-mascot','Big Red Mascot','One person-height red cube mascot shouting into a black megaphone. One hero object, lots of air. The cleanest wow.',['fun','bright red']],
+ ['30','letters-burst','Letters Burst','BATTLE as huge red 3D letters with objects and characters bursting from between them. Typographic wow, the LEGO Barcamp energy in brand colours.',['bright red','fun']],
+ ['31','playground-mark','Playground Mark','A giant 3D B and M as playground equipment, characters climbing, sliding and hanging off it. Joyful and crafted.',['fun','professional']],
+ ['32','gachapon','Gachapon','A giant red capsule-toy machine full of characters and objects; one capsule just dropped. "Pick your weapon", Sue\'s own slide title.',['fun','bright red']],
+ ['33','next-move','Your Next Move','A red-and-white chessboard where the pieces are characters and objects, one mid-jump. Strategy made playful.',['professional','fun']],
+ ['34','growth-stack','Growth Stack','Characters stacking icon blocks into a tower. The brief\'s growth-stack layers as a toy build; teamwork without faces.',['professional','fun']],
+ ['35','megaphone-burst','Megaphone Burst','Red page, a giant black megaphone spraying objects and characters across it. Loudest of the ten.',['bright red','fun']],
+ ['36','ribbon-coaster','Ribbon Coaster','The red roller-coaster ribbon with characters riding it, no people. Built for scroll motion.',['fun','bright red']],
+];
 const g2 = document.getElementById('g2');
+const g3 = document.getElementById('g3');
+for (const [n, f, t, d, fit] of C3) { const a = document.createElement('article'); a.className = 'card'; a.innerHTML = `<img src="gen/${n}-${f}.webp" alt="${t}" loading="lazy"><div class="b"><h2><small>${n}</small>${t}</h2><p>${d}</p><div class="fit">${fit.map(x => `<i class="${x === 'bright red' ? 'r' : ''}">${x}</i>`).join('')}</div></div>`; a.querySelector('img').onclick = e => { z.querySelector('img').src = e.target.src; z.classList.add('on'); }; g3.appendChild(a); }
 for (const [n, f, t, d, fit] of C2) { const a = document.createElement('article'); a.className = 'card'; a.innerHTML = `<img src="gen/${n}-${f}.webp" alt="${t}" loading="lazy"><div class="b"><h2><small>${n}</small>${t}</h2><p>${d}</p><div class="fit">${fit.map(x => `<i class="${x === 'bright red' ? 'r' : ''}">${x}</i>`).join('')}</div></div>`; a.querySelector('img').onclick = e => { z.querySelector('img').src = e.target.src; z.classList.add('on'); }; g2.appendChild(a); }
 for (const [n, f, t, d, fit] of C) { const a = document.createElement('article'); a.className = 'card'; a.innerHTML = `<img src="gen/${n}-${f}.webp" alt="${t}" loading="lazy"><div class="b"><h2><small>${n}</small>${t}</h2><p>${d}</p><div class="fit">${fit.map(x => `<i class="${x === 'bright red' ? 'r' : ''}">${x}</i>`).join('')}</div></div>`; a.querySelector('img').onclick = e => { z.querySelector('img').src = e.target.src; z.classList.add('on'); }; g.appendChild(a); }
 z.onclick = () => z.classList.remove('on');
