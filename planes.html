@@ -1,0 +1,111 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Paper Planes · take-off experience · Battle Mind</title><meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="xp.css">
+<style>
+.hero{background:#fff}
+.grid{background:radial-gradient(circle,rgba(0,0,0,.13) 1px,transparent 1.5px) 0 0/28px 28px;opacity:.9}
+.pw{left:56%;translate:-10% 0}
+#gl{position:absolute;inset:0;z-index:5;pointer-events:none}
+#path{position:absolute;inset:0;z-index:1;pointer-events:none}#path path{fill:none;stroke:var(--red);stroke-width:2;stroke-dasharray:6 10;opacity:.0}
+.land{position:relative;background:#0A0A0B;color:#fff;padding:0 var(--gut);min-height:100vh;display:grid;place-items:center}
+.land .in{max-width:1320px;width:100%;padding:120px 0}
+.land h2{margin:0 0 50px;font:800 clamp(34px,5vw,74px)/.95 var(--f);letter-spacing:-.04em;text-transform:uppercase}
+.land h2 b{color:var(--red)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:22px}
+.st{position:relative;padding:30px 26px 26px;border-radius:16px;background:#141418;border:1px solid rgba(255,255,255,.08);opacity:0;transform:translateY(30px)}
+.st b{display:block;font:800 clamp(54px,6vw,90px)/1 var(--f);letter-spacing:-.04em;color:var(--red)}.st span{display:block;margin-top:8px;color:#aaa}
+.st svg{position:absolute;right:18px;top:-22px;width:54px;height:54px;transform:rotate(25deg)}
+
+</style></head><body>
+<a class="back" href="./">← directions</a>
+<header class="nav"><span class="wm">BATTLE MIND</span><ul><li><a href="#">Work</a></li><li><a href="#">Services</a></li><li><a href="#">About</a></li><li><a href="#">Contact</a></li></ul></header>
+
+<section class="hero" id="hero">
+  <div class="lay fill grid" data-depth="0.15"></div>
+  <svg id="path" viewBox="0 0 1600 900" preserveAspectRatio="none"><path id="arc" d="M 760 560 C 900 420, 1100 330, 1560 60"/></svg>
+  <div class="h1w"><h1 class="h1 lay" data-depth="0.35"><span class="w"><i>Ideas</i></span><span class="w"><i>that</i></span><span class="w"><i>actually</i></span><span class="w"><i>take off</i></span></h1>
+  <a class="cta" href="#">Let's talk <span>↗</span></a></div>
+  <div class="pw"><img class="person lay" data-depth="0.6" src="assets/man.webp" alt="" draggable="false"></div>
+  <canvas id="gl"></canvas>
+  <div class="hint">Move the mouse · scroll</div>
+</section>
+
+<section class="land" id="land"><div class="in">
+  <h2>Where they <b>land.</b></h2>
+  <div class="stats">
+    <div class="st"><svg viewBox="0 0 24 24"><path d="M2 12 22 3l-6 18-4-7z" fill="#D7000F"/></svg><b>3×</b><span>sales for a client who aimed for 2×</span></div>
+    <div class="st"><svg viewBox="0 0 24 24"><path d="M2 12 22 3l-6 18-4-7z" fill="#D7000F"/></svg><b>700+</b><span>qualified leads, RM3.8M pipeline</span></div>
+    <div class="st"><svg viewBox="0 0 24 24"><path d="M2 12 22 3l-6 18-4-7z" fill="#D7000F"/></svg><b>22×</b><span>return on ad spend</span></div>
+  </div>
+</div></section>
+
+<section class="spec">
+  <h2>19 · Paper Planes — the take-off experience</h2>
+  <div><h3>On load</h3><p>The four headline words rise in one after another, the man fades up, and the first plane leaves his hand. From then on planes launch continuously along the arc, each banking into the curve. The button lands last.</p></div>
+  <div><h3>Mouse</h3><p>Three parallax depths: the dot grid barely moves, the headline a little, the man more. The flight arc itself bends toward the cursor, so visitors steer the stream of planes without being told to.</p></div>
+  <div><h3>Scroll</h3><p>The hero is pinned for one extra screen. Scrolling accelerates the planes and lifts the arc out of frame while the headline drifts up slower and the man sinks away. The dotted flight line draws itself into the next section, where the planes land on the three proof numbers and pop them in one by one.</p></div>
+  <div><h3>WebGL layer</h3><p>The planes are real 3D paper darts (three.js): two folded wings and a keel, matte brand red, lit from the top left, with banking, scale change as they fly toward the camera, and a soft ambient term so red never goes orange. Everything else stays DOM, so text is selectable and indexable.</p></div>
+  <div><h3>Fallbacks</h3><ul><li>No WebGL: SVG planes on the same path (GSAP MotionPath), same timing.</li><li>Reduced motion: the composition sits still with the planes placed along the arc; the proof cards simply appear.</li><li>Phones: the arc is steeper and shorter, the man moves to the right edge, no pin.</li></ul></div>
+  <div><h3>Cost</h3><p>One small WebGL scene (12 meshes, one light), GSAP + ScrollTrigger. Hero stays under 1 MB with the cut-out as webp. 60 fps target on a 2019 laptop and a mid-range phone; the scene pauses when off-screen.</p></div>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script type="importmap">{"imports":{"three":"https://cdnjs.cloudflare.com/ajax/libs/three.js/0.166.1/three.module.min.js"}}</script>
+<script type="module">
+import * as THREE from 'three';
+gsap.registerPlugin(ScrollTrigger);
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const hero = document.getElementById('hero'), lays = [...document.querySelectorAll('.lay')];
+
+// ---------- the flight arc (screen space, 1600x900 design units) ----------
+const P0 = {x: 760, y: 560}, P1 = {x: 900, y: 420}, P2 = {x: 1100, y: 330}, P3 = {x: 1560, y: 60};
+const arc = document.getElementById('arc'); let bend = {x: 0, y: 0}, bendTo = {x: 0, y: 0}, lift = 0; // lift = scroll progress
+const bez = (t, a, b, c, d) => { const u = 1 - t; return u*u*u*a + 3*u*u*t*b + 3*u*t*t*c + t*t*t*d; };
+function ctrl() { const c1 = {x: P1.x + bend.x * 90, y: P1.y + bend.y * 70 - lift * 300}, c2 = {x: P2.x + bend.x * 140, y: P2.y + bend.y * 120 - lift * 700}, p3 = {x: P3.x + lift * 200, y: P3.y - lift * 900}; return {c1, c2, p3}; }
+function pointAt(t) { const {c1, c2, p3} = ctrl(); const p0 = {x: P0.x, y: P0.y + lift * 380}; return {x: bez(t, p0.x, c1.x, c2.x, p3.x), y: bez(t, p0.y, c1.y, c2.y, p3.y)}; }
+function drawArc() { const {c1, c2, p3} = ctrl(); const p0 = {x: P0.x, y: P0.y + lift * 380}; arc.setAttribute('d', `M ${p0.x} ${p0.y} C ${c1.x} ${c1.y}, ${c2.x} ${c2.y}, ${p3.x} ${p3.y}`); }
+
+// ---------- WebGL planes ----------
+const canvas = document.getElementById('gl'); let gl = null;
+try {
+  const renderer = new THREE.WebGLRenderer({canvas, alpha: true, antialias: true, powerPreference: 'low-power'});
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2)); renderer.outputColorSpace = THREE.SRGBColorSpace;
+  const scene = new THREE.Scene(); const cam = new THREE.OrthographicCamera(0, 1600, 0, 900, -2000, 2000); // y down like the SVG
+  scene.add(new THREE.AmbientLight(0xffffff, 1.6)); const key = new THREE.DirectionalLight(0xffffff, 2.6); key.position.set(-400, -600, 900); scene.add(key);
+  // a paper dart: two wings with dihedral + a keel, all one red matte sheet
+  const geo = new THREE.BufferGeometry(); const L = 1, W = .3, D = .1, K = .2;
+  const v = [ [L,0,0],[-L*.8,-W,-D],[-L*.9,0,0],   [L,0,0],[-L*.9,0,0],[-L*.8,W,-D],   [L,0,0],[-L*.9,0,0],[-L*.85,0,K],  [L,0,0],[-L*.85,0,K],[-L*.9,0,0] ];
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(v.flat(), 3)); geo.computeVertexNormals();
+  const mat = new THREE.MeshStandardMaterial({color: 0xD7000F, emissive: 0xD7000F, emissiveIntensity: .5, roughness: .8, metalness: 0, side: THREE.DoubleSide});
+  const N = 8, planes = []; for (let i = 0; i < N; i++) { const m = new THREE.Mesh(geo, mat); m.userData.o = i / N; m.userData.s = 1 + (i % 3) * .08; scene.add(m); planes.push(m); }
+  let w = 0, h = 0; const fit = () => { w = hero.clientWidth; h = hero.clientHeight; renderer.setSize(w, h, false); };
+  fit(); addEventListener('resize', fit);
+  let t0 = performance.now(), run = true; new IntersectionObserver(e => { run = e[0].isIntersecting; if (run) { t0 = performance.now(); loop(); } }).observe(hero);
+  function loop() { if (!run) return; const now = performance.now(); const T = reduce ? 0 : (now - t0) / 1000;
+    bend.x += (bendTo.x - bend.x) * .06; bend.y += (bendTo.y - bend.y) * .06; drawArc();
+    const speed = .11 + lift * .7; const sx = w / 1600, sy = h / 900;
+    for (const m of planes) { const o = m.userData.o; let p = reduce ? o : ((T * speed + o) % 1); const a = pointAt(p), b = pointAt(Math.min(1, p + .01));
+      const ang = Math.atan2(b.y - a.y, b.x - a.x); const size = (30 + p * 46) * (1 + lift * .5) * m.userData.s * Math.min(sx, sy);
+      m.position.set(a.x * sx, a.y * sy, 0); m.scale.setScalar(size); m.rotation.set(0, 0, ang); m.rotateY(-.55 + Math.sin(T * 2 + o * 9) * .25); m.rotateX(Math.sin(T * 3 + o * 7) * .3 - .25);
+      m.visible = p > .005 && p < .995; }
+    renderer.render(scene, cam); requestAnimationFrame(loop); }
+  loop(); gl = true;
+} catch (e) { canvas.remove(); document.getElementById('path').querySelector('path').style.opacity = .9; console.warn('no webgl', e); }
+
+// ---------- mouse parallax + arc steering ----------
+hero.addEventListener('pointermove', e => { const r = hero.getBoundingClientRect(); const x = (e.clientX - r.left) / r.width * 2 - 1, y = (e.clientY - r.top) / r.height * 2 - 1; bendTo = {x, y};
+  if (reduce) return; for (const l of lays) { const d = +l.dataset.depth; gsap.to(l, {x: x * 26 * d, y: y * 18 * d, duration: .8, ease: 'power2.out', overwrite: 'auto'}); } });
+hero.addEventListener('pointerleave', () => { bendTo = {x: 0, y: 0}; for (const l of lays) gsap.to(l, {x: 0, y: 0, duration: 1}); });
+
+// ---------- load ----------
+if (!reduce) { const tl = gsap.timeline({delay: .2}); tl.from('.person', {y: 60, opacity: 0, duration: 1.1, ease: 'power3.out'}, 0).to('.h1 .w i', {y: 0, duration: .9, stagger: .09, ease: 'power4.out'}, .1).to('.cta', {opacity: 1, duration: .6}, .9); }
+
+// ---------- scroll: pin, lift the arc, draw the line, land the planes on the numbers ----------
+if (!reduce && innerWidth > 760) {
+  ScrollTrigger.create({trigger: hero, start: 'top top', end: '+=100%', pin: true, scrub: .6, onUpdate: s => { lift = s.progress; gsap.set('.h1', {yPercent: -22 * lift, opacity: 1 - lift * .9}); gsap.set('.person', {yPercent: 45 * lift, opacity: 1 - lift * 1.3}); gsap.set('.grid', {opacity: .9 - lift}); }});
+}
+gsap.to('.st', {opacity: 1, y: 0, duration: .7, stagger: .22, ease: 'back.out(1.6)', scrollTrigger: {trigger: '#land', start: 'top 55%'}});
+</script>
+</body></html>

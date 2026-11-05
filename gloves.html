@@ -1,0 +1,115 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Red Gloves · fight experience · Battle Mind</title><meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="xp.css">
+<style>
+.hero{background:#fff;cursor:crosshair}
+#ripple{position:absolute;inset:0;z-index:1;pointer-events:none}
+.pw{right:4vw}.person{height:min(86vh,940px);transform-origin:50% 100%}
+.h1{z-index:3}.h1 .w i{will-change:transform}
+.glove{position:absolute;z-index:6;width:min(22vw,260px);pointer-events:none;opacity:0;transform-origin:50% 50%;filter:drop-shadow(0 18px 30px rgba(0,0,0,.25))}
+.ring{position:absolute;z-index:4;width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:50%;border:3px solid var(--red);pointer-events:none;opacity:0}
+.rounds{position:relative;background:#0A0A0B;color:#fff;padding:0 var(--gut)}
+.rounds .in{max-width:1320px;margin:0 auto;padding:120px 0}
+.rounds h2{margin:0 0 56px;font:800 clamp(34px,5vw,74px)/.95 var(--f);letter-spacing:-.04em;text-transform:uppercase}.rounds h2 b{color:var(--red)}
+.rd{display:grid;grid-template-columns:120px 1fr auto;gap:24px;align-items:center;padding:30px 0;border-top:1px solid rgba(255,255,255,.12);opacity:0;transform:translateX(-30px)}
+.rd:last-child{border-bottom:1px solid rgba(255,255,255,.12)}
+.rd small{font:700 12px var(--o);letter-spacing:.22em;color:var(--red);text-transform:uppercase}.rd h3{margin:0;font:800 clamp(24px,3vw,42px)/1 var(--f);letter-spacing:-.03em}.rd p{margin:6px 0 0;color:#aaa}
+.rd .bell{width:46px;height:46px;border-radius:50%;border:2px solid var(--red);display:grid;place-items:center;color:var(--red);font:800 16px var(--f)}
+@media (max-width:760px){.rd{grid-template-columns:70px 1fr}.rd .bell{display:none}}
+</style></head><body>
+<a class="back" href="./">← directions</a>
+<header class="nav"><span class="wm">BATTLE MIND</span><ul><li><a href="#">Work</a></li><li><a href="#">Services</a></li><li><a href="#">About</a></li><li><a href="#">Contact</a></li></ul></header>
+
+<section class="hero" id="hero">
+  <canvas id="ripple" class="fill"></canvas>
+  <div class="h1w"><h1 class="h1 lay" data-depth="0.3"><span class="w"><i>We fight</i></span><span class="w"><i>for your</i></span><span class="w"><i>brand</i></span></h1>
+  <a class="cta" href="#">Let's talk <span>→</span></a></div>
+  <div class="pw"><img class="person lay" data-depth="0.55" src="assets/woman.webp" alt="" draggable="false"></div>
+  <img class="glove" id="glove" src="assets/glove.webp" alt="" draggable="false">
+  <div class="hint">Click anywhere to throw a punch · scroll</div>
+</section>
+
+<section class="rounds" id="rounds"><div class="in">
+  <h2>Three <b>rounds.</b> One corner.</h2>
+  <div class="rd"><small>Round 1</small><div><h3>Performance Marketing</h3><p>Ads, SEO, SEM: leads that close, not clicks that bounce.</p></div><div class="bell">1</div></div>
+  <div class="rd"><small>Round 2</small><div><h3>Creative &amp; Content</h3><p>Social, video, branding: work people stop scrolling for.</p></div><div class="bell">2</div></div>
+  <div class="rd"><small>Round 3</small><div><h3>Web Development</h3><p>Sites and funnels that convert on the first visit.</p></div><div class="bell">3</div></div>
+</div></section>
+
+<section class="spec">
+  <h2>20 · Red Gloves — the fight experience</h2>
+  <div><h3>On load</h3><p>The three headline lines punch in one after the other, each landing with a small impact ring and a 60 ms screen nudge. She fades up last and settles into her guard. The button appears with the third line.</p></div>
+  <div><h3>Mouse</h3><p>Two parallax depths: the headline moves a little, she moves more and leans toward the cursor like a boxer tracking an opponent. The cursor is a crosshair, an invitation.</p></div>
+  <div><h3>Click / tap</h3><p>Anywhere on the hero throws a jab: a glove flies from her guard to the click point, a red shockwave ripples out across the page (WebGL), the headline wobbles, and the glove snaps back. Visitors play with it; nobody has to explain the brand.</p></div>
+  <div><h3>Scroll</h3><p>The hero pins for one extra screen. The headline lines slide apart, she steps to the edge, and three bell ticks reveal the three service rounds in the dark section below, each sliding in with its own impact ring.</p></div>
+  <div><h3>WebGL layer</h3><p>A single fullscreen fragment shader draws the shockwaves: concentric rings with a refractive displacement of the white background, in brand red, fading in 900 ms. It costs almost nothing and runs on any phone. The gloves, type and photo stay DOM.</p></div>
+  <div><h3>Fallbacks</h3><ul><li>No WebGL: the ring is a CSS border circle that scales and fades, same timing.</li><li>Reduced motion: no pin, no shake, the rings appear without animation.</li><li>Phones: tap = jab, she moves to the right edge, headline above her.</li></ul></div>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+gsap.registerPlugin(ScrollTrigger);
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const hero = document.getElementById('hero'), lays = [...hero.querySelectorAll('.lay')], person = hero.querySelector('.person'), glove = document.getElementById('glove');
+
+// ---------- WebGL shockwaves: one fullscreen fragment shader ----------
+const canvas = document.getElementById('ripple'); let shock = null;
+(function () {
+  const gl = canvas.getContext('webgl', {alpha: true, premultipliedAlpha: true, antialias: false}); if (!gl) return;
+  const vs = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
+  const fs = `precision mediump float;uniform vec2 R;uniform float T;uniform vec4 W[6];
+  void main(){vec2 uv=gl_FragCoord.xy/R;vec4 c=vec4(0.);
+  for(int i=0;i<6;i++){float t=T-W[i].z;if(W[i].z<0.||t<0.||t>1.1)continue;vec2 d=(uv-W[i].xy)*vec2(R.x/R.y,1.);float r=length(d);float rad=t*0.55;float ring=exp(-pow((r-rad)*34.,2.));float ring2=exp(-pow((r-rad*0.62)*48.,2.))*0.6;float a=(ring+ring2)*(1.-t)*(1.-t);c+=vec4(0.843,0.,0.059,1.)*a;}
+  gl_FragColor=vec4(c.rgb,min(c.a,1.));}`;
+  const sh = (t, s) => { const o = gl.createShader(t); gl.shaderSource(o, s); gl.compileShader(o); if (!gl.getShaderParameter(o, gl.COMPILE_STATUS)) throw gl.getShaderInfoLog(o); return o; };
+  const pr = gl.createProgram(); gl.attachShader(pr, sh(gl.VERTEX_SHADER, vs)); gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, fs)); gl.linkProgram(pr); gl.useProgram(pr);
+  const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+  const loc = gl.getAttribLocation(pr, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+  const uR = gl.getUniformLocation(pr, 'R'), uT = gl.getUniformLocation(pr, 'T'), uW = gl.getUniformLocation(pr, 'W');
+  const waves = new Float32Array(24).fill(-1); let k = 0, t0 = performance.now(), live = 0;
+  gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+  const fit = () => { const d = Math.min(devicePixelRatio, 1.5); canvas.width = hero.clientWidth * d; canvas.height = hero.clientHeight * d; gl.viewport(0, 0, canvas.width, canvas.height); }; fit(); addEventListener('resize', fit);
+  function frame() { const T = (performance.now() - t0) / 1000; gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT); gl.uniform2f(uR, canvas.width, canvas.height); gl.uniform1f(uT, T); gl.uniform4fv(uW, waves); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); if (T - live < 1.2) requestAnimationFrame(frame); }
+  shock = (x, y) => { const T = (performance.now() - t0) / 1000; waves[k*4] = x; waves[k*4+1] = 1 - y; waves[k*4+2] = T; waves[k*4+3] = 1; k = (k + 1) % 6; const was = T - live >= 1.2; live = T; if (was) requestAnimationFrame(frame); };
+})();
+function ring(px, py) { // DOM ring for no-WebGL, and a small one always (it reads as the hit point)
+  const r = document.createElement('div'); r.className = 'ring'; r.style.left = px + 'px'; r.style.top = py + 'px'; hero.appendChild(r);
+  gsap.fromTo(r, {opacity: .9, scale: .2}, {opacity: 0, scale: shock ? 1.6 : 4, duration: shock ? .5 : .8, ease: 'power2.out', onComplete: () => r.remove()}); }
+
+// ---------- a jab ----------
+let busy = false;
+function jab(px, py) {
+  const r = hero.getBoundingClientRect(); const pr = person.getBoundingClientRect();
+  const gx = pr.left - r.left + pr.width * .22, gy = pr.top - r.top + pr.height * .3; // her left glove, roughly
+  if (shock) shock(px / r.width, py / r.height); ring(px, py);
+  if (reduce || busy) return; busy = true;
+  const ang = Math.atan2(py - gy, px - gx) * 180 / Math.PI;
+  gsap.timeline({onComplete: () => { busy = false; }})
+    .set(glove, {left: gx - glove.offsetWidth / 2, top: gy - glove.offsetHeight / 2, x: 0, y: 0, rotation: ang + 90, scale: .7, opacity: 1})
+    .to(glove, {x: px - gx, y: py - gy, scale: 1.05, duration: .22, ease: 'power3.in'})
+    .to(hero, {x: (px > r.width / 2 ? 1 : -1) * 6, duration: .05, yoyo: true, repeat: 1}, '<.18')
+    .to('.h1 .w i', {skewX: -6, duration: .08, stagger: .03, yoyo: true, repeat: 1}, '<')
+    .to(glove, {x: 0, y: 0, scale: .7, opacity: 0, duration: .35, ease: 'power2.out'}, '+=.05');
+}
+hero.addEventListener('pointerdown', e => { if (e.target.closest('a')) return; const r = hero.getBoundingClientRect(); jab(e.clientX - r.left, e.clientY - r.top); });
+
+// ---------- mouse: parallax, she tracks the cursor ----------
+hero.addEventListener('pointermove', e => { if (reduce) return; const r = hero.getBoundingClientRect(); const x = (e.clientX - r.left) / r.width * 2 - 1, y = (e.clientY - r.top) / r.height * 2 - 1;
+  for (const l of lays) { const d = +l.dataset.depth; gsap.to(l, {x: x * 30 * d, y: y * 16 * d, duration: .8, ease: 'power2.out', overwrite: 'auto'}); }
+  gsap.to(person, {rotation: x * -2.5, duration: .9, ease: 'power2.out', overwrite: 'auto'}); });
+hero.addEventListener('pointerleave', () => { for (const l of lays) gsap.to(l, {x: 0, y: 0, duration: 1}); gsap.to(person, {rotation: 0, duration: 1}); });
+
+// ---------- load: the lines punch in ----------
+if (!reduce) { const tl = gsap.timeline({delay: .25}); const lines = [...document.querySelectorAll('.h1 .w i')];
+  lines.forEach((el, i) => { tl.fromTo(el, {y: '110%', scale: 1.12}, {y: 0, scale: 1, duration: .55, ease: 'power4.out', onStart: () => { const b = el.getBoundingClientRect(), r = hero.getBoundingClientRect(); ring(b.left - r.left + b.width * .5, b.top - r.top + b.height * .5); }}, i * .32).to(hero, {x: i % 2 ? 4 : -4, duration: .05, yoyo: true, repeat: 1}, i * .32 + .3); });
+  tl.from(person, {y: 70, opacity: 0, duration: 1, ease: 'power3.out'}, .3).to('.cta', {opacity: 1, duration: .5}, 1.1); }
+
+// ---------- scroll: pin, lines part, she steps aside, rounds ring in ----------
+if (!reduce && innerWidth > 760) {
+  ScrollTrigger.create({trigger: hero, start: 'top top', end: '+=100%', pin: true, scrub: .6, onUpdate: s => { const p = s.progress; const ws = document.querySelectorAll('.h1 .w'); gsap.set(ws[0], {x: -160 * p}); gsap.set(ws[1], {x: 120 * p}); gsap.set(ws[2], {x: -60 * p}); gsap.set('.h1', {opacity: 1 - p * .9}); gsap.set(person, {xPercent: 30 * p, opacity: 1 - p * 1.2}); }});
+}
+gsap.utils.toArray('.rd').forEach((el, i) => { gsap.to(el, {opacity: 1, x: 0, duration: .6, ease: 'power3.out', delay: i * .12, scrollTrigger: {trigger: el, start: 'top 80%'}, onStart: () => gsap.fromTo(el.querySelector('.bell'), {scale: .6}, {scale: 1, duration: .5, ease: 'back.out(3)'})}); });
+</script>
+</body></html>
