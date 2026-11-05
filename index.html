@@ -1,0 +1,55 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Battle Mind · 10 homepage directions · square one</title><meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;700;800&family=Oswald:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{--red:#D7000F;--ink:#0A0A0B;--f:"Archivo",system-ui,sans-serif;--o:"Oswald",sans-serif}
+*{box-sizing:border-box}body{margin:0;background:#fff;color:#111;font:15px/1.55 var(--f);-webkit-font-smoothing:antialiased}
+.top{padding:56px 40px 28px;max-width:1400px;margin:0 auto}
+.lbl{font:600 12px var(--o);letter-spacing:.22em;text-transform:uppercase;color:var(--red)}
+h1{font-weight:800;letter-spacing:-.03em;font-size:clamp(34px,4.5vw,60px);line-height:1;margin:10px 0 14px}
+.brief{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 6px}.brief span{border:1.5px solid #111;border-radius:999px;padding:5px 12px;font-weight:600;font-size:13px}.brief span.r{background:var(--red);border-color:var(--red);color:#fff}
+.note{color:#555;max-width:70ch}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(560px,1fr));gap:34px 28px;padding:0 40px 80px;max-width:1400px;margin:0 auto}
+@media (max-width:640px){.grid{grid-template-columns:1fr;padding:0 16px 60px}.top{padding:36px 16px 20px}}
+.card{border:1px solid #e6e6e6;border-radius:18px;overflow:hidden;background:#fff}
+.card img{display:block;width:100%;aspect-ratio:3/2;object-fit:cover;background:#f3f3f3;cursor:zoom-in}
+.card .b{padding:16px 18px 18px}
+.card h2{margin:0;font-size:20px;font-weight:800;letter-spacing:-.02em;display:flex;align-items:baseline;gap:12px}.card h2 small{font:600 12px var(--o);letter-spacing:.18em;color:var(--red)}
+.card p{margin:8px 0 0;color:#444}.card .fit{margin-top:10px;display:flex;gap:6px;flex-wrap:wrap}.card .fit i{font-style:normal;font-size:12px;padding:3px 9px;border-radius:999px;background:#f1f1f1;color:#333}.card .fit i.r{background:var(--red);color:#fff}
+.zoom{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;place-items:center;z-index:9;cursor:zoom-out}.zoom.on{display:grid}.zoom img{max-width:96vw;max-height:94vh;border-radius:10px}
+.foot{padding:0 40px 60px;max-width:1400px;margin:0 auto;color:#666;font-size:13px}
+</style></head><body>
+<div class="top"><div class="lbl">Battle Mind · homepage · square one · 5 Nov 2026</div>
+<h1>20 directions, one brief.</h1>
+<div class="brief"><span class="r">bright red</span><span>fun</span><span>human-centric</span><span>professional</span><span>red / white / black only</span></div>
+<p class="note">Concept renders by gpt-image-2 of the above-the-fold hero only, to pick a feeling before anything is built. Faces are generic fictional people, never Battle staff. Each card says what the direction is and which part of the brief it carries hardest. Tap an image to zoom.</p></div>
+<div class="grid" id="g"></div>
+<div class="zoom" id="z"><img alt=""></div>
+<p class="foot">Pick one or two to develop into a full homepage (hero, proof strip, services, cases, team, contact) with the real photos and real copy. Mixing is fine: e.g. 07's bento structure with 02's sticker energy, or 16's chair inside 13's wall.</p>
+<script>
+const C = [
+ ['01','red-court','Red Court','White page, giant black headline, one huge glossy red ball with a person sitting on it. The red element is a prop people touch, so the brand red reads human, not corporate.',['fun','human','professional']],
+ ['02','sticker-crew','Sticker Crew','The team as photo stickers with red marker scribbles and a speech bubble. The loudest "fun" of the ten; the clean white grid keeps it professional.',['fun','human']],
+ ['03','red-editorial','Red Editorial','The whole hero is brand red with a huge white headline and a black-and-white cut-out person pointing at you. Maximum red, magazine-cover confidence.',['bright red','professional']],
+ ['04','black-stage','Black Stage','Near-black page, a person in a white spotlight holding a red megaphone, one red neon underline. Cinematic and premium; the fun is in the performer.',['professional','human']],
+ ['05','comic-panels','Comic Panels','A three-panel comic in red, white and black halftone: flat chart, the team huddles, the chart flies. Story-led and playful; good for the "digestible data" promise.',['fun','human']],
+ ['06','red-thread','Red Thread','One thick red line runs through the page: underlines the headline, passes behind the person, becomes the rising chart, exits as an arrow. Minimal, clever, warm.',['professional','human','bright red']],
+ ['07','bento-blocks','Bento Blocks','A bento grid: photo card, a red "3x" stat card, a black headline card, client logos, a small red mascot. Modern SaaS-grade structure that can hold every homepage section.',['professional','fun']],
+ ['08','mascot-crew','Mascot & Crew','A simple glossy red cube mascot with dot eyes standing with the team, who lean on it and high-five it. The brief\'s "mascots" USP made literal; charming, still premium.',['fun','human']],
+ ['09','red-dot-tech','Red Dot Tech','Blueprint grid, a red-glass growth-stack diagram wired to a portrait. The Battle X (web/tech) mood: expert and precise, warmed by the face.',['professional','bright red']],
+ ['10','sports-poster','Sports Poster','Two diagonal red bands, a person mid-jump celebrating, big condensed type. Athletic battle energy that stays clean and bright.',['fun','bright red']],
+ ['11','red-room','Red Room','Half the page is a real red-painted room, half is white; a person steps out of the red into the white. Spatial and bold, the red is a place you enter.',['bright red','human']],
+ ['12','big-red-button','Big Red Button','A person about to press an enormous glossy red button. One joke, told well; instantly fun, still a clean studio shot.',['fun','human']],
+ ['13','polaroid-wall','Polaroid Wall','Instant photos of the team taped to a white wall with red tape and handwritten red notes. The warmest, most crafted "human" of the set.',['human','fun']],
+ ['14','red-flag','Red Flag','A person plants a big red flag on a white hill. The battle metaphor with zero aggression; simple shapes, poster-clear.',['bright red','professional']],
+ ['15','split-duo','Fun Mind, Sharp Mind','White half / red half, one person each: the creative side and the precise side. Shows Battle Mind and Battle X as one brand with two tempers.',['professional','bright red']],
+ ['16','red-chair','Red Chair','One iconic red armchair, a person leaning in mid-conversation, "Book a 15-min chat". Consultative and calm; sells the conversation, not the agency.',['human','professional']],
+ ['17','lean-on-numbers','Lean On Numbers','A person-height glossy red "3X" sculpture with someone leaning on it. Results-first, premium, and the number is the hero object.',['professional','bright red']],
+ ['18','neon-night','Neon Night','Red neon "BATTLE MIND" on a dark wall, three people laughing on a bench beneath it. Night-office warmth; the one dark direction with real human heat.',['human','fun']],
+ ['19','paper-planes','Paper Planes','A trail of red paper planes arcs from a person\'s hand across the page. Light, optimistic, easy to animate on the real site.',['fun','bright red']],
+ ['20','red-gloves','Red Gloves','Oversized glossy red boxing gloves, a big playful grin. Fearless and fun, shot like a sports campaign, not a fight.',['fun','bright red']],
+];
+const g = document.getElementById('g'), z = document.getElementById('z');
+for (const [n, f, t, d, fit] of C) { const a = document.createElement('article'); a.className = 'card'; a.innerHTML = `<img src="gen/${n}-${f}.webp" alt="${t}" loading="lazy"><div class="b"><h2><small>${n}</small>${t}</h2><p>${d}</p><div class="fit">${fit.map(x => `<i class="${x === 'bright red' ? 'r' : ''}">${x}</i>`).join('')}</div></div>`; a.querySelector('img').onclick = e => { z.querySelector('img').src = e.target.src; z.classList.add('on'); }; g.appendChild(a); }
+z.onclick = () => z.classList.remove('on');
+</script></body></html>
