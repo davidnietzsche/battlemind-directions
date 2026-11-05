@@ -20,10 +20,15 @@ h1{font-weight:800;letter-spacing:-.03em;font-size:clamp(34px,4.5vw,60px);line-h
 .foot{padding:0 40px 60px;max-width:1400px;margin:0 auto;color:#666;font-size:13px}
 </style></head><body>
 <div class="top"><div class="lbl">Battle Mind · homepage · square one · 5 Nov 2026</div>
-<h1>20 directions, one brief.</h1>
+<h1>Round 1: 20 directions, one brief.</h1>
 <div class="brief"><span class="r">bright red</span><span>fun</span><span>human-centric</span><span>professional</span><span>red / white / black only</span></div>
 <p class="note">Concept renders by gpt-image-2 of the above-the-fold hero only, to pick a feeling before anything is built. Faces are generic fictional people, never Battle staff. Each card says what the direction is and which part of the brief it carries hardest. Tap an image to zoom.</p></div>
 <div class="grid" id="g"></div>
+<div class="top" id="sue" style="padding-top:20px"><div class="lbl">Round 2 · Sue, 5 Nov 18:23</div>
+<h1>07 or 08, plus the swirl.</h1>
+<div class="brief"><span>7 or 8</span><span>swirling feeling</span><span class="r">red like the posters</span><span>black toy characters</span><span>lost in the universe of digital marketing</span><span>inside: swirling, tangled</span></div>
+<p class="note">Sue's reply to the first round: start from 07 Bento or 08 Mascot, add the ring of 3D objects from her mood slide ("Choose Your Way", "Cluep"), but in the red and with the black vinyl-toy characters of the right-side posters. Six takes below; every object and character is red, white or black only.</p></div>
+<div class="grid" id="g2"></div>
 <div class="zoom" id="z"><img alt=""></div>
 <p class="foot">Pick one or two to develop into a full homepage (hero, proof strip, services, cases, team, contact) with the real photos and real copy. Mixing is fine: e.g. 07's bento structure with 02's sticker energy, or 16's chair inside 13's wall.</p>
 <script>
@@ -49,7 +54,17 @@ const C = [
  ['19','paper-planes','Paper Planes','A trail of red paper planes arcs from a person\'s hand across the page. Light, optimistic, easy to animate on the real site.',['fun','bright red']],
  ['20','red-gloves','Red Gloves','Oversized glossy red boxing gloves, a big playful grin. Fearless and fun, shot like a sports campaign, not a fight.',['fun','bright red']],
 ];
+const C2 = [
+ ['21','red-universe','Red Universe','The whole page is red; a ring of black toy characters and white objects orbits the headline, two hands reach in. Sue\'s "characters and red like the right side" at full volume.',['bright red','fun']],
+ ['22','white-universe','White Universe','Same ring on white: red and black objects, black characters, lots of air. The brightest, most "Choose Your Way" reading.',['fun','professional']],
+ ['23','black-universe','Black Universe','The ring on near-black with red and white objects and red characters, lit like a night shoot. Cinematic version of the same idea.',['bright red','professional']],
+ ['24','bento-universe','Bento Universe','07\'s bento structure; the big card holds the swirl, a character peeks over the black card, the mascot waves in the red one. Most buildable as a full homepage.',['professional','fun']],
+ ['25','mascot-vortex','Mascot Vortex','08\'s red cube mascot sits calm at the centre of a galaxy of objects and black characters spiralling in. "Lost in the noise? We know the way."',['fun','human']],
+ ['26','tangled-ribbon','Tangled Ribbon','One red ribbon loops across the page with the objects and characters tangled in it. Sue\'s "getting tangled" as the hero itself; made for scroll motion.',['fun','bright red']],
+];
 const g = document.getElementById('g'), z = document.getElementById('z');
+const g2 = document.getElementById('g2');
+for (const [n, f, t, d, fit] of C2) { const a = document.createElement('article'); a.className = 'card'; a.innerHTML = `<img src="gen/${n}-${f}.webp" alt="${t}" loading="lazy"><div class="b"><h2><small>${n}</small>${t}</h2><p>${d}</p><div class="fit">${fit.map(x => `<i class="${x === 'bright red' ? 'r' : ''}">${x}</i>`).join('')}</div></div>`; a.querySelector('img').onclick = e => { z.querySelector('img').src = e.target.src; z.classList.add('on'); }; g2.appendChild(a); }
 for (const [n, f, t, d, fit] of C) { const a = document.createElement('article'); a.className = 'card'; a.innerHTML = `<img src="gen/${n}-${f}.webp" alt="${t}" loading="lazy"><div class="b"><h2><small>${n}</small>${t}</h2><p>${d}</p><div class="fit">${fit.map(x => `<i class="${x === 'bright red' ? 'r' : ''}">${x}</i>`).join('')}</div></div>`; a.querySelector('img').onclick = e => { z.querySelector('img').src = e.target.src; z.classList.add('on'); }; g.appendChild(a); }
 z.onclick = () => z.classList.remove('on');
 </script></body></html>
