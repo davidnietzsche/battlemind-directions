@@ -81,7 +81,7 @@ function setH(i, animate) { hi = i; h1.classList.toggle('long', i === 1); h1.inn
 setH(hi, false); tog.onclick = () => setH((hi + 1) % 2, true);
 
 // ---------- the ring ----------
-const PIECES = [['char1', 1.35], ['megaphone_w', 1.15], ['heart_w', .9], ['play_k', .95], ['hashtag_w', .9], ['char2', 1.3], ['bubble_w', 1], ['envelope_w', .95], ['thumb_k', 1], ['cursor_w', .85], ['chart_w', 1], ['char3', 1.3], ['phone_k', .95], ['camera_k', 1], ['coin_w', .85], ['bolt_w', .8], ['magnifier_k', 1]];
+const PIECES = [['char1', 1.35], ['megaphone_w', 1.15], ['heart_w', .9], ['play_k', .95], ['hashtag_w', .9], ['char2', 1.3], ['bubble_w', 1], ['envelope_w', .95], ['thumb_k', 1], ['cursor_w', .85], ['chart_w', 1], ['char3', 1.3], ['phone_k', .95], ['camera_k', 1], ['coin_w', .85], ['bolt_w', .8], ['magnifier_k', 1], ['bag_w', .95]];
 const ring = document.getElementById('ring'), hero = document.getElementById('hero'); const N = PIECES.length;
 const rnd = i => { const g = Math.sin(i * 12.9898 + 1) * 43758.5453; return g - Math.floor(g); };
 const P = PIECES.map((p, i) => { const el = document.createElement('img'); el.className = 'pc'; el.src = `assets2/${p[0]}.webp`; el.alt = ''; el.draggable = false; ring.appendChild(el);
