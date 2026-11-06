@@ -1,0 +1,120 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Universe · 22 on red · Battle Mind</title><meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="xp.css">
+<style>
+html,body{background:#fff}
+.hero{background:var(--red);color:#fff}
+.nav{color:#fff;mix-blend-mode:normal;transition:color .3s}.nav.dark{color:#0A0A0B}
+.ring{position:absolute;inset:0;z-index:2;pointer-events:none}
+.pc{position:absolute;left:0;top:0;height:auto;will-change:transform;transform:translate(-50%,-50%) scale(0);user-select:none;-webkit-user-drag:none}
+.pc.far{z-index:1}.pc.near{z-index:4}
+.h1w{left:50%;top:50%;translate:-50% -50%;text-align:center;width:min(94vw,1240px)}
+.h1{color:#fff;font-size:clamp(50px,8.4vw,132px)}
+.h1.long{font-size:clamp(38px,6.2vw,96px)}
+.cta{background:#fff;color:var(--red)}.cta.on{opacity:1}
+.hint{color:rgba(255,255,255,.72)}
+.svc{position:relative;background:#fff;color:#0A0A0B;padding:150px var(--gut) 130px;overflow:hidden}
+.svc .in{max-width:1320px;margin:0 auto;position:relative}
+.svc h2{margin:0 0 70px;font:800 clamp(34px,5vw,74px)/.95 var(--f);letter-spacing:-.04em;text-transform:uppercase;max-width:14ch}
+.svc h2 b{color:var(--red)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:22px}
+.cd{position:relative;padding:112px 24px 28px;border-radius:18px;background:#fff;border:1px solid #e4e4e4;opacity:0;transform:translateY(40px)}
+.cd img{position:absolute;left:22px;top:-36px;width:124px;height:124px;object-fit:contain;filter:drop-shadow(0 18px 22px rgba(0,0,0,.2));will-change:transform}
+.cd small{display:block;font:600 11px var(--o);letter-spacing:.22em;color:var(--red);text-transform:uppercase}
+.cd b{display:block;margin-top:6px;font:800 23px/1.1 var(--f);letter-spacing:-.03em}
+.cd p{margin:10px 0 0;color:#555;font-size:14px}
+.peek{position:absolute;right:0;top:-40px;width:170px;pointer-events:none}
+.band{background:var(--ink);color:#fff;padding:120px var(--gut);text-align:center}
+.band h2{margin:0 0 26px;font:800 clamp(34px,5.4vw,80px)/.95 var(--f);letter-spacing:-.04em;text-transform:uppercase}
+.band .cta{background:var(--red);color:#fff}
+.tog{position:fixed;right:var(--gut);bottom:18px;z-index:30;font:600 12px var(--o);letter-spacing:.16em;text-transform:uppercase;color:#fff;background:#0A0A0B;border:0;padding:10px 14px;border-radius:999px;cursor:pointer}
+body.rec .tog,body.rec .back,body.rec .hint{display:none}
+@media (max-width:760px){.h1w{top:50%;translate:-50% -50%}.peek{width:110px;top:-10px}}
+</style></head><body>
+<a class="back" href="./">← directions</a>
+<header class="nav" id="nav"><span class="wm">BATTLE MIND</span><ul><li><a href="#">Work</a></li><li><a href="#">Services</a></li><li><a href="#">About</a></li><li><a href="#">Contact</a></li></ul></header>
+
+<section class="hero" id="hero">
+  <div class="ring" id="ring"></div>
+  <div class="h1w"><h1 class="h1" id="h1"></h1><a class="cta" href="#">Let's go <span>→</span></a></div>
+  <div class="hint">Move the mouse · scroll</div>
+</section>
+
+<section class="svc" id="svc"><div class="in">
+  <h2>Lost in the noise? <b>We know the way.</b></h2>
+  <img class="peek" src="assets2/char3.webp" alt="">
+  <div class="cards">
+    <div class="cd"><img src="assets2/cursor_r.webp" alt=""><small>01 · Web &amp; e-commerce</small><b>Build your conversion engine</b><p>Sites and stores built to turn visits into customers.</p></div>
+    <div class="cd"><img src="assets2/megaphone_r.webp" alt=""><small>02 · Performance</small><b>High-intent paid traffic</b><p>Meta, Google and TikTok campaigns that buy the right attention.</p></div>
+    <div class="cd"><img src="assets2/play_r.webp" alt=""><small>03 · Creative &amp; content</small><b>Scroll-stopping creative</b><p>Content people actually enjoy, made to be shared.</p></div>
+    <div class="cd"><img src="assets2/magnifier_r.webp" alt=""><small>04 · Organic &amp; AI search</small><b>Organic brand authority</b><p>Show up where people, and now AI, go looking.</p></div>
+  </div>
+</div></section>
+
+<section class="band"><h2>Got 15 minutes?<br>Let's talk.</h2><a class="cta on" href="#">Book a call <span>→</span></a></section>
+
+<section class="spec">
+  <h2>22 + 21 · the universe, on red</h2>
+  <div><h3>On load</h3><p>The page is already red. Eighteen pieces pop out of the centre one after another and settle into a wide, airy orbit: white objects, black toy characters. The two headline lines rise out of their slots, the white button lands last.</p></div>
+  <div><h3>Mouse</h3><p>The whole ring tilts and shifts with the cursor, and the headline drifts a little less, so the orbit reads as a real 3D object. Pieces near the cursor get nudged aside and float back when it leaves.</p></div>
+  <div><h3>Scroll</h3><p>The hero is pinned for one extra screen. Scrolling spins the ring faster and sends it outward past the edges, so you fly through the universe into the white section below, where the four services land as cards with their red toy icons, and a character peeks in from the right.</p></div>
+  <div><h3>Headline</h3><p>Two options are wired in, switch with the pill at the bottom right: Sue's new line “Human first. Results always.” and the current site line “Win the right battles. Scale results.” Any line fits the same choreography.</p></div>
+  <div><h3>Build</h3><p>No WebGL: the orbit is 18 transparent images positioned by one small script, so it runs at 60 fps on phones and the text stays selectable and indexable. The pieces are the same toy set that reappears through the site (cards, 404, loaders).</p></div>
+  <div><h3>Fallbacks</h3><ul><li>Reduced motion: the ring is drawn once, still; cards simply appear.</li><li>Phones: smaller ring, same orbit, no pin.</li></ul></div>
+</section>
+<button class="tog" id="tog">Headline · Human first</button>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+gsap.registerPlugin(ScrollTrigger);
+const q = new URLSearchParams(location.search); if (q.has('rec')) document.body.classList.add('rec');
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// ---------- headline (two options) ----------
+const H = [['Human first.', 'Results always.'], ['Win the right battles.', 'Scale results.']];
+let hi = Math.min(1, Math.max(0, (+q.get('h') || 1) - 1)); const h1 = document.getElementById('h1'), tog = document.getElementById('tog');
+function setH(i, animate) { hi = i; h1.classList.toggle('long', i === 1); h1.innerHTML = H[i].map(l => `<span class="w"><i>${l}</i></span>`).join('');
+  tog.textContent = 'Headline · ' + (i ? 'Win the right battles' : 'Human first');
+  if (reduce) gsap.set('.h1 .w i', {y: 0}); else if (animate) gsap.to('.h1 .w i', {y: 0, duration: .9, stagger: .12, ease: 'power4.out'}); }
+setH(hi, false); tog.onclick = () => setH((hi + 1) % 2, true);
+
+// ---------- the ring ----------
+const PIECES = [['char1', 1.35], ['megaphone_w', 1.15], ['heart_w', .9], ['play_k', .95], ['hashtag_w', .9], ['char2', 1.3], ['bubble_w', 1], ['envelope_w', .95], ['thumb_k', 1], ['cursor_w', .85], ['chart_w', 1], ['char3', 1.3], ['phone_k', .95], ['camera_k', 1], ['coin_w', .85], ['bolt_w', .8], ['magnifier_k', 1]];
+const ring = document.getElementById('ring'), hero = document.getElementById('hero'); const N = PIECES.length;
+const rnd = i => { const g = Math.sin(i * 12.9898 + 1) * 43758.5453; return g - Math.floor(g); };
+const P = PIECES.map((p, i) => { const el = document.createElement('img'); el.className = 'pc'; el.src = `assets2/${p[0]}.webp`; el.alt = ''; el.draggable = false; ring.appendChild(el);
+  return {el, m: p[1], a: i / N * Math.PI * 2, r: .9 + rnd(i) * .22, v: (rnd(i + 50) - .5) * .28, tilt: (rnd(i + 90) - .5) * 30, px: 0, py: 0, front: null, b: 0}; });
+let w = 0, h = 0, base = 100; const fit = () => { w = hero.clientWidth; h = hero.clientHeight; base = Math.min(w, h) * .14; for (const p of P) p.el.style.width = (base * p.m) + 'px'; }; fit(); addEventListener('resize', fit);
+let ptr = {x: 0, y: 0}, pt = {x: 0, y: 0}, mouse = {x: -1e4, y: -1e4}, lift = 0, t0 = performance.now(), run = true;
+function frame() { if (!run) return; const T = (performance.now() - t0) / 1000;
+  ptr.x += (pt.x - ptr.x) * .06; ptr.y += (pt.y - ptr.y) * .06;
+  const ex = 1 + lift * 1.4, cx = w * .5 + ptr.x * 34, cy = h * .5 + ptr.y * 24 - lift * h * .12, A = w * .43 * ex, B = h * (.37 + ptr.y * .07) * ex;
+  const spin = (reduce ? 0 : T * .28) + lift * 2.8 + ptr.x * .28;
+  for (const p of P) { const th = p.a + spin, z = Math.sin(th), d = (z + 1) / 2;
+    const x = cx + Math.cos(th) * A * p.r * (.86 + .14 * d), y = cy + z * B * p.r + p.v * h * .3 + (reduce ? 0 : Math.sin(T * 1.3 + p.a * 3) * 7);
+    const dx = x - mouse.x, dy = y - mouse.y, dist = Math.hypot(dx, dy); let tx = 0, ty = 0; if (dist < 200 && dist > 0) { const f = (200 - dist) / 200 * 50; tx = dx / dist * f; ty = dy / dist * f; }
+    p.px += (tx - p.px) * .12; p.py += (ty - p.py) * .12;
+    const s = (.58 + .55 * d) * (1 + lift * .9) * p.b;
+    p.el.style.transform = `translate(${(x + p.px).toFixed(1)}px,${(y + p.py).toFixed(1)}px) translate(-50%,-50%) rotate(${(p.tilt + (reduce ? 0 : Math.sin(T * .8 + p.a * 2) * 8)).toFixed(1)}deg) scale(${s.toFixed(3)})`;
+    const front = z > 0; if (front !== p.front) { p.front = front; p.el.classList.toggle('near', front); p.el.classList.toggle('far', !front); } }
+  requestAnimationFrame(frame); }
+new IntersectionObserver(e => { const on = e[0].isIntersecting; if (on && !run) { run = true; frame(); } else if (!on) run = false; }).observe(hero);
+frame();
+hero.addEventListener('pointermove', e => { const r = hero.getBoundingClientRect(); pt = {x: (e.clientX - r.left) / r.width * 2 - 1, y: (e.clientY - r.top) / r.height * 2 - 1}; mouse = {x: e.clientX - r.left, y: e.clientY - r.top};
+  if (!reduce) gsap.to('.h1', {x: pt.x * 16, y: pt.y * 10, duration: .9, ease: 'power2.out', overwrite: 'auto'}); });
+hero.addEventListener('pointerleave', () => { pt = {x: 0, y: 0}; mouse = {x: -1e4, y: -1e4}; gsap.to('.h1', {x: 0, y: 0, duration: 1}); });
+
+// ---------- load ----------
+if (reduce) { for (const p of P) p.b = 1; gsap.set('.cta', {opacity: 1}); }
+else { const tl = gsap.timeline({delay: .25}); tl.to(P, {b: 1, duration: 1, stagger: {each: .05, from: 'random'}, ease: 'back.out(1.8)'}, 0).to('.h1 .w i', {y: 0, duration: .95, stagger: .12, ease: 'power4.out'}, .35).to('.cta', {opacity: 1, duration: .6}, 1.2); }
+
+// ---------- scroll ----------
+if (!reduce && innerWidth > 760) ScrollTrigger.create({trigger: hero, start: 'top top', end: '+=80%', pin: true, scrub: .5, onUpdate: s => { lift = s.progress; gsap.set('.h1', {scale: 1 - lift * .18, opacity: 1 - lift * 1.3}); gsap.set('.cta', {opacity: 1 - lift * 2.5}); }});
+ScrollTrigger.create({trigger: '#svc', start: 'top 60px', toggleClass: {targets: '#nav', className: 'dark'}});
+gsap.to('.cd', {opacity: 1, y: 0, duration: .8, stagger: .14, ease: 'back.out(1.5)', scrollTrigger: {trigger: '#svc', start: 'top 60%'}});
+if (!reduce) { gsap.to('.peek', {y: -16, rotation: 6, duration: 1.8, yoyo: true, repeat: -1, ease: 'sine.inOut'});
+  document.querySelectorAll('.cd').forEach(c => { const im = c.querySelector('img'); c.addEventListener('pointermove', e => { const r = c.getBoundingClientRect(); const x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5; gsap.to(im, {x: x * 26, y: y * 18, rotation: x * 14, duration: .5, overwrite: 'auto'}); }); c.addEventListener('pointerleave', () => gsap.to(im, {x: 0, y: 0, rotation: 0, duration: .7, ease: 'elastic.out(1,.5)'})); }); }
+</script>
+</body></html>

@@ -1,5 +1,5 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Battle Mind · 20 homepage directions</title><meta name="robots" content="noindex">
+<title>Battle Mind · homepage directions</title><meta name="robots" content="noindex">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;700;800&family=Oswald:wght@500;600&display=swap" rel="stylesheet">
 <style>
 :root{--red:#D7000F;--ink:#0A0A0B;--f:"Archivo",system-ui,sans-serif;--o:"Oswald",sans-serif}
@@ -17,9 +17,18 @@ h1{font-weight:800;letter-spacing:-.03em;font-size:clamp(34px,4.5vw,60px);line-h
 .card h2{margin:0;font-size:20px;font-weight:800;letter-spacing:-.02em;display:flex;align-items:baseline;gap:12px}.card h2 small{font:600 12px var(--o);letter-spacing:.18em;color:var(--red)}
 .card p{margin:8px 0 0;color:#444}.card .fit{margin-top:10px;display:flex;gap:6px;flex-wrap:wrap}.card .fit i{font-style:normal;font-size:12px;padding:3px 9px;border-radius:999px;background:#f1f1f1;color:#333}.card .fit i.r{background:var(--red);color:#fff}
 .zoom{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;place-items:center;z-index:9;cursor:zoom-out}.zoom.on{display:grid}.zoom img{max-width:96vw;max-height:94vh;border-radius:10px}
+.mv{display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:28px;padding:0 40px 70px;max-width:1400px;margin:0 auto}.mv .card video{display:block;width:100%;aspect-ratio:16/10;background:#111}.mv .card .b a{color:var(--red);font-weight:600;text-decoration:none;margin-right:16px}
 .foot{padding:0 40px 60px;max-width:1400px;margin:0 auto;color:#666;font-size:13px}
 </style></head><body>
-<div class="top"><div class="lbl">Battle Mind · homepage · square one · 5 Nov 2026</div>
+<div class="top" id="motion"><div class="lbl">Round 4 · Ian &amp; Sue, 6 Nov 15:26 · motion previews</div>
+<h1>22 on 21's red, and 32 in motion.</h1>
+<div class="brief"><span class="r">22 + 21</span><span class="r">32 gachapon</span><span>headline: Human first. Results always.</span><span>switch to: Win the right battles. Scale results.</span></div>
+<p class="note">Two live prototypes, each with a short screen recording for the group. Open the prototype on a laptop, move the mouse and scroll. The pill at the bottom right switches the headline between Sue's new line and the current site line.</p></div>
+<div class="mv">
+ <div class="card"><video controls playsinline preload="metadata" src="video/universe.mp4"></video><div class="b"><h2><small>22 + 21</small>The universe, on red</h2><p>22's airy ring of objects and black characters on 21's red page. The ring orbits on its own, tilts with the mouse, pieces dodge the cursor; scrolling flies you through it into the white services section.</p><p style="margin-top:12px"><a href="universe.html">Open the live prototype →</a><a href="video/universe.mp4" download>Download the MP4 (3 MB)</a></p></div></div>
+ <div class="card"><video controls playsinline preload="metadata" src="video/gachapon.mp4"></video><div class="b"><h2><small>32</small>Gachapon: zoom out, then dispense</h2><p>Opens zoomed into the pile inside the dome. The first scroll pulls back to reveal the machine; every scroll after that drops a capsule that opens into one service, four in all, collected in a tray.</p><p style="margin-top:12px"><a href="gachapon.html">Open the live prototype →</a><a href="video/gachapon.mp4" download>Download the MP4 (3 MB)</a></p></div></div>
+</div>
+<div class="top" style="padding-top:20px"><div class="lbl">Battle Mind · homepage · square one · 5 Nov 2026</div>
 <h1>Round 1: 20 directions, one brief.</h1>
 <div class="brief"><span class="r">bright red</span><span>fun</span><span>human-centric</span><span>professional</span><span>red / white / black only</span></div>
 <p class="note">Concept renders by gpt-image-2 of the above-the-fold hero only, to pick a feeling before anything is built. Faces are generic fictional people, never Battle staff. Each card says what the direction is and which part of the brief it carries hardest. Tap an image to zoom.</p></div>
@@ -60,8 +69,8 @@ const C = [
  ['20','red-gloves','Red Gloves','Oversized glossy red boxing gloves, a big playful grin. Fearless and fun, shot like a sports campaign, not a fight. <a href="gloves.html" style="color:#D7000F;font-weight:600">Open the motion prototype →</a>',['fun','bright red']],
 ];
 const C2 = [
- ['21','red-universe','Red Universe','The whole page is red; a ring of black toy characters and white objects orbits the headline, two hands reach in. Sue\'s "characters and red like the right side" at full volume.',['bright red','fun']],
- ['22','white-universe','White Universe','Same ring on white: red and black objects, black characters, lots of air. The brightest, most "Choose Your Way" reading.',['fun','professional']],
+ ['21','red-universe','Red Universe','The whole page is red; a ring of black toy characters and white objects orbits the headline, two hands reach in. Sue\'s "characters and red like the right side" at full volume. <a href="universe.html" style="color:#D7000F;font-weight:600">Motion preview: 22 on this red →</a>',['bright red','fun']],
+ ['22','white-universe','White Universe','Same ring on white: red and black objects, black characters, lots of air. The brightest, most "Choose Your Way" reading. <a href="universe.html" style="color:#D7000F;font-weight:600">Motion preview: this ring on 21\'s red →</a>',['fun','professional']],
  ['23','black-universe','Black Universe','The ring on near-black with red and white objects and red characters, lit like a night shoot. Cinematic version of the same idea.',['bright red','professional']],
  ['24','bento-universe','Bento Universe','07\'s bento structure; the big card holds the swirl, a character peeks over the black card, the mascot waves in the red one. Most buildable as a full homepage.',['professional','fun']],
  ['25','mascot-vortex','Mascot Vortex','08\'s red cube mascot sits calm at the centre of a galaxy of objects and black characters spiralling in. "Lost in the noise? We know the way."',['fun','human']],
@@ -74,7 +83,7 @@ const C3 = [
  ['29','big-red-mascot','Big Red Mascot','One person-height red cube mascot shouting into a black megaphone. One hero object, lots of air. The cleanest wow.',['fun','bright red']],
  ['30','letters-burst','Letters Burst','BATTLE as huge red 3D letters with objects and characters bursting from between them. Typographic wow, the LEGO Barcamp energy in brand colours.',['bright red','fun']],
  ['31','playground-mark','Playground Mark','A giant 3D B and M as playground equipment, characters climbing, sliding and hanging off it. Joyful and crafted.',['fun','professional']],
- ['32','gachapon','Gachapon','A giant red capsule-toy machine full of characters and objects; one capsule just dropped. "Pick your weapon", Sue\'s own slide title.',['fun','bright red']],
+ ['32','gachapon','Gachapon','A giant red capsule-toy machine full of characters and objects; one capsule just dropped. "Pick your weapon", Sue\'s own slide title. <a href="gachapon.html" style="color:#D7000F;font-weight:600">Motion preview: zoom out, then dispense →</a>',['fun','bright red']],
  ['33','next-move','Your Next Move','A red-and-white chessboard where the pieces are characters and objects, one mid-jump. Strategy made playful.',['professional','fun']],
  ['34','growth-stack','Growth Stack','Characters stacking icon blocks into a tower. The brief\'s growth-stack layers as a toy build; teamwork without faces.',['professional','fun']],
  ['35','megaphone-burst','Megaphone Burst','Red page, a giant black megaphone spraying objects and characters across it. Loudest of the ten.',['bright red','fun']],
