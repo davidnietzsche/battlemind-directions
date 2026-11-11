@@ -26,6 +26,17 @@ if (nb) { const open = (on) => { nb.setAttribute("aria-expanded", on); drawer.cl
   nb.onclick = () => open(nb.getAttribute("aria-expanded") !== "true"); $$("a", drawer).forEach((a) => a.addEventListener("click", () => open(false)));
   addEventListener("keydown", (e) => { if (e.key === "Escape") open(false); }); }
 
+// ---- when a click opens something, glide so the result is in view; the user's own scroll always wins ----
+let gl = null;
+function glideTo(y) { y = Math.max(0, Math.round(y)); if (Math.abs(y - scrollY) < 6) return; if (!G) { scrollTo({ top: y, behavior: "instant" }); return; }
+  const o = { y: scrollY }; if (gl) gl.kill(); gl = gsap.to(o, { y, duration: .85, ease: "power3.inOut", onUpdate: () => scrollTo({ top: o.y, behavior: "instant" }) }); }
+["wheel", "touchstart", "keydown"].forEach((ev) => addEventListener(ev, () => { if (gl) { gl.kill(); gl = null; } }, { passive: true }));
+function showBlock(top, h) { const navH = (nav ? nav.offsetHeight : 0) + 14, pad = 26, vh = innerHeight; let y = scrollY;   // top/h = where the block will be once the layout settles
+  if (h > vh - navH - pad) y = top - navH;                     // taller than the view: start at its top
+  else if (top + h > y + vh - pad) y = top + h + pad - vh;     // its end is below the fold: bring it up
+  else if (top < y + navH) y = top - navH;                     // its start is under the nav: bring it down
+  glideTo(y); }
+
 // ---- section headlines: one masked line each ----
 $$(".hx").forEach((h) => { h.innerHTML = h.innerHTML.split(/<br\s*\/?>/i).map((p) => `<span class="ln"><i>${p.trim()}</i></span>`).join(""); });
 
@@ -65,8 +76,11 @@ let openRow = () => {};
   const rows = $$(".sr", box); let seen = false;
   const count = (row) => { if (row.dataset.lit || !G || !seen) return; row.dataset.lit = 1; $$(".sres b", row).forEach((b) => { const n = +b.dataset.n, o = { v: 0 }, dec = Number.isInteger(n) ? 0 : 1;
     gsap.to(o, { v: n, duration: 1.1, delay: .25, ease: "power3.out", onUpdate: () => (b.textContent = b.dataset.pre + o.v.toFixed(dec) + b.dataset.suf), onComplete: () => (b.textContent = b.dataset.pre + n.toFixed(dec).replace(/\.0$/, "") + b.dataset.suf) }); }); };
-  openRow = (i, force) => rows.forEach((r, j) => { const on = j === i && (force || !r.classList.contains("open")); r.classList.toggle("open", on); $(".srh", r).setAttribute("aria-expanded", on); $(".srb", r).inert = !on; if (on) count(r); });
-  rows.forEach((r, i) => { $(".srh", r).addEventListener("click", () => openRow(i)); const fl = $(".flood", r);
+  openRow = (i, force, reveal) => { const prev = rows.findIndex((r) => r.classList.contains("open")), will = force || prev !== i;
+    const shift = prev >= 0 && prev < i ? $(".srb", rows[prev]).offsetHeight : 0, top = rows[i].getBoundingClientRect().top + scrollY - shift, h = $(".wrap", rows[i]).offsetHeight + $(".in", rows[i]).scrollHeight;
+    rows.forEach((r, j) => { const on = j === i && will; r.classList.toggle("open", on); $(".srh", r).setAttribute("aria-expanded", on); $(".srb", r).inert = !on; if (on) count(r); });
+    if (reveal && will) showBlock(top, h); };
+  rows.forEach((r, i) => { $(".srh", r).addEventListener("click", () => openRow(i, false, true)); const fl = $(".flood", r);
     const side = (e) => { const b = r.getBoundingClientRect(); fl.style.transformOrigin = e.clientY - b.top < b.height / 2 ? "50% 0%" : "50% 100%"; }; r.addEventListener("pointerenter", side); r.addEventListener("pointerleave", side); });
   box.classList.add("noan"); openRow(0, true); box.offsetHeight; requestAnimationFrame(() => box.classList.remove("noan"));
   if (G) ScrollTrigger.create({ trigger: box, start: "top 75%", once: true, onEnter: () => { seen = true; const o = rows.find((r) => r.classList.contains("open")); if (o) count(o); } }); else seen = true; } }
@@ -81,12 +95,15 @@ const DG = [["A", "We need sales, calls, and qualified inquiries right away.", "
   opts.innerHTML = DG.map(([, qq], i) => `<button type="button" class="opt" aria-pressed="false" data-i="${i}">${qq}</button>`).join("");
   let tmr; $$(".opt", opts).forEach((b) => b.addEventListener("click", () => { const [, qq, label, card] = DG[+b.dataset.i];
     $$(".opt", opts).forEach((x) => x.setAttribute("aria-pressed", String(x === b))); clearTimeout(tmr);
-    const say = () => { ans.innerHTML = `<div class="bub red"><span>That's a job for</span><b>${SV[card][1]}</b><span>${label}. We start there.</span><img src="assets2/${TB[card]}.webp" alt=""></div>
+    const html = `<div class="bub red"><span>That's a job for</span><b>${SV[card][1]}</b><span>${label}. We start there.</span><img src="assets2/${TB[card]}.webp" alt=""></div>
         <div class="acts"><a class="cta ink" href="#connect" id="dgo">Talk about this${AR}</a><button class="cta gl dk" type="button" id="dsee">See the service</button></div>`;
+    const say = () => { ans.innerHTML = html;
       $("#dgo").addEventListener("click", () => { const inp = $("#askin"); if (inp && !inp.value) inp.value = qq; });
-      $("#dsee").addEventListener("click", () => { openRow(card, true); $$("#srows .sr")[card].scrollIntoView({ behavior: R ? "auto" : "smooth", block: "center" }); });
+      $("#dsee").addEventListener("click", () => openRow(card, true, true));
       if (G) gsap.from(ans.children, { y: 18, opacity: 0, duration: .55, stagger: .08, ease: "power3.out" }); };
-    if (R) say(); else { ans.innerHTML = '<div class="bub them typing" aria-hidden="true"><i></i><i></i><i></i></div>'; tmr = setTimeout(say, 750); } })); } }
+    ans.style.minHeight = ""; ans.innerHTML = html; const h = ans.offsetHeight; ans.style.minHeight = h + "px";   // measured, not painted
+    if (R) say(); else { ans.innerHTML = '<div class="bub them typing" aria-hidden="true"><i></i><i></i><i></i></div>'; tmr = setTimeout(say, 750); }
+    showBlock(ans.getBoundingClientRect().top + scrollY, h); })); } }
 
 // ---- impact: the deck's four numbers, counting up once ----
 $$("#kp4 [data-to]").forEach((v, i) => { if (!G) return; const to = +v.dataset.to, o = { n: 0 }; v.textContent = "0";
@@ -138,7 +155,10 @@ const CS = [{ k: "yakisoul", logo: "v9_logo_yakisoul", name: "Yaki Soul", n: "RM
   cfr.innerHTML = CS.map((c, i) => `<img class="ph" src="assets3/v9c_${c.k}.webp" alt="${c.name}: our work"${i ? ' loading="lazy"' : ""} draggable="false">`).join("") + '<span class="clg" id="clg"></span>';
   list.innerHTML = CS.map((c, i) => `<li><button type="button" class="crow" data-i="${i}" aria-pressed="false"><span class="ct"><span class="cn">${c.name}</span><span class="cl">${c.l}</span></span><span class="cv">${c.pre ? `<small>${c.pre}</small>` : ""}${c.n}</span></button><div class="cmob"><div><img src="assets3/v9c_${c.k}.webp" alt="" loading="lazy">${story(c)}</div></div></li>`).join("");
   const imgs = $$("img.ph", cfr), lis = $$("li", list), clg = $("#clg"); let cur = -1, z = 1;
-  const show = (i, instant) => { if (i === cur) return; cur = i; const c = CS[i]; lis.forEach((l, j) => { l.classList.toggle("on", j === i); $(".crow", l).setAttribute("aria-pressed", String(j === i)); });
+  const show = (i, instant) => { if (i === cur) return;
+    if (!instant && getComputedStyle($(".cmob", lis[i])).display !== "none") { const shift = cur >= 0 && cur < i ? $(".cmob", lis[cur]).offsetHeight : 0;
+      showBlock(lis[i].getBoundingClientRect().top + scrollY - shift, $(".crow", lis[i]).offsetHeight + $(".cmob > div", lis[i]).scrollHeight); }
+    cur = i; const c = CS[i]; lis.forEach((l, j) => { l.classList.toggle("on", j === i); $(".crow", l).setAttribute("aria-pressed", String(j === i)); });
     const im = imgs[i]; im.style.zIndex = ++z; if (instant || !G) { im.style.clipPath = "none"; } else gsap.fromTo(im, { clipPath: "inset(100% 0% 0% 0%)", scale: 1.14 }, { clipPath: "inset(0% 0% 0% 0%)", scale: 1, duration: .85, ease: "power3.inOut", overwrite: true });
     clg.className = "clg" + (c.dark ? " dk" : ""); clg.innerHTML = c.logo ? `<img src="assets3/${c.logo}.webp" alt="${c.name}">` : c.name; clg.style.zIndex = z + 1; cst.innerHTML = story(c);
     if (!instant && G) gsap.from(cst.children, { y: 12, opacity: 0, duration: .45, stagger: .06, ease: "power3.out" }); };
