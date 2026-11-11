@@ -1,0 +1,187 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>v12 · 32 Gachapon · Battle Mind</title><meta name="robots" content="noindex,nofollow"><link rel="icon" href="assets3/bm-mark.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Inter:wght@400;500;600&family=Barlow+Condensed:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="v12.css">
+<style>
+.hero{position:relative;height:100svh;min-height:620px;overflow:hidden;background:#fff;color:var(--ink,#0D131A)}
+.gsc{position:absolute;left:0;top:0;z-index:1;will-change:transform}
+.gsc>img{position:absolute;inset:0;width:100%;height:100%;mix-blend-mode:multiply;user-select:none;-webkit-user-drag:none}
+.gknob{position:absolute;z-index:2;border-radius:50%;background-repeat:no-repeat;will-change:transform}
+.gturn{all:unset;position:absolute;z-index:6;border-radius:50%;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.gturn::before{content:"";position:absolute;inset:6%;border-radius:50%;box-shadow:0 0 0 2px #fff,0 0 0 4px var(--red,#D7000F);opacity:0;animation:gping 2.2s cubic-bezier(.2,.7,.3,1) infinite}
+.gturn:focus-visible{outline:3px solid var(--ink,#0D131A);outline-offset:2px}
+.gturn.done::before{animation:none}
+@keyframes gping{0%{transform:scale(.8);opacity:.9}70%,100%{transform:scale(1.5);opacity:0}}
+.gtip{position:absolute;z-index:6;translate:-50% 0;padding:9px 14px;border-radius:999px;background:var(--ink,#0D131A);color:#fff;font:500 13px/1 var(--b,Inter,sans-serif);white-space:nowrap;pointer-events:none;transition:opacity .4s}
+.gtip::before{content:"";position:absolute;left:50%;top:-5px;width:10px;height:10px;background:inherit;translate:-50% 0;rotate:45deg}
+.gcap{position:absolute;left:0;top:0;z-index:5;pointer-events:none;will-change:transform;opacity:0}
+.gcap img{position:absolute;left:0;width:100%;height:auto;user-select:none}
+.gcap .ct{top:0;z-index:2;transform-origin:10% 80%}.gcap .cb{top:42%;z-index:1}
+.gwin{position:absolute;left:0;top:0;z-index:4;pointer-events:none;will-change:transform;opacity:0}
+.gwin img{display:block;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 14px 16px rgba(13,19,26,.22))}
+.gwin span{position:absolute;left:100%;top:50%;translate:calc(var(--lg,10px) / .54) -50%;scale:1.852;transform-origin:0 50%;width:var(--lw,160px);text-align:left;opacity:0}
+.gwin small{display:block;font:500 var(--f1,11px)/1.2 var(--h,Oswald,sans-serif);letter-spacing:.16em;text-transform:uppercase;color:var(--red,#D7000F)}
+.gwin b{display:block;margin-top:2px;font:600 var(--f2,15px)/1.06 var(--h,Oswald,sans-serif);letter-spacing:.03em;text-transform:uppercase;color:var(--ink,#0D131A)}
+.gcopy{position:absolute;z-index:4;left:var(--gut,40px);top:calc(50% - 6px);translate:0 -50%;width:max-content;max-width:46vw}
+.gcopy .h1{margin-top:14px;font-size:min(8.6vw,13.2vh);line-height:.88;width:max-content}
+.gcopy .h1.long{font-size:min(4.6vw,9vh);max-width:11em}
+.gcopy .lead{margin:18px 0 0;max-width:30vw;color:var(--grey,#5B6068);font-size:clamp(15px,1.15vw,18px)}
+.gcopy .ctas{margin-top:22px}
+.crew{position:absolute;z-index:3;left:var(--gut,40px);bottom:10px;display:flex;align-items:flex-end;gap:clamp(10px,1.6vw,26px);pointer-events:none}
+.crew img{height:clamp(54px,9.6vh,104px);width:auto;transform-origin:50% 100%;filter:drop-shadow(0 10px 8px rgba(13,19,26,.18))}
+.crew.off{display:none}
+body[data-people="0"] .gsc .ppl-only{display:none}
+@media (max-width:760px){.hero{height:auto;min-height:0}.gcopy{position:relative;left:auto;top:auto;translate:none;max-width:none;width:auto;padding:84px var(--gut,18px) 0}
+  .gcopy .h1{font-size:clamp(46px,15.5vw,72px)}.gcopy .h1.long{font-size:clamp(32px,9vw,44px)}.gcopy .lead{display:none}.gcopy .ctas{margin-top:18px}
+  .gstage{position:relative;height:var(--sh,340px);margin-top:10px;overflow:hidden}.crew{display:none}.gtip{display:none}}
+@media (min-width:761px){.gstage{position:absolute;inset:0}}
+@media (prefers-reduced-motion:reduce){.gturn::before{animation:none}}
+</style></head>
+<body class="v12 t32">
+<div class="cur" id="cur" aria-hidden="true"><span id="curT"></span></div>
+<header class="nav" id="nav"><div class="wrap"><a class="home" href="#top" aria-label="Battle, back to the top"><img class="lw" src="assets3/battle-white.webp" alt="Battle"><img class="lr" src="assets3/battle-red.webp" alt="" aria-hidden="true"></a>
+<ul><li><a href="#services">Services</a></li><li><a href="#cases">Work</a></li><li><a href="#team">Team</a></li><li><a href="#connect">Contact</a></li></ul>
+<div class="nr"><a class="cta gl sm" href="#connect">Let's talk</a><button class="nb" id="nb" type="button" aria-label="Menu" aria-expanded="false" aria-controls="drawer"><span><i></i><i></i><i></i></span></button></div></div></header>
+<nav class="drawer" id="drawer" aria-label="Menu"><ul><li><a href="#services"><small>01</small>Services</a></li><li><a href="#impact"><small>02</small>Impact</a></li><li><a href="#cases"><small>03</small>Work</a></li><li><a href="#team"><small>04</small>Team</a></li><li><a href="#connect"><small>05</small>Contact</a></li></ul>
+<div class="dct"><a class="cta" href="https://wa.me/60197707927?text=Hi%20Battle%2C%20I%27d%20like%20a%2015-minute%20call%20about%20my%20marketing." target="_blank" rel="noopener">Chat on WhatsApp<span class="ar" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M4 12 12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><svg viewBox="0 0 16 16"><path d="M4 12 12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a></div><div class="dln"><a href="tel:+60197707927">+6019-770 7927</a><a href="mailto:hello@battlemind.my">hello@battlemind.my</a></div></nav>
+<section class="hero" id="hero" data-tone="light"><a id="top"></a>
+<div class="gcopy" id="gcopy"><div class="eyebrow"><i></i>Data-intelligent digital marketing · Kuala Lumpur</div><h1 class="h1" data-stack="1"></h1><p class="lead">We know what it's like to miss your leads and conversion targets. We understand your pain and your users' needs. Let us help you. We turn information into content people actually enjoy.</p><div class="ctas"><a class="cta rd" href="#connect">Let's talk<span class="ar" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M4 12 12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><svg viewBox="0 0 16 16"><path d="M4 12 12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a><a class="cta gl dk" href="#cases">See our work</a></div></div>
+<div class="gstage" id="gstage"><div class="gsc" id="gsc"><img id="gimg" src="assets2/g_scene_a.webp" alt="A giant red capsule-toy machine packed with marketing toys; one person leans on it, another waits at the chute with open hands" draggable="false"><div class="gknob" id="gknob" aria-hidden="true"></div></div>
+<button class="gturn" id="gturn" type="button" aria-label="Turn the knob to win a service"></button><span class="gtip" id="gtip" aria-hidden="true">Turn the knob</span></div>
+<div class="crew" id="crew" aria-hidden="true"><img src="assets2/crew_heart.webp" alt=""><img src="assets2/crew_phone.webp" alt=""><img src="assets2/crew_coin.webp" alt=""><img src="assets2/crew_cursor.webp" alt=""></div>
+<p class="vh" id="gsay" aria-live="polite"></p></section>
+
+<!-- 2 PROOF · logos -->
+<section class="sec tp" id="s2" data-tone="light"><div class="deb" id="deb" aria-hidden="true"><img src="assets2/capsule_top.webp" alt="" style="right:5%;top:214px;--w:150px" data-r="14" loading="lazy"><img src="assets2/play_r.webp" alt="" style="right:22%;top:262px;--w:84px" data-r="-18" loading="lazy"><img src="assets2/cursor_r.webp" alt="" style="right:33%;top:64px;--w:66px" data-r="22" loading="lazy"><img src="assets2/megaphone_r.webp" alt="" style="right:1.5%;top:92px;--w:100px" data-r="-26" loading="lazy"><img src="assets2/magnifier_r.webp" alt="" style="left:2%;top:60px;--w:74px" data-r="30" loading="lazy"><img src="assets2/heart_r.webp" alt="" style="right:18%;top:70px;--w:58px" data-r="-12" loading="lazy"></div><div class="wrap"><h2 class="h2">Trusted by <b class="x">160+ Clients</b><br>Across <b class="x">14+ Industries</b></h2><div class="lgrid" id="lgrid" role="list" aria-label="Some of our clients"></div></div></section>
+
+<!-- 3 SERVICES · where the armour was, with the cube's own pieces -->
+<section class="sec svs tw" id="services" data-tone="light"><div class="wrap">
+  <div class="shd"><div><div class="lbl">What we do</div><h2 class="h2" style="margin-top:12px">Our <b class="x">Services</b></h2></div></div>
+  <div class="svg4" id="svg4"></div>
+  <div class="chat9" id="diag"><div class="chl"><h3>Match your <b class="x">marketing headache</b></h3><p>Tap the line that sounds like you. We'll point you straight to the solution.</p>
+<div class="still"><span>Still not sure? Let's figure it out together.</span><a class="cta gl" href="#connect" data-mag>Talk to us</a></div></div>
+<div class="conv" id="conv"><div class="who"><img src="assets3/bm-mark.webp" alt="">Battle Mind</div><div class="bub them">What is your biggest challenge today?</div>
+<div class="opts" id="opts" role="group" aria-label="Your biggest challenge"></div><div class="ans" id="ans" aria-live="polite"></div></div></div></div></section>
+
+<!-- 4 PROOF · numbers -->
+<section class="sec tr" id="s3" data-tone="dark"><div class="wrap"><h2 class="h2">Proven <b class="x">Business Impact</b></h2>
+  <div class="kpi" id="kpi">
+    <article class="kp g-red" data-tilt><div class="gk"><img class="gl" src="assets2/chart_r.webp" alt="" loading="lazy"><small>Up to</small><div><b class="num"><span data-to="500">500</span><i>%</i></b><p>client business growth in 3 years</p></div></div></article>
+    <article class="kp g-smoke" data-tilt><div class="gk"><img class="gl" src="assets2/bag_w.webp" alt="" loading="lazy"><small>Up to</small><div><b class="num"><span data-to="3">3</span><i>×</i></b><p>annual sales for our client</p></div></div></article>
+    <article class="kp g-frost" data-tilt><div class="gk"><img class="gl" src="assets2/coin_k.webp" alt="" loading="lazy"><small>Up to</small><div><b class="num"><span data-to="67">67</span><i>%</i></b><p>decrease in cost per result</p></div></div></article>
+    <article class="kp g-wine" data-tilt><div class="gk"><img class="gl" src="assets2/megaphone_w.webp" alt="" loading="lazy"><small>Luxe Living</small><div><b class="num"><span data-to="22">22</span><i>×</i></b><p>return on ad spend, against an industry benchmark of 8 to 12</p></div></div></article></div></div></section>
+
+<!-- 5 DATA MADE DIGESTIBLE -->
+<section class="sec dsec tk" id="data" data-tone="dark"><div class="dpin" id="dpin"><div class="wrap">
+  <div class="dhd"><div><div class="lbl">Data made digestible</div><h2 class="h2" style="margin-top:12px">From Confusing Analytics <b class="x">to Clear Plan</b></h2></div>
+    <p>No overload of jargon or vanity metrics. We get to the root of what's holding your sales back, and hand you the next three moves.</p></div>
+  <div class="dstage" id="dstage">
+    <div class="sheet" id="sheet"><div class="top"><span>Sample · raw analytics export</span><i>3 findings</i></div><table id="tab"></table><div class="scan" id="scan"></div></div>
+    <div><div class="plan" id="plan">
+      <div class="s" data-n="1"><span class="key" aria-hidden="true"><svg viewBox="0 0 24 24"><path class="g1" d="M3.5 5h17a1 1 0 0 1 1 1v11.5a1 1 0 0 1-1 1h-17a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM2.5 8.8h19M5.4 6.9h.01M7.6 6.9h.01M12.5 11.5l6.2 2.3-2.7 1.1 1.9 2.5-1.1.9-1.9-2.5-1.3 2.5z"/><path class="g2" d="M3.5 5h17a1 1 0 0 1 1 1v11.5a1 1 0 0 1-1 1h-17a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM2.5 8.8h19M5.4 6.9h.01M7.6 6.9h.01M12.5 11.5l6.2 2.3-2.7 1.1 1.9 2.5-1.1.9-1.9-2.5-1.3 2.5z"/><path class="g3" d="M3.5 5h17a1 1 0 0 1 1 1v11.5a1 1 0 0 1-1 1h-17a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM2.5 8.8h19M5.4 6.9h.01M7.6 6.9h.01M12.5 11.5l6.2 2.3-2.7 1.1 1.9 2.5-1.1.9-1.9-2.5-1.3 2.5z"/></svg></span><div><h4>Enhance web UX</h4><p>Fix the leaky bucket: remove what stops visitors buying, before you spend another ringgit on ads.</p><small>From finding 1: 74% of Instagram visitors bounce</small></div></div>
+      <div class="s" data-n="2"><span class="key" aria-hidden="true"><svg viewBox="0 0 24 24"><path class="g1" d="M10.5 3.5a6.8 6.8 0 1 0 0 13.6 6.8 6.8 0 0 0 0-13.6zM15.4 15.4l5.1 5.1M10.5 6.6l.95 2.25 2.25.95-2.25.95-.95 2.25-.95-2.25-2.25-.95 2.25-.95z"/><path class="g2" d="M10.5 3.5a6.8 6.8 0 1 0 0 13.6 6.8 6.8 0 0 0 0-13.6zM15.4 15.4l5.1 5.1M10.5 6.6l.95 2.25 2.25.95-2.25.95-.95 2.25-.95-2.25-2.25-.95 2.25-.95z"/><path class="g3" d="M10.5 3.5a6.8 6.8 0 1 0 0 13.6 6.8 6.8 0 0 0 0-13.6zM15.4 15.4l5.1 5.1M10.5 6.6l.95 2.25 2.25.95-2.25.95-.95 2.25-.95-2.25-2.25-.95 2.25-.95z"/></svg></span><div><h4>Strengthen SEM</h4><p>Show up where buyers are already searching, on Google and in AI answers.</p><small>From finding 2: Google leads at RM30, Facebook leads at RM63</small></div></div>
+      <div class="s" data-n="3"><span class="key" aria-hidden="true"><svg viewBox="0 0 24 24"><path class="g1" d="M4 4.5h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H9.5L5 20v-3.5H4a1 1 0 0 1-1-1v-10a1 1 0 0 1 1-1zM12 14c-2.5-1.7-3.4-2.8-3.4-4 0-1 .8-1.7 1.7-1.7.7 0 1.3.4 1.7 1 .4-.6 1-1 1.7-1 .9 0 1.7.7 1.7 1.7 0 1.2-.9 2.3-3.4 4z"/><path class="g2" d="M4 4.5h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H9.5L5 20v-3.5H4a1 1 0 0 1-1-1v-10a1 1 0 0 1 1-1zM12 14c-2.5-1.7-3.4-2.8-3.4-4 0-1 .8-1.7 1.7-1.7.7 0 1.3.4 1.7 1 .4-.6 1-1 1.7-1 .9 0 1.7.7 1.7 1.7 0 1.2-.9 2.3-3.4 4z"/><path class="g3" d="M4 4.5h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H9.5L5 20v-3.5H4a1 1 0 0 1-1-1v-10a1 1 0 0 1 1-1zM12 14c-2.5-1.7-3.4-2.8-3.4-4 0-1 .8-1.7 1.7-1.7.7 0 1.3.4 1.7 1 .4-.6 1-1 1.7-1 .9 0 1.7.7 1.7 1.7 0 1.2-.9 2.3-3.4 4z"/></svg></span><div><h4>Engaging, trust-building social ads</h4><p>Stop the scroll, earn trust, then convert.</p><small>From finding 3: a 0.8% click-through rate</small></div></div></div>
+      <p class="dend" id="dend">Three moves. Not thirty metrics.</p></div>
+    <svg class="dlinks" id="dlinks" aria-hidden="true"></svg></div></div></div></section>
+
+<!-- 6 CASES -->
+<section class="sec white tp" id="cases" data-tone="light"><div class="wrap cshd"><div><div class="lbl">Proven results</div><h2 class="h2" style="margin-top:12px">Battles <b class="x">We've Won</b></h2></div>
+</div>
+  <div class="cf" id="cf" role="region" aria-roledescription="carousel" aria-label="Case studies" tabindex="0"><div class="cft" id="cft"></div>
+    <div class="cfnav"><button type="button" id="cfp" aria-label="Previous case">←</button><span id="cfn" aria-live="polite">01 / 07</span><button type="button" id="cfx" aria-label="Next case">→</button></div></div>
+  <div class="wrap"><div style="margin-top:30px;display:flex;gap:12px;flex-wrap:wrap"><a class="cta dk" href="#cases" data-mag>All case studies<span class="ar" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M4 12 12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><svg viewBox="0 0 16 16"><path d="M4 12 12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a><a class="cta dk gh" href="#connect" data-mag>Start your own battle</a></div></div></section>
+
+<!-- 7 TEAM · the people, with the clients they grow alongside -->
+<section class="sec gal tw" id="team" data-tone="light">
+  <div class="grib" aria-hidden="true"><div class="gtr"><figure class="gt"><img src="assets3/v9_g_poiching.webp" alt="" loading="lazy" draggable="false"></figure><figure class="gt rd"><img src="assets3/v9_g_marcus.webp" alt="" loading="lazy" draggable="false"></figure><figure class="gt"><img src="assets3/v9_g_swet.webp" alt="" loading="lazy" draggable="false"></figure><figure class="gt"><img src="assets3/v9_g_bhp.webp" alt="" loading="lazy" draggable="false"></figure><figure class="gt rd"><img src="assets3/v9_g_cheanu.webp" alt="" loading="lazy" draggable="false"></figure><figure class="gt"><img src="assets3/v9_g_belle.webp" alt="" loading="lazy" draggable="false"></figure><figure class="gt"><img src="assets3/v9_g_poiching.webp" alt="" loading="lazy" draggable="false"></figure><figure class="gt rd"><img src="assets3/v9_g_marcus.webp" alt="" loading="lazy" draggable="false"></figure><figure class="gt"><img src="assets3/v9_g_swet.webp" alt="" loading="lazy" draggable="false"></figure><figure class="gt"><img src="assets3/v9_g_bhp.webp" alt="" loading="lazy" draggable="false"></figure><figure class="gt rd"><img src="assets3/v9_g_cheanu.webp" alt="" loading="lazy" draggable="false"></figure><figure class="gt"><img src="assets3/v9_g_belle.webp" alt="" loading="lazy" draggable="false"></figure></div></div>
+  <div class="wrap gmid"><div><div class="lbl">Human first</div><h2 class="h2" style="margin-top:12px">Meet Your <b class="x">Growth Partners</b></h2></div>
+    <a class="cta" href="#team" data-mag>Meet the team<span class="ar" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M4 12 12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><svg viewBox="0 0 16 16"><path d="M4 12 12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a></div>
+  <div class="grib" aria-hidden="true"><div class="gtr rev"><figure class="gt"><img src="assets3/v9_g_belle.webp" alt="" loading="lazy" draggable="false"></figure><figure class="gt rd"><img src="assets3/v9_g_bhp.webp" alt="" loading="lazy" draggable="false"></figure><figure class="gt"><img src="assets3/v9_g_poiching.webp" alt="" loading="lazy" draggable="false"></figure><figure class="gt"><img src="assets3/v9_g_cheanu.webp" alt="" loading="lazy" draggable="false"></figure><figure class="gt rd"><img src="assets3/v9_g_swet.webp" alt="" loading="lazy" draggable="false"></figure><figure class="gt"><img src="assets3/v9_g_marcus.webp" alt="" loading="lazy" draggable="false"></figure><figure class="gt"><img src="assets3/v9_g_belle.webp" alt="" loading="lazy" draggable="false"></figure><figure class="gt rd"><img src="assets3/v9_g_bhp.webp" alt="" loading="lazy" draggable="false"></figure><figure class="gt"><img src="assets3/v9_g_poiching.webp" alt="" loading="lazy" draggable="false"></figure><figure class="gt"><img src="assets3/v9_g_cheanu.webp" alt="" loading="lazy" draggable="false"></figure><figure class="gt rd"><img src="assets3/v9_g_swet.webp" alt="" loading="lazy" draggable="false"></figure><figure class="gt"><img src="assets3/v9_g_marcus.webp" alt="" loading="lazy" draggable="false"></figure></div></div>
+  <p class="gcap">Our team with our clients: workshops, shoots and wins. Photos from Battle.</p></section>
+
+<!-- 8 LET'S TALK -->
+<section class="cn tr" id="connect" data-tone="dark">
+  <div class="wrap cnw">
+    <div class="cnc"><h2>Got 15 Minutes?<br><b class="x">Let's Talk</b></h2></div>
+    <div class="askw">
+      <span class="ko fr" data-d="1.1" style="right:-7%;top:-38%;width:clamp(110px,11vw,170px)"><span data-depth="1.2"><img data-float src="assets2/heart_w.webp" alt="" style="rotate:12deg"></span></span>
+      <form class="ask" id="ask"><label class="ak" for="askin">Your marketing battle</label><input id="askin" placeholder="What's your marketing battle?" autocomplete="off">
+        <div class="row"><div class="chips2"><button type="button" data-q="Our ads cost too much per lead">Ads</button><button type="button" data-q="We need a website that converts">Website</button></div>
+          <button class="send" type="submit" aria-label="Send on WhatsApp"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 12 12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div></form>
+      <p class="cnalt">Sends on WhatsApp. Or write to <a href="mailto:hello@battlemind.my">hello@battlemind.my</a> · call <a href="tel:+60197707927">+6019-770 7927</a></p></div></div></section>
+
+<footer class="foot" data-tone="light"><div class="wrap"><div class="fmain">
+  <div class="fbrand"><div class="lk"><a href="#top" aria-label="Battle Mind, back to the top"><img src="assets3/bm-lockup.webp" alt="Battle Mind"></a><a href="#services" aria-label="Battle X, web development"><img src="assets3/bx-lockup.webp" alt="Battle X"></a></div>
+    <p>Battle Mind Creative · Battle X. Data-intelligent digital marketing in Kuala Lumpur: human first, results always.</p></div>
+  <nav aria-label="Services"><b>Services</b><ul><li><a href="#services">Performance marketing</a></li><li><a href="#services">Creative &amp; content</a></li><li><a href="#services">Web development</a></li><li><a href="#diag">Service finder</a></li></ul></nav>
+  <nav aria-label="Company"><b>Company</b><ul><li><a href="#cases">Work</a></li><li><a href="#team">About</a></li><li><a href="#team">Our story</a></li><li><a href="#team">Team</a></li></ul></nav>
+  <div><b>Talk</b><ul><li><a href="#connect">Book a 15-minute call</a></li><li><a href="tel:+60197707927">+6019-770 7927</a></li><li><a href="mailto:hello@battlemind.my">hello@battlemind.my</a></li>
+    <li><a class="addr" href="https://www.google.com/maps/search/?api=1&amp;query=No.%207-2%2C%20Jalan%202%2F137B%2C%20Resource%20Industrial%20Centre%2C%2058200%20Kuala%20Lumpur" target="_blank" rel="noopener">No. 7-2, Jalan 2/137B, Resource Industrial Centre, Off Jalan Kelang Lama, 58200 Kuala Lumpur</a></li></ul></div></div>
+  <div class="fbot"><span>© 2026 Battle Mind Creative Sdn. Bhd. (1379718-A) · BattleX Sdn. Bhd. (1666567-U)</span><a href="./" style="font-weight:400;color:#6b7079">All directions</a><a class="top" href="#top">Back to top <i aria-hidden="true">↑</i></a></div><div class="big" aria-hidden="true">BATTLE</div></div></footer>
+<div class="note">v12 with the 32 hero, the gachapon, rebuilt to the picked render: a giant machine packed with toys, a poster headline, two people at the machine. Scroll or turn the knob and a capsule lands in his hands and opens into one service, four in all. Below the hero the modules keep v9.1's designs, their layouts and their motion (logo tiles that turn a row at a time, four service cards crowned by a piece, four impact tiles, the analytics export that a red scan settles and wires to three moves as you scroll, the case cover-flow, the photo ribbons, the prompt card), in this page's own look: flat brand red, white and black, toys and clean cards. None of the cube's material is left: no smoked glass, chrome frames or neon. Brand type: Oswald, Inter, DIN Condensed. People in the hero are generic fictional people, never Battle staff.</div>
+<script src="lib/gsap.min.js"></script><script src="lib/ScrollTrigger.min.js"></script><script src="lib/SplitText.min.js"></script><script src="lib/lenis.min.js"></script><script src="v11.js"></script><script src="v11m.js"></script>
+<script>
+(() => {
+const R = BM.R, q = new URLSearchParams(location.search), nop = q.get('people') === '0'; if (nop) document.body.dataset.people = '0';
+// everything is placed in fractions of the scene picture (measured from the image): knob, chute, where a capsule lands, where wins park
+const SC = nop ? {src: 'assets2/g_machine2.webp', ar: 1024 / 1536, box: [.133, .858, .035, .948], knob: [.4863, .68, .078], chute: [.485, .862], hand: [.04, .905], pop: [.04, .76], park: [[-.5, .3], [-.5, .4], [-.5, .5], [-.5, .6]], lw: .42, fit: .9}
+               : {src: 'assets2/g_scene_a.webp', ar: 1536 / 1024, box: [.104, .816, .033, .931], knob: [.4933, .5905, .0325], chute: [.4928, .8], hand: [.414, .742], pop: [.404, .655], park: [[.146, .058], [.146, .136], [.146, .214], [.146, .292]], lw: .16, fit: .88};
+const SV = [['cursor_r', '01 · Web & e-commerce', 'Build your conversion engine'], ['megaphone_r', '02 · Performance', 'High-intent paid traffic'], ['play_r', '03 · Creative & content', 'Scroll-stopping creative'], ['magnifier_r', '04 · Organic & AI search', 'Organic brand authority']];
+const $ = (id) => document.getElementById(id), lead = document.querySelector('#gcopy .lead'), h1 = document.querySelector('#gcopy .h1'), hero = $('hero'), stage = $('gstage'), sc = $('gsc'), img = $('gimg'), knob = $('gknob'), turn = $('gturn'), tip = $('gtip'), copy = $('gcopy'), crew = $('crew'), say = $('gsay');
+if (nop) img.src = SC.src; knob.style.backgroundImage = `url(${SC.src})`;
+const caps = SV.map(() => { const c = document.createElement('div'); c.className = 'gcap'; c.innerHTML = '<img class="ct" src="assets2/capsule_top.webp" alt=""><img class="cb" src="assets2/capsule_bottom.webp" alt="">'; stage.appendChild(c); return c; });
+const wins = SV.map((s) => { const w = document.createElement('div'); w.className = 'gwin'; w.innerHTML = `<img src="assets2/${s[0]}.webp" alt=""><span><small>${s[1]}</small><b>${s[2]}</b></span>`; stage.appendChild(w); return w; });
+let W = 0, Hh = 0, sw = 0, sh = 0, sx = 0, sy = 0; const P = (f) => ({x: sx + f[0] * sw, y: sy + f[1] * sh});
+function layout() { const phone = innerWidth <= 760; W = stage.clientWidth; Hh = stage.clientHeight;
+  if (phone) { lead.style.maxWidth = ''; sw = W * (nop ? .62 : 1.42); sh = sw / SC.ar; stage.style.setProperty('--sh', Math.round(sh * (SC.box[3] - SC.box[2]) + 8) + 'px'); Hh = stage.clientHeight; sx = W / 2 - (SC.box[0] + SC.box[1]) / 2 * sw + (nop ? W * .16 : 0); sy = Hh - SC.box[3] * sh; }
+  else { lead.style.maxWidth = h1.offsetWidth + 'px'; const cr = copy.getBoundingClientRect().right - hero.getBoundingClientRect().left, room = W * .972 - cr - 28;       // what is left beside the headline
+    sh = Math.min(Hh * SC.fit, room / (SC.box[1] - SC.box[0]) / SC.ar); sw = sh * SC.ar; sx = W * .972 - SC.box[1] * sw - (nop ? W * .05 : 0); sy = Hh - SC.box[3] * sh - Hh * .012;
+    const chh = parseFloat(getComputedStyle(crew.firstElementChild).height) || 90; crew.classList.toggle('off', copy.getBoundingClientRect().bottom - hero.getBoundingClientRect().top > Hh - chh - 22); }
+  Object.assign(sc.style, {width: sw + 'px', height: sh + 'px', transform: `translate(${sx}px,${sy}px)`});
+  const k = SC.knob, r = k[2] * sw; Object.assign(knob.style, {width: 2 * r + 'px', height: 2 * r + 'px', left: k[0] * sw - r + 'px', top: k[1] * sh - r + 'px', backgroundSize: `${sw}px ${sh}px`, backgroundPosition: `${-(k[0] * sw - r)}px ${-(k[1] * sh - r)}px`});
+  const kp = P(k), tr = r * 1.75; Object.assign(turn.style, {width: 2 * tr + 'px', height: 2 * tr + 'px', left: kp.x - tr + 'px', top: kp.y - tr + 'px'}); Object.assign(tip.style, {left: kp.x + 'px', top: kp.y + tr + 4 + 'px'}); }
+let tl = null, done = 0; const PER = 1.5, N = SV.length, TOTAL = N * PER + .25;
+function build() { const t0 = tl ? tl.time() : 0; if (tl) tl.kill(); layout();
+  const cs = sw * (nop ? .17 : .074), ws = sw * (nop ? .2 : .078), ch = P(SC.chute), hd = P(SC.hand), pp = P(SC.pop), u = sw * (nop ? 2.6 : 1);
+  stage.style.setProperty('--lw', SC.lw * sw + 'px'); stage.style.setProperty('--lg', Math.max(5, u * .008) + 'px'); stage.style.setProperty('--f1', Math.max(7.5, Math.min(11, u * .0092)) + 'px'); stage.style.setProperty('--f2', Math.max(9.5, Math.min(15, u * .0126)) + 'px');
+  tl = gsap.timeline({paused: true}); gsap.set(knob, {rotation: 0}); gsap.set(tip, {opacity: 1}); tl.to(tip, {opacity: 0, duration: .08}, .04);
+  caps.forEach((c, k) => { const t = .12 + k * PER, top = c.querySelector('.ct'), w = wins[k], lab = w.querySelector('span'), pk = P(SC.park[k]);
+    c.style.width = cs + 'px'; c.style.height = cs * 1.17 + 'px'; w.style.width = w.style.height = ws + 'px';
+    const cy = cs * .585; gsap.set(c, {x: ch.x - cs / 2, y: ch.y - cy, scale: .3, opacity: 0, rotation: 0}); gsap.set(top, {x: 0, y: 0, rotation: 0, opacity: 1}); gsap.set(w, {x: pp.x - ws / 2, y: hd.y - ws / 2, scale: 0, opacity: 0, rotation: 0}); gsap.set(lab, {opacity: 0});
+    tl.to(knob, {rotation: (k + 1) * 180, duration: .4, ease: 'back.out(1.6)'}, t)
+      .to(c, {opacity: 1, duration: .08}, t + .16).to(c, {x: hd.x - cs / 2, scale: 1, rotation: -360, duration: .5, ease: 'power1.inOut'}, t + .16)
+      .to(c, {y: hd.y - cy - sh * .04, duration: .25, ease: 'power2.out'}, t + .16).to(c, {y: hd.y - cy, duration: .25, ease: 'bounce.out'}, t + .41)
+      .to(c, {rotation: -360 - 10, duration: .12}, t + .66)
+      .to(top, {x: -cs * .34, y: -cs * .5, rotation: -64, duration: .26, ease: 'power2.out'}, t + .72).to(top, {opacity: 0, duration: .18}, t + .98)
+      .set(w, {opacity: 1}, t + .74).to(w, {x: pp.x - ws / 2, y: pp.y - ws / 2, scale: 1.25, rotation: -8, duration: .34, ease: 'back.out(2.2)'}, t + .74)
+      .to(c, {opacity: 0, duration: .2}, t + 1.02)
+      .to(w, {x: pk.x - ws / 2, y: pk.y - ws / 2, scale: .54, rotation: 0, duration: .42, ease: 'power3.inOut'}, t + 1.02).to(lab, {opacity: 1, duration: .2}, t + 1.3)
+      .call(() => mark(k + 1), null, t + 1.32).call(() => mark(k), null, t + .1); });
+  tl.to({}, {duration: .25}); tl.time(t0); }
+function mark(n) { if (n === done) return; done = n; turn.classList.toggle('done', n >= N); turn.setAttribute('aria-label', n >= N ? 'All four services won. Continue to the page' : 'Turn the knob to win a service');
+  if (n) say.textContent = `${SV[n - 1][2]}. ${n} of ${N}.`; }
+img.addEventListener('load', build); build(); if (document.fonts) document.fonts.ready.then(build);
+let rz; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(build, 120); });
+// scroll drives it on laptops (pinned); the knob glides the scroll to the next stop. Without a pin the knob plays it directly
+const pinned = !R && innerWidth > 760; let st = null, target = 0, cur = 0, run = true;
+const stopAt = (n) => (.12 + (n - 1) * PER + 1.5) / TOTAL;                      // timeline progress once capsule n has parked
+if (R) { build(); tl.progress(1); }
+else if (pinned) { st = ScrollTrigger.create({trigger: hero, start: 'top top', end: '+=250%', pin: true, refreshPriority: 10, onUpdate: (s) => { target = s.progress; }});
+  const loop = () => { if (!run) return; cur += (target - cur) * .16; if (Math.abs(target - cur) < .0004) cur = target; tl.progress(Math.min(1, cur / .96)); requestAnimationFrame(loop); }; loop();
+  new IntersectionObserver((e) => { const on = e[0].isIntersecting; if (on && !run) { run = true; loop(); } else if (!on) run = false; }).observe(hero); }
+turn.addEventListener('click', () => { const n = Math.min(N, Math.floor(tl.time() / PER + .12) + 1), last = tl.time() >= (N - 1) * PER + 1.3;
+  if (st) { const y = last ? st.end + 4 : st.start + (st.end - st.start) * Math.min(1, stopAt(n) * .96 + .004); (BM.glideTo || ((v) => scrollTo(0, v)))(y, 1.1); }
+  else if (last) { const nx = hero.nextElementSibling; if (nx) (BM.glideTo || ((v) => scrollTo(0, v)))(nx.getBoundingClientRect().top + scrollY); }
+  else gsap.to(tl, {time: Math.min(tl.duration(), (n - 1) * PER + 1.62), duration: R ? 0 : 1.5, ease: 'none'}); });
+// life: the headline rises, the scene settles, the crew walks in and bobs; the scene leans a little with the pointer
+if (!R) { gsap.to('#gcopy .h1 .w i', {y: 0, duration: 1, stagger: .09, ease: 'power4.out', delay: .15}); gsap.from('#gcopy .eyebrow, #gcopy .lead, #gcopy .ctas', {y: 22, opacity: 0, duration: .8, stagger: .08, ease: 'power3.out', delay: .5});
+  gsap.from(img, {scale: 1.05, opacity: 0, duration: 1.1, ease: 'power3.out', transformOrigin: '50% 100%'});
+  [...crew.children].forEach((c, i) => { gsap.from(c, {x: -160 - i * 40, opacity: 0, duration: 1.1, delay: .7 + (3 - i) * .12, ease: 'power3.out'}); gsap.to(c, {rotation: i % 2 ? 4 : -4, y: -5, duration: .5 + i * .07, repeat: -1, yoyo: true, ease: 'sine.inOut', delay: 1.6 + i * .1}); });
+  hero.addEventListener('pointermove', (e) => { const r = hero.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5; gsap.to(stage, {x: -x * 14, y: -y * 8, duration: 1, ease: 'power2.out', overwrite: 'auto'}); gsap.to(crew, {x: x * 18, duration: 1, ease: 'power2.out', overwrite: 'auto'}); });
+  hero.addEventListener('pointerleave', () => gsap.to([stage, crew], {x: 0, y: 0, duration: 1}));
+  if (!pinned) new IntersectionObserver((e, ob) => { if (e[0].isIntersecting) { ob.disconnect(); setTimeout(() => { if (tl.time() < .05) turn.click(); }, 1400); } }, {threshold: .6}).observe(stage);
+} else gsap.set('.h1 .w i', {y: 0});
+})();</script>
+<script>ScrollTrigger.sort(); ScrollTrigger.refresh(); if (document.fonts) document.fonts.ready.then(() => ScrollTrigger.refresh()); addEventListener("load", () => { ScrollTrigger.sort(); ScrollTrigger.refresh(); });</script>
+</body></html>
