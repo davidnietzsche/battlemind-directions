@@ -12,7 +12,7 @@ const rnd = (i) => { const g = Math.sin(i * 127.1 + 311.7) * 43758.5453; return 
 // ---- headline: Sue's line by default; ?h=2 shows the current site line ----
 const H = [["Human First.", "Results Always."], ["Win the right battles.", "Scale results."]];
 const hi = Math.min(1, Math.max(0, (+q.get("h") || 1) - 1));
-function setH(i, animate) { $$(".h1").forEach((h) => { h.classList.toggle("long", i === 1); h.innerHTML = H[i].map((l) => `<span class="w"><i>${l}</i></span>`).join(""); });
+function setH(i, animate) { $$(".h1").forEach((h) => { h.classList.toggle("long", i === 1); h.innerHTML = (h.dataset.stack && !i ? H[i].flatMap((l) => l.split(" ")) : H[i]).map((l) => `<span class="w"><i>${l}</i></span>`).join(""); });
   if (R) gsap.set(".h1 .w i", { y: 0 }); else if (animate) gsap.to(".h1 .w i", { y: 0, duration: .9, stagger: .12, ease: "power4.out" }); }
 setH(hi, false);
 window.BM = { setH, R, AR };
@@ -28,8 +28,9 @@ if (nb) { const open = (on) => { nb.setAttribute("aria-expanded", on); drawer.cl
 
 // ---- when a click opens something, glide so the result is in view; the user's own scroll always wins ----
 let gl = null;
-function glideTo(y) { y = Math.max(0, Math.round(y)); if (Math.abs(y - scrollY) < 6) return; if (!G) { scrollTo({ top: y, behavior: "instant" }); return; }
-  const o = { y: scrollY }; if (gl) gl.kill(); gl = gsap.to(o, { y, duration: .85, ease: "power3.inOut", onUpdate: () => scrollTo({ top: o.y, behavior: "instant" }) }); }
+function glideTo(y, dur) { y = Math.max(0, Math.round(y)); if (Math.abs(y - scrollY) < 6) return; if (!G) { scrollTo({ top: y, behavior: "instant" }); return; }
+  const o = { y: scrollY }; if (gl) gl.kill(); gl = gsap.to(o, { y, duration: dur || .85, ease: "power3.inOut", onUpdate: () => scrollTo({ top: o.y, behavior: "instant" }) }); }
+window.BM.glideTo = glideTo;
 ["wheel", "touchstart", "keydown"].forEach((ev) => addEventListener(ev, () => { if (gl) { gl.kill(); gl = null; } }, { passive: true }));
 function showBlock(top, h) { const navH = (nav ? nav.offsetHeight : 0) + 14, pad = 26, vh = innerHeight; let y = scrollY;   // top/h = where the block will be once the layout settles
   if (h > vh - navH - pad) y = top - navH;                     // taller than the view: start at its top
