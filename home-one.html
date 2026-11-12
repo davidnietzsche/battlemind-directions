@@ -1,0 +1,152 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>One direction · the Battle machine · Battle Mind</title><meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Barlow+Condensed:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css">
+<style>
+.hero.fh{position:relative;height:100svh;min-height:620px;overflow:hidden;background:var(--red);color:#fff}
+.fstage{position:absolute;inset:-14px;z-index:1;will-change:transform}
+.fstage canvas,.fstage .fpl{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;user-select:none;-webkit-user-drag:none}
+.fstage .fpl{opacity:0}.fstage .fpl.on{opacity:1}
+.fstage canvas{opacity:0}.fh.live .fstage canvas{opacity:1}
+.fshade{position:absolute;left:0;right:0;top:0;height:210px;z-index:2;pointer-events:none;background:linear-gradient(180deg,rgba(64,0,5,.78),rgba(64,0,5,.5) 38%,rgba(64,0,5,0))}
+.fa{position:absolute;z-index:4;left:50%;top:50%;translate:-50% -50%;width:max-content;max-width:92vw;text-align:center;will-change:transform,opacity}
+.fa .h1{margin-top:16px;font-size:min(6.5vw,12.6vh);line-height:.9}
+.fa .h1.long{font-size:min(4.6vw,9vh)}
+.fa .lead{margin:20px auto 0;max-width:40ch;font-size:clamp(15px,1.15vw,18px);opacity:.92}
+.fa .ctas{justify-content:center;margin-top:26px}
+.fb{position:absolute;z-index:4;left:var(--gut);top:50%;translate:0 -50%;width:max-content;max-width:38vw;opacity:0;visibility:hidden;will-change:transform,opacity}
+.fb .h1{font-family:var(--h);font-weight:600;text-transform:uppercase;letter-spacing:.02em;font-size:min(7.2vw,13vh);line-height:.88}
+.fb .h1.long{font-size:min(4.4vw,8.6vh);max-width:10em}
+.fb .lead{margin:18px 0 0;max-width:36ch;font-size:clamp(15px,1.1vw,17px);opacity:.92}
+.fb .ctas{margin-top:22px}
+.fc{position:absolute;z-index:4;left:0;right:0;bottom:4.2vh;text-align:center;opacity:0;visibility:hidden;font:500 12px/1.3 var(--h);letter-spacing:.2em;text-transform:uppercase;will-change:opacity,transform}
+.fc b{font-weight:600}.fc span{opacity:.82}
+.fsv{position:absolute;z-index:5;inset:0;pointer-events:none}
+.fsv a{position:absolute;translate:-50% 0;width:min(21vw,300px);text-align:center;opacity:0;visibility:hidden;pointer-events:auto;color:#fff;text-decoration:none;will-change:transform,opacity}
+.fsv a small{display:block;font:500 12px/1 var(--h);letter-spacing:.2em;text-transform:uppercase;opacity:.86}
+.fsv a b{display:block;margin-top:8px;font:600 clamp(17px,1.5vw,25px)/1.05 var(--h);letter-spacing:.02em;text-transform:uppercase}
+.fsv a i{display:inline-grid;place-items:center;margin-top:12px;width:38px;height:38px;border-radius:50%;background:#fff;color:var(--red);font-style:normal;transition:transform .35s var(--ease)}
+.fsv a i svg{width:14px;height:14px}
+.fsv a:hover i,.fsv a:focus-visible i{transform:translateY(4px)}
+.fsv a:focus-visible{outline:2px solid #fff;outline-offset:8px;border-radius:12px}
+.fknob{all:unset;position:absolute;z-index:6;translate:-50% -50%;border-radius:50%;cursor:pointer;opacity:0;visibility:hidden;-webkit-tap-highlight-color:transparent}
+.fknob::before{content:"";position:absolute;inset:-8%;border-radius:50%;box-shadow:0 0 0 2px #fff;animation:fping 2.2s cubic-bezier(.2,.7,.3,1) infinite}
+.fknob span{position:absolute;left:50%;top:calc(100% + 16px);translate:-50% 0;padding:9px 14px;border-radius:999px;background:#fff;color:var(--ink);font:500 13px/1 var(--b,Inter,sans-serif);white-space:nowrap}
+.fknob:focus-visible{outline:3px solid #fff;outline-offset:4px}
+@keyframes fping{0%{transform:scale(.86);opacity:.95}70%,100%{transform:scale(1.35);opacity:0}}
+.fh .scue{z-index:6;color:#fff}
+.fmob{display:none}
+@media (max-width:760px){.hero.fh{height:auto;min-height:0;overflow:visible;display:flex;flex-direction:column}.fa{order:1}.fstage{order:2}.fsv{order:3}
+  .fstage{position:relative;inset:auto;height:auto}.fstage canvas,.fshade,.fb,.fc,.fknob,.fh .scue{display:none}
+  .fstage .fpl{display:none}.fstage .fpl.mob{display:block;position:relative;opacity:1;aspect-ratio:4/4.4;object-position:74% 50%}
+  .fa{position:relative;left:auto;top:auto;translate:none;width:auto;max-width:none;padding:96px var(--gut) 30px;text-align:left}.fa .lead{margin-left:0}.fa .ctas{justify-content:flex-start}
+  .fa .h1{font-size:clamp(44px,13.4vw,66px)}.fa .h1.long{font-size:clamp(32px,9vw,44px)}
+  .fsv{position:relative;inset:auto;display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(255,255,255,.22);border-top:1px solid rgba(255,255,255,.22)}
+  .fsv a{position:relative;left:auto!important;top:auto!important;translate:none;width:auto;opacity:1;visibility:visible;text-align:left;padding:18px var(--gut,18px) 20px;background:var(--red)}
+  .fsv a i{display:none}.fsv a b{font-size:17px}}
+html.norise .hero.fh .fstage canvas,html.norise .fa,html.norise .fc,html.norise .fknob{display:none}
+html.norise .fstage .fpl.mob{opacity:1}html.norise .fb{opacity:1;visibility:visible}
+html.norise .fsv{inset:auto var(--gut) 26px var(--gut);display:flex;gap:28px;justify-content:flex-start}html.norise .fh .scue{display:none}html.norise .fsv a{position:static;translate:none;width:auto;text-align:left;opacity:1;visibility:visible}html.norise .fsv a i{display:none}
+@media (prefers-reduced-motion:reduce){.fknob::before{animation:none}}
+</style></head><body class="tone"><header class="nav" id="nav"><div class="wrap"><a class="home" href="#top" aria-label="Battle, back to the top"><img class="lw" src="assets3/battle-white.webp" alt="Battle"><img class="lr" src="assets3/battle-red.webp" alt="" aria-hidden="true"></a>
+<ul><li><a href="#services">Services</a></li><li><a href="#cases">Work</a></li><li><a href="#team">Team</a></li><li><a href="#connect">Contact</a></li></ul>
+<div class="nr"><a class="cta gl sm" href="#connect">Let's talk</a><button class="nb" id="nb" type="button" aria-label="Menu" aria-expanded="false" aria-controls="drawer"><span><i></i><i></i><i></i></span></button></div></div></header>
+<nav class="drawer" id="drawer" aria-label="Menu"><ul><li><a href="#services"><small>01</small>Services</a></li><li><a href="#impact"><small>02</small>Impact</a></li><li><a href="#cases"><small>03</small>Work</a></li><li><a href="#team"><small>04</small>Team</a></li><li><a href="#connect"><small>05</small>Contact</a></li></ul>
+<div class="dct"><a class="cta" href="https://wa.me/60197707927?text=Hi%20Battle%2C%20I%27d%20like%20a%2015-minute%20call%20about%20my%20marketing." target="_blank" rel="noopener">Chat on WhatsApp<span class="ar" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M4 12 12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><svg viewBox="0 0 16 16"><path d="M4 12 12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a></div><div class="dln"><a href="tel:+60197707927">+6019-770 7927</a><a href="mailto:hello@battlemind.my">hello@battlemind.my</a></div></nav><section class="hero fh" id="hero" data-tone="dark"><a id="top"></a>
+<div class="fstage" id="fstage"><canvas id="fcv" aria-hidden="true"></canvas>
+<img class="fpl on" id="fp1" src="assets4/one_universe.webp" alt="Glossy red, white and black marketing toys, hearts, megaphones, play buttons and small black characters, swirl in a ring on bright red." fetchpriority="high">
+<img class="fpl mob" id="fp2" src="assets4/one_wide.webp" alt="A white capsule-toy machine packed with the same toys; a person stands beside it with a hand on the knob." loading="lazy">
+<img class="fpl" id="fp3" src="assets4/one_tray.webp" alt="Four capsules lie open in a row, each holding one toy: a cursor, a megaphone, a play button and a magnifying glass." loading="lazy"></div>
+<div class="fshade" aria-hidden="true"></div>
+<div class="fa" id="fa"><div class="eyebrow"><i></i>Data-intelligent digital marketing · Kuala Lumpur</div><h1 class="h1"></h1><p class="lead">We know what it's like to miss your leads and conversion targets. We understand your pain and your users' needs. Let us help you. We turn information into content people actually enjoy.</p><div class="ctas"><a class="cta" href="#connect">Let's talk<span class="ar" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M4 12 12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><svg viewBox="0 0 16 16"><path d="M4 12 12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a><a class="cta gl" href="#cases">See our work</a></div></div>
+<div class="fb" id="fb"><div class="h1" data-stack="1" aria-hidden="true"></div><p class="lead">Trusted by 160+ clients across 14+ industries.</p><div class="ctas"><a class="cta" href="#connect">Let's talk<span class="ar" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M4 12 12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><svg viewBox="0 0 16 16"><path d="M4 12 12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a><a class="cta gl" href="#cases">See our work</a></div></div>
+<div class="fc" id="fc"><b>Pick your weapon.</b> <span>Tap one to see how we use it.</span></div>
+<nav class="fsv" id="fsv" aria-label="Our four services"><a href="#services" data-i="0" style="left:17.20%;top:66.50%"><small>01 · Web & e-commerce</small><b>Build your conversion engine</b><i aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M8 3v10M3.5 8.5 8 13l4.5-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></i></a><a href="#services" data-i="1" style="left:39.00%;top:66.50%"><small>02 · Performance</small><b>High-intent paid traffic</b><i aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M8 3v10M3.5 8.5 8 13l4.5-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></i></a><a href="#services" data-i="2" style="left:61.00%;top:66.50%"><small>03 · Creative & content</small><b>Scroll-stopping creative content</b><i aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M8 3v10M3.5 8.5 8 13l4.5-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></i></a><a href="#services" data-i="3" style="left:83.00%;top:66.50%"><small>04 · Organic & AI search</small><b>Organic brand authority</b><i aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M8 3v10M3.5 8.5 8 13l4.5-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></i></a></nav>
+<button class="fknob" id="fknob" type="button" aria-label="Turn the knob to see our four services"><span aria-hidden="true">Turn the knob</span></button>
+<div class="scue" id="fcue"><i></i>Scroll</div></section><section class="sec p cl" id="clients" data-tone="light">
+<div class="wrap"><h2 class="hx md">Trusted by <b class="dn">160+</b> clients<br>across <b class="dn">14+</b> industries</h2></div>
+<div class="lrib" id="lrib" role="list" aria-label="Some of our clients"></div></section><section class="sec w" id="services" data-tone="light">
+<div class="wrap"><div class="shead"><h2 class="hx">Our services</h2><p class="bd rv">Not sure what your marketing actually needs right now? You're not alone, and we're here to help.</p></div></div>
+<div class="srows" id="srows"></div></section>
+<section class="sec p chat" id="diag" data-tone="light"><div class="wrap chg">
+<div class="chl"><h2 class="hm">Match your marketing headache</h2><p class="bd">Tap the line that sounds like you. We'll point you straight to the solution.</p>
+<div class="still"><span>Still not sure? Let's figure it out together.</span><a class="cta ink" href="#connect">Talk to us<span class="ar" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M4 12 12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><svg viewBox="0 0 16 16"><path d="M4 12 12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a></div></div>
+<div class="conv" id="conv"><div class="who"><img src="assets3/bm-mark.webp" alt="">Battle Mind</div><div class="bub them">What is your biggest challenge today?</div>
+<div class="opts" id="opts" role="group" aria-label="Your biggest challenge"></div><div class="ans" id="ans" aria-live="polite"></div></div></div></section><section class="sec r" id="impact" data-tone="dark">
+<div class="wrap"><h2 class="hx md">Proven business impact</h2><div class="kp4" id="kp4"><div class="kc"><small>Up to</small><b class="dn"><span data-to="500">500</span><i>%</i></b><p>client business growth in 3 years</p></div><div class="kc"><small>Up to</small><b class="dn"><span data-to="3">3</span><i>×</i></b><p>annual sales for our client</p></div><div class="kc"><small>Up to</small><b class="dn"><span data-to="67">67</span><i>%</i></b><p>decrease in cost per result</p></div><div class="kc"><small>Luxe Living</small><b class="dn"><span data-to="22">22</span><i>×</i></b><p>return on ad spend, against an industry benchmark of 8 to 12</p></div></div></div></section><section class="sec k dsec" id="data" data-tone="dark"><div class="dpin" id="dpin">
+<div class="wrap dtop"><h2 class="hx sm">From confusing analytics<br>to clear plan</h2><p class="bd">No overload of jargon or vanity metrics. We get to the root of what's holding your sales back, and hand you the next three moves.</p></div>
+<div class="wrap dwrap"><div class="dstage" id="dstage"><div class="nzbox" id="nzbox" aria-hidden="true"></div><div class="moves" id="moves"></div></div>
+<div class="dfoot"><p class="dend" id="dend"><span class="ln"><i>Three moves. Not thirty metrics.</i></span></p><small>Sample numbers, for illustration.</small></div></div></div></section><section class="sec w" id="cases" data-tone="light"><div class="wrap"><h2 class="hx">Battles we've won</h2>
+<div class="cz"><div class="cph"><div class="cfr" id="cfr"></div><div class="cst" id="cst" aria-live="polite"></div></div>
+<div><ol class="clist" id="clist"></ol><div class="cfoot"><a class="cta ink" href="#connect">Start your own battle<span class="ar" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M4 12 12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><svg viewBox="0 0 16 16"><path d="M4 12 12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a><small>Figures from Battle's case studies. More client quotes to follow.</small></div></div></div></div></section><section class="sec p" id="team" data-tone="light"><div class="wrap"><h2 class="hx">Meet your<br>growth partners</h2>
+<div class="trow"><p class="bd">We're easy to work with &amp; we celebrate your wins with you.</p><a class="cta ink" href="#connect">Meet the team<span class="ar" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M4 12 12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><svg viewBox="0 0 16 16"><path d="M4 12 12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a></div></div>
+<div class="trib"><img class="peek" src="assets2/char2.webp" alt="" aria-hidden="true" loading="lazy"><div class="trw" id="trw"></div></div>
+<div class="wrap"><p class="tcap">Our team with our clients: workshops, shoots and wins. Photos from Battle.</p></div></section><section class="sec r cnx" id="connect" data-tone="dark">
+<div class="wrap cng"><h2 class="hx">Got 15 minutes?<br>Let's talk</h2>
+<form class="ask rv" id="ask"><label class="vh" for="askin">Your marketing battle</label><div class="askp"><input id="askin" placeholder="What's your marketing battle?" autocomplete="off">
+<button class="send" type="submit" aria-label="Send on WhatsApp"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 12 12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+<div class="goal"><span id="gl2">Your primary goal</span><div class="seg" role="group" aria-labelledby="gl2"><span class="thumb" aria-hidden="true"></span><button type="button" data-g="Leads" aria-pressed="false">Leads</button><button type="button" data-g="Traffic" aria-pressed="false">Traffic</button><button type="button" data-g="Brand" aria-pressed="false">Brand</button><button type="button" data-g="Not sure" aria-pressed="false">Not sure</button></div></div>
+<p class="cnalt">Sends on WhatsApp. Or write to <a href="mailto:hello@battlemind.my">hello@battlemind.my</a>, or call <a href="tel:+60197707927">+6019-770 7927</a>.</p></form></div></section><footer class="foot" data-tone="light"><div class="wrap"><div class="fmain">
+<div class="fbrand"><div class="lk"><a href="#top" aria-label="Battle Mind, back to the top"><img src="assets3/bm-lockup.webp" alt="Battle Mind"></a><a href="#services" aria-label="Battle X, web development"><img src="assets3/bx-lockup.webp" alt="Battle X"></a></div><p>Battle Mind Creative and Battle X. Data-intelligent digital marketing in Kuala Lumpur: human first, results always.</p></div>
+<nav aria-label="Services"><b>Services</b><ul><li><a href="#services">Performance marketing</a></li><li><a href="#services">Creative &amp; content</a></li><li><a href="#services">Web development</a></li><li><a href="#diag">Service finder</a></li></ul></nav>
+<nav aria-label="Company"><b>Company</b><ul><li><a href="#cases">Work</a></li><li><a href="#team">About</a></li><li><a href="#team">Our story</a></li><li><a href="#team">Team</a></li></ul></nav>
+<div><b>Talk</b><ul><li><a href="#connect">Book a 15-minute call</a></li><li><a href="tel:+60197707927">+6019-770 7927</a></li><li><a href="mailto:hello@battlemind.my">hello@battlemind.my</a></li><li><a class="addr" href="https://www.google.com/maps/search/?api=1&amp;query=No.%207-2%2C%20Jalan%202%2F137B%2C%20Resource%20Industrial%20Centre%2C%2058200%20Kuala%20Lumpur" target="_blank" rel="noopener">No. 7-2, Jalan 2/137B, Resource Industrial Centre, Off Jalan Kelang Lama, 58200 Kuala Lumpur</a></li></ul></div></div>
+<div class="fbot"><span>© 2026 Battle Mind Creative Sdn. Bhd. (1379718-A) and BattleX Sdn. Bhd. (1666567-U)</span><a class="dl" href="./">All directions</a><a href="#top">Back to top <i aria-hidden="true">↑</i></a></div><div class="big" aria-hidden="true">BATTLE</div></div></footer><div class="note">One direction. The hero is one film that the scroll plays: you open among the toys circling the headline, the camera pulls back to show it is all inside a capsule machine with a person at the knob, then it pushes in as four capsules open into the four services. Tap a capsule and the page takes you to that service. Below it are the sections from the current pick, unchanged. The person is a stand-in for a real team member.</div><script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script><script src="site.js"></script><script>
+(() => {
+const C = {"frames": [{"n": 121, "dir": "assets4/fa/"}, {"n": 121, "dir": "assets4/fb/"}], "seg": [0.04, 0.46, 0.55, 0.9], "knob": {"ar": 1.7777777777777777, "x": 0.625, "y": 0.5875, "r": 0.034}, "pin": 400, "label_x": [0.172, 0.39, 0.61, 0.83], "label_y": 0.665};
+const R = BM.R, $ = (id) => document.getElementById(id), hero = $('hero'), stage = $('fstage'), cv = $('fcv'), ctx = cv.getContext('2d'), P = [$('fp1'), $('fp2'), $('fp3')];
+const A = $('fa'), B = $('fb'), T = $('fc'), SV = [...document.querySelectorAll('#fsv a')], knob = $('fknob'), cue = $('fcue');
+const phone = () => innerWidth <= 760, st = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+// a label opens its service row and the page glides to it
+SV.forEach((a) => a.addEventListener('click', (e) => { const rows = document.querySelectorAll('#srows > *'), row = rows[+a.dataset.i]; if (!row) return; e.preventDefault();
+  const hd = row.querySelector('button, [role=button], .srh') || row; hd.click(); }));
+// entrance: the ring is already there (it is the first paint); the words rise into it. Runs on phones too.
+if (window.gsap && !R) { const parts = [A.querySelector('.eyebrow'), A.querySelector('.lead'), A.querySelector('.ctas')]; gsap.set(parts, {opacity: 0, y: 14});
+  gsap.timeline({delay: .15}).to('#fa .h1 .w i', {y: 0, duration: .95, stagger: .12, ease: 'power4.out'}, 0).to(parts, {opacity: 1, y: 0, duration: .7, stagger: .1, ease: 'power3.out'}, .45); gsap.set('#fb .h1 .w i', {y: 0}); }
+else document.querySelectorAll('#hero .h1 .w i').forEach((i) => { i.style.transform = 'none'; });
+if (R || phone() || !window.gsap) { if (!phone()) { P[0].classList.remove('on'); } return; }
+hero.classList.add('live');
+// ---- frames ----
+const CL = C.frames.map((f) => ({n: f.n, im: new Array(f.n), ok: new Array(f.n).fill(false), src: (i) => f.dir + String(i + 1).padStart(3, '0') + '.webp'}));
+function loadClip(c, done) { let next = 0, live = 0; const pump = () => { while (live < 6 && next < c.n) { const i = next++, im = new Image(); live++; im.decoding = 'async';
+    im.onload = im.onerror = () => { c.ok[i] = im.naturalWidth > 0; live--; if (next >= c.n && !live) done && done(); else pump(); if (i === 0) draw(true); }; im.src = c.src(i); c.im[i] = im; } }; pump(); }
+const start = () => loadClip(CL[0], () => loadClip(CL[1]));
+if (document.readyState === 'complete') start(); else addEventListener('load', start);
+let W = 0, H = 0, dpr = 1, last = '';
+function size() { const r = stage.getBoundingClientRect(); dpr = Math.min(devicePixelRatio || 1, 1.5); W = Math.round(r.width * dpr); H = Math.round(r.height * dpr); cv.width = W; cv.height = H; last = ''; place(); draw(true); }
+function nearest(c, k) { for (let d = 0; d < c.n; d++) { if (c.ok[k - d]) return c.im[k - d]; if (c.ok[k + d]) return c.im[k + d]; } return null; }
+function paint(im) { const s = Math.max(W / im.naturalWidth, H / im.naturalHeight), w = im.naturalWidth * s, h = im.naturalHeight * s; ctx.drawImage(im, (W - w) / 2, (H - h) / 2, w, h); }
+// where a point of the picture (fractions) lands on screen, for the knob
+function place() { const r = stage.getBoundingClientRect(), ar = C.knob.ar, s = Math.max(r.width / ar, r.height), w = ar * s, h = s, x0 = r.left + (r.width - w) / 2 - hero.getBoundingClientRect().left, y0 = r.top + (r.height - h) / 2 - hero.getBoundingClientRect().top;
+  knob.style.left = (x0 + C.knob.x * w) + 'px'; knob.style.top = (y0 + C.knob.y * h) + 'px'; knob.style.width = knob.style.height = (C.knob.r * 2 * w) + 'px';
+  SV.forEach((el, i) => { el.style.left = (x0 + C.label_x[i] * w) + 'px'; el.style.top = (y0 + C.label_y * h) + 'px'; }); }
+let cur = 0, tgt = 0;
+const S = C.seg;   // [a0, a1, b0, b1]
+function draw(force) { const p = cur; let clip = 0, k = 0;
+  if (p < S[2] - .0001) { k = Math.round(st(S[0], S[1], p) * (CL[0].n - 1)); } else { clip = 1; k = Math.round(Math.min(1, Math.max(0, (p - S[2]) / (S[3] - S[2]))) * (CL[1].n - 1)); }
+  const key = clip + ':' + k; if (key !== last || force) { const im = nearest(CL[clip], k); if (im) { paint(im); last = key; } }
+  // sharp stills hold the three rests and cross-fade into the moving frames
+  const haveA = CL[0].ok[0], haveB = CL[1].ok[0];
+  P[0].style.opacity = haveA ? 1 - st(S[0], S[0] + .035, p) : (p < (S[0] + S[1]) / 2 ? 1 : 0);
+  P[1].style.opacity = (haveA ? st(S[1] - .035, S[1], p) : (p >= (S[0] + S[1]) / 2 ? 1 : 0)) * (haveB ? 1 - st(S[2], S[2] + .035, p) : (p < (S[2] + S[3]) / 2 ? 1 : 0));
+  P[2].style.opacity = haveB ? st(S[3] - .035, S[3], p) : (p >= (S[2] + S[3]) / 2 ? 1 : 0);
+  // copy: the headline sits in the ring, leaves as the camera pulls back, and returns in the left column beside the machine
+  const a = 1 - st(S[0] + .02, S[0] + .16, p); gsap.set(A, {opacity: a, scale: 1 - (1 - a) * .16, visibility: a > .01 ? 'visible' : 'hidden'});
+  const b = st(S[1] - .1, S[1] - .005, p) * (1 - st(S[2] - .005, S[2] + .07, p)); gsap.set(B, {opacity: b, x: (1 - st(S[1] - .1, S[1] - .005, p)) * -36, visibility: b > .01 ? 'visible' : 'hidden'});
+  const kn = st(S[1] - .01, S[1] + .02, p) * (1 - st(S[2] - .03, S[2], p)); gsap.set(knob, {opacity: kn, visibility: kn > .5 ? 'visible' : 'hidden'});
+  const t = st(S[3] - .05, S[3] + .02, p); gsap.set(T, {opacity: t, y: (1 - t) * 18, visibility: t > .01 ? 'visible' : 'hidden'});
+  SV.forEach((el, i) => { const v = st(S[3] - .025 + i * .012, S[3] + .015 + i * .012, p); gsap.set(el, {opacity: v, y: (1 - v) * 22, visibility: v > .01 ? 'visible' : 'hidden'}); });
+  cue.style.opacity = p < .03 ? .7 : 0; }
+let ptr = {x: 0, y: 0}, pt = {x: 0, y: 0}, raf = 0, vis = true;
+function tick() { raf = 0; const d = tgt - cur; cur = Math.abs(d) < .0004 ? tgt : cur + d * .16; ptr.x += (pt.x - ptr.x) * .07; ptr.y += (pt.y - ptr.y) * .07;
+  stage.style.transform = `translate3d(${(-ptr.x * 9).toFixed(2)}px,${(-ptr.y * 6).toFixed(2)}px,0)`; draw();
+  if (vis && (cur !== tgt || Math.abs(pt.x - ptr.x) > .002 || Math.abs(pt.y - ptr.y) > .002)) raf = requestAnimationFrame(tick); }
+const kick = () => { if (!raf) raf = requestAnimationFrame(tick); };
+hero.addEventListener('pointermove', (e) => { const r = hero.getBoundingClientRect(); pt = {x: (e.clientX - r.left) / r.width * 2 - 1, y: (e.clientY - r.top) / r.height * 2 - 1}; kick(); });
+hero.addEventListener('pointerleave', () => { pt = {x: 0, y: 0}; kick(); });
+const trig = ScrollTrigger.create({trigger: hero, start: 'top top', end: '+=' + C.pin + '%', pin: true, refreshPriority: 10, onUpdate: (s) => { tgt = s.progress; kick(); }, onRefresh: () => { size(); }});
+knob.addEventListener('click', () => { BM.glideTo(trig.start + (trig.end - trig.start) * (S[3] + .075), 2.4); });
+new IntersectionObserver((e) => { vis = e[0].isIntersecting; if (vis) kick(); }).observe(hero);
+addEventListener('resize', size); size(); window.__film = {get p() { return cur; }, CL, trig};
+})();</script><script>if (window.ScrollTrigger) { ScrollTrigger.sort(); ScrollTrigger.refresh(); addEventListener("load", () => { ScrollTrigger.sort(); ScrollTrigger.refresh(); }); }</script></body></html>
