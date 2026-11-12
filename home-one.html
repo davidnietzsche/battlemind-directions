@@ -110,7 +110,9 @@ hero.classList.add('live');
 // ---- frames ----
 const CL = C.frames.map((f) => ({n: f.n, im: new Array(f.n), ok: new Array(f.n).fill(false), src: (i) => f.dir + String(i + 1).padStart(3, '0') + '.webp'}));
 function loadClip(c, done) { let next = 0, live = 0; const pump = () => { while (live < 6 && next < c.n) { const i = next++, im = new Image(); live++; im.decoding = 'async';
-    im.onload = im.onerror = () => { c.ok[i] = im.naturalWidth > 0; live--; if (next >= c.n && !live) done && done(); else pump(); if (i === 0) draw(true); }; im.src = c.src(i); c.im[i] = im; } }; pump(); }
+    const fin = () => { c.ok[i] = im.naturalWidth > 0; live--; if (next >= c.n && !live) done && done(); else pump(); if (i === 0) draw(true); };
+    im.onload = fin; im.onerror = () => { if (im.dataset.r) return fin(); im.dataset.r = 1; setTimeout(() => { im.src = c.src(i) + '?r=1'; }, 700); };   // one retry for a dropped frame
+    im.src = c.src(i); c.im[i] = im; } }; pump(); }
 const start = () => loadClip(CL[0], () => loadClip(CL[1]));
 if (document.readyState === 'complete') start(); else addEventListener('load', start);
 let W = 0, H = 0, dpr = 1, last = '';
