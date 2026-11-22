@@ -100,7 +100,7 @@ body.lock{overflow:hidden}
 .h1 .b{font:700 clamp(58px,7.1vw,108px)/.92 var(--c);text-transform:uppercase;letter-spacing:.005em;white-space:nowrap}
 .lead{margin-top:22px;max-width:46ch;font-size:clamp(15px,1.2vw,18.5px);line-height:1.55;color:rgba(255,255,255,.95)}
 .ctas{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:28px}
-.ppl{position:absolute;inset:0;z-index:6;pointer-events:none;overflow:hidden}
+.ppl{position:absolute;inset:0;z-index:6;pointer-events:none;overflow:hidden;visibility:hidden}.ppl.on{visibility:visible}
 .pp{position:absolute;bottom:0;height:min(58svh,580px);width:auto;max-width:none;user-select:none;-webkit-user-drag:none;-webkit-mask-image:linear-gradient(#000 80%,transparent 99%);mask-image:linear-gradient(#000 80%,transparent 99%)}
 .pp.l{left:0}.pp.r{right:0}
 /* pieces that carry on past the banner into the logos */
@@ -475,7 +475,7 @@ html:not([data-hero="1"]) .ring,html:not([data-hero="1"]) .ppl,html:not([data-he
 /* depth layers shared by the hero versions: a light under the cursor, dust in the air (paused whenever the banner is off screen) */
 .hglow{position:absolute;left:0;top:0;width:70vmax;height:70vmax;margin:-35vmax 0 0 -35vmax;border-radius:50%;background:radial-gradient(closest-side,rgba(255,160,168,.42),rgba(255,80,95,.14) 55%,rgba(255,80,95,0));opacity:0;transition:opacity .7s;pointer-events:none;will-change:transform}
 .hdust{position:absolute;inset:0;z-index:5;overflow:hidden;pointer-events:none}
-.hdust i{position:absolute;width:calc(9px*var(--s));height:calc(9px*var(--s));border-radius:50%;background:rgba(255,236,238,.9);filter:blur(calc(1.6px*var(--s)));opacity:0;animation:dust var(--d) linear var(--dl) infinite;animation-play-state:paused}
+.hdust i{position:absolute;width:calc(4.5px*var(--s));height:calc(4.5px*var(--s));border-radius:50%;background:rgba(255,236,238,.85);filter:blur(calc(.7px*var(--s)));opacity:0;animation:dust var(--d) linear var(--dl) infinite;animation-play-state:paused}
 .hero.live .hdust i{animation-play-state:running}
 @keyframes dust{0%{transform:translate3d(0,50px,0);opacity:0}18%{opacity:.55}80%{opacity:.3}100%{transform:translate3d(36px,-240px,0);opacity:0}}
 .hteam{transform-origin:50% 100%}.hcopy,.hteam,.hsplit,.neon{will-change:transform}
@@ -525,4 +525,66 @@ html:not([data-hero="1"]) .ring,html:not([data-hero="1"]) .ppl,html:not([data-he
   [data-hero="5"] .neon{width:124vw;height:124vw;top:46%}[data-hero="5"] .hcopy{top:46%}
   [data-hero="5"] .h1 .b{font-size:clamp(52px,15vw,76px)}
   [data-hero="5"] .hproof{gap:18px;margin-top:24px;padding-top:18px;align-items:start}.hproof b{font-size:30px}.hproof span{font-size:12px;max-width:11ch}
+}
+
+/* ================= Round 14 hero ideas (David 23 Nov: "any more ideas?") · 6 crew, 7 film ================= */
+.hstage,.hfilm{display:none}
+.sro{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.hsw{flex-wrap:nowrap}
+/* 6 · crew: one character at a time rises out of the ring; the end of the headline changes with it */
+[data-hero="6"] .hcopy{left:max(var(--gut),calc((100vw - 1320px)/2 + var(--gut)));top:50%;translate:0 -50%;width:min(58vw,820px);text-align:left;align-items:flex-start}
+[data-hero="6"] .h1{justify-items:start}
+[data-hero="6"] .h1 .b{font-size:clamp(50px,6.1vw,96px);line-height:1}
+[data-hero="6"] .lead{max-width:40ch}
+[data-hero="6"] .ctas{justify-content:flex-start}
+.roll{display:inline-grid;overflow:hidden;vertical-align:top;padding:.05em 0}
+.rw{grid-area:1/1;white-space:nowrap;will-change:transform}
+[data-hero="6"] .neon{left:calc(100% - max(var(--gut),(100vw - 1320px)/2 + var(--gut)) - min(19vw,260px));top:50%;width:min(92vh,60vw);height:min(92vh,60vw);opacity:.3}
+[data-hero="6"] .hstage{--sw:min(38vw,520px);--rh:calc(var(--sw)*.2);display:block;position:absolute;z-index:4;right:max(var(--gut),calc((100vw - 1320px)/2 + var(--gut)));top:118px;bottom:6.5%;width:var(--sw);will-change:transform}
+.sclip{position:absolute;left:-8%;right:-8%;top:0;bottom:calc(62px + var(--rh)/2);overflow:hidden;transform-origin:50% 100%;will-change:transform}
+.sch{position:absolute;left:0;right:0;bottom:0;margin:0 auto;height:95%;width:auto;max-width:none;visibility:hidden;cursor:pointer;user-select:none;-webkit-user-drag:none}
+.sch.on{visibility:visible}
+.svis{position:absolute;inset:0;will-change:transform}
+.sring{position:absolute;left:2%;right:2%;bottom:62px;height:var(--rh);border-radius:50%;border:2px solid rgba(255,255,255,.96);pointer-events:none;
+  background:radial-gradient(closest-side,rgba(255,255,255,calc(.34 + .36*var(--gl,0))),rgba(255,255,255,0) 97%);
+  box-shadow:0 0 calc(16px + 34px*var(--gl,0)) rgba(255,255,255,calc(.5 + .45*var(--gl,0))),inset 0 0 16px rgba(255,255,255,.5)}
+.sring.fr{z-index:2;background:none;clip-path:inset(50% -70px -70px -70px)}
+.sfoot{position:absolute;left:0;right:0;bottom:0;height:44px;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.stag{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;gap:10px;height:44px;padding:0 8px 0 20px;border-radius:999px;background:#fff;color:var(--ink);font:700 14.5px/1 var(--t);white-space:nowrap;box-shadow:0 16px 30px -16px rgba(40,0,4,.6);-webkit-tap-highlight-color:transparent}
+.stag svg{width:30px;height:30px;padding:8px;box-sizing:border-box;border-radius:50%;background:var(--red);color:#fff;transition:transform .3s var(--ease)}
+@media (hover:hover){.stag:hover svg{transform:rotate(45deg)}}
+.stag:focus-visible{outline:3px solid #fff;outline-offset:4px}.sdots button:focus-visible{outline:3px solid #fff;outline-offset:-8px;border-radius:12px}
+/* the label grows to the right and the dots keep fixed slots, so nothing shifts under the pointer when the service changes */
+.sdots{display:flex;align-items:center;gap:2px;flex:none}
+.sdots button{all:unset;position:relative;width:24px;height:44px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.sdots button::before{content:"";position:absolute;left:50%;top:50%;width:9px;height:9px;margin:-4.5px 0 0 -4.5px;border-radius:9px;background:rgba(255,255,255,.5);transition:transform .35s var(--ease),background .35s}
+.sdots button[aria-current=true]::before{background:#fff;transform:scaleX(2.2)}
+[data-hero="6"] .hfade{height:18%}
+@media (max-width:900px){
+  .hsw a{padding:8px 7px}
+  [data-hero="6"] .hcopy{left:var(--gut);top:112px;translate:none;width:calc(100% - 2*var(--gut))}
+  [data-hero="6"] .h1 .b{font-size:clamp(46px,13.6vw,68px);line-height:.95}
+  .rw{white-space:normal}.rw span{display:block}
+  [data-hero="6"] .lead{margin-top:12px;font-size:14.5px}[data-hero="6"] .ctas{margin-top:16px}
+  [data-hero="6"] .neon{left:50%;top:78%;width:120vw;height:120vw}
+  [data-hero="6"] .hstage{--sw:min(80vw,330px);right:auto;left:50%;margin-left:calc(var(--sw)/-2);top:auto;bottom:2.5%;height:37svh;max-height:310px}
+  .sclip{bottom:calc(50px + var(--rh)/2)}.sring{bottom:50px}.sfoot{height:38px;gap:8px}.stag{height:38px;font-size:12.5px;padding:0 6px 0 15px;gap:8px}.stag svg{width:26px;height:26px;padding:7px}.sdots button{width:19px;height:38px}
+}
+/* 7 · film: the four characters as one looping studio shot, feathered into the same red; the headline above them */
+[data-hero="7"] .hbg{background:radial-gradient(58% 52% at 50% 52%,#E0090C,rgba(224,9,12,0) 76%),#B60202}
+[data-hero="7"] .neon{display:none}
+[data-hero="7"] .hfilm{display:flex;justify-content:center;position:absolute;left:0;right:0;bottom:0;height:67svh;max-height:69%;z-index:1;pointer-events:none;transform-origin:50% 100%;will-change:transform}
+.hfilm video{display:block;height:100%;width:auto;aspect-ratio:16/9;max-width:none;object-fit:cover;
+  -webkit-mask-image:linear-gradient(transparent,#000 17%),linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);-webkit-mask-composite:source-in;mask-image:linear-gradient(transparent,#000 17%),linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);mask-composite:intersect}
+[data-hero="7"] .hcopy{top:clamp(220px,27%,350px)}
+[data-hero="7"] .h1 .b{font-size:clamp(52px,6.3vw,98px)}
+[data-hero="7"] .lead{display:none}
+[data-hero="7"] .ctas{margin-top:22px}
+[data-hero="7"] .hfade{height:11%}
+@media (max-height:800px) and (min-width:901px){[data-hero="7"] .hcopy{top:clamp(186px,27%,260px)}[data-hero="7"] .h1 .b{font-size:clamp(48px,5.6vw,84px)}[data-hero="7"] .hfilm{height:66svh}}
+@media (max-width:900px){
+  [data-hero="7"] .hcopy{top:35%}[data-hero="7"] .hfade{height:8%}[data-hero="7"] .h1 .b{font-size:clamp(50px,14.4vw,72px)}
+  [data-hero="7"] .lead{display:block;margin-top:14px}[data-hero="7"] .ctas{margin-top:18px}
+  [data-hero="7"] .hfilm{height:calc(124vw*9/16);max-height:none}
+  .hfilm video{translate:2.3% 0}
 }

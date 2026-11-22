@@ -2,11 +2,13 @@
 (() => {
 const RM = matchMedia("(prefers-reduced-motion: reduce)").matches, q = new URLSearchParams(location.search), $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
 if (window.gsap) gsap.registerPlugin(ScrollTrigger);
-const G = !RM && !!window.gsap, FIN = q.get("ch") === "b" ? "b" : "a", PHONE = () => innerWidth <= 900;
+const G = !RM && !!window.gsap, FIN = /^[ab]$/.test(q.get("ch") || "") ? q.get("ch") : "c", PHONE = () => innerWidth <= 900;
 const AR = '<span class="ar" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M4 12 12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><svg viewBox="0 0 16 16"><path d="M4 12 12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>';
 const WA = (t) => "https://wa.me/60197707927?text=" + encodeURIComponent(t);
 const rnd = (i) => { const g = Math.sin(i * 127.1 + 311.7) * 43758.5453; return g - Math.floor(g); };
-const CH = (k) => `assets5/ch_${k}_${FIN}.webp`;
+// the service characters: "c" is the art-toy crew (bull, rabbit, cat, robot); ?ch=a and ?ch=b keep the earlier object mascots for comparison
+const CH = (k) => FIN === "c" ? `assets7/ch_${k}.webp` : `assets5/ch_${k}_${FIN}.webp`;
+const CM = FIN === "c" ? { perf: 1.46, ads: .96, video: 1.26, web: 1.22 } : { perf: 1.6, ads: 1.5, video: 1.55, web: 1.55 };   // ring size by width: the crew are taller and narrower
 window.R13 = { fin: FIN };
 
 // ---- nav tone, drawer ----
@@ -38,20 +40,52 @@ if (!RM) { $$("[data-rz]").forEach(split);
 // ---- hero versions, for review: ?hero=1 ring, 2 team photo, 3 photo split, 4 character line-up, 5 clean type ----
 const HV = document.documentElement.dataset.hero || "1"; window.R13.hero = HV;
 { const sw = $("#hsw"); if (sw) { const u = new URLSearchParams(location.search);
-  sw.innerHTML = "<span>Hero</span>" + [["1", "Ring"], ["2", "Team"], ["3", "Photo"], ["4", "Line-up"], ["5", "Clean"]].map(([n, t]) => { u.set("hero", n); return `<a href="?${u}"${n === HV ? ' aria-current="true"' : ""}>${t}</a>`; }).join(""); } }
+  sw.innerHTML = "<span>Hero</span>" + [["1", "Ring"], ["2", "Team"], ["3", "Photo"], ["4", "Line-up"], ["5", "Clean"], ["6", "Crew"], ["7", "Film"]].map(([n, t]) => { u.set("hero", n); return `<a href="?${u}"${n === HV ? ' aria-current="true"' : ""}>${t}</a>`; }).join(""); } }
 if (HV !== "1") { const hero = $("#hero");
   if (HV === "4") { const line = $("#hline");
     line.innerHTML = [["perf", "Performance"], ["ads", "Advertising"], ["video", "Creative"], ["web", "Web & App"]].map(([k, t], i) => `<button type="button" class="hc" data-i="${i}" aria-label="${t}: see the service"><img src="${CH(k)}" alt="" draggable="false"><span>${t}</span></button>`).join("");
     $$(".hc", line).forEach((b) => b.addEventListener("click", () => openSvc(+b.dataset.i, true, true))); }
+  // 6 · crew: one character at a time rises out of the ring, and the last words of the headline change with it. Solid moves only, nothing fades in.
+  if (HV === "6") { const st = $("#hstage"), bEl = $(".h1 .b");
+    const CR = [["perf", ["Digital", "marketing?"], "Performance marketing"], ["ads", ["Paid", "ads?"], "Digital advertising"], ["video", ["Your", "content?"], "Creative design & video"], ["web", ["Your", "website?"], "Web & app development"]];
+    const word = (i) => `<span class="rw">${CR[i][1].map((t) => `<span>${t}</span>`).join(" ")}</span>`;
+    // the character and its ring drift with the pointer for depth; the label and dots sit outside that wrapper so they never move under a finger
+    st.innerHTML = `<div class="svis"><i class="sring" aria-hidden="true"></i><div class="sclip" aria-hidden="true">${CR.map(([k]) => `<img class="sch" src="${CH(k)}" alt="" draggable="false">`).join("")}</div><i class="sring fr" aria-hidden="true"></i></div>
+      <div class="sfoot"><button type="button" class="stag" id="stag"><span></span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 12 12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="sdots" role="group" aria-label="Pick a service">${CR.map((c) => `<button type="button" aria-label="${c[2]}"></button>`).join("")}</div></div>`;
+    bEl.innerHTML = `<span class="sro">digital marketing?</span><span class="roll" aria-hidden="true">${word(0)}</span>`;
+    const chs = $$(".sch", st), dots = $$(".sdots button", st), tag = $("#stag span"), roll = $(".roll", bEl), rings = $$(".sring", st); let cur = 0, tl = null, timer = null, hold = false, live = true;
+    const label = () => { tag.textContent = CR[cur][2]; dots.forEach((d, i) => d.setAttribute("aria-current", i === cur)); }; label();
+    function go(to) { to = (to + CR.length) % CR.length; if (to === cur) return; if (tl) tl.progress(1); const a = chs[cur], b = chs[to]; cur = to;
+      if (!G) { chs.forEach((c, i) => c.classList.toggle("on", i === cur)); roll.innerHTML = word(cur); label(); return; }
+      const old = roll.firstElementChild; roll.insertAdjacentHTML("beforeend", word(cur)); const nw = roll.lastElementChild;
+      tl = gsap.timeline({ onComplete: () => { tl = null; } });
+      tl.to(a, { yPercent: 104, duration: .4, ease: "power2.in" }, 0).fromTo(b, { yPercent: 104 }, { yPercent: 0, duration: .8, ease: "back.out(1.4)" }, .36)
+        .to(old, { yPercent: -110, duration: .5, ease: "power3.in", onComplete: () => old.remove() }, 0).fromTo(nw, { yPercent: 110 }, { yPercent: 0, duration: .7, ease: "power3.out" }, .3)
+        .fromTo(rings, { "--gl": 1 }, { "--gl": 0, duration: 1.1, ease: "power2.out" }, .34).add(label, .36); }
+    const play = () => { clearInterval(timer); if (G) timer = setInterval(() => { if (!hold && live && !document.hidden) go(cur + 1); }, 3600); };
+    dots.forEach((d, i) => d.addEventListener("click", () => { go(i); play(); }));
+    $("#stag").addEventListener("click", () => openSvc(cur, true, true)); chs.forEach((c) => c.addEventListener("click", () => openSvc(cur, true, true)));
+    st.addEventListener("pointerenter", () => { hold = true; }); st.addEventListener("pointerleave", () => { hold = false; });
+    new IntersectionObserver((e) => { live = e[0].isIntersecting; }, { threshold: .4 }).observe(hero);
+    window.R13.crew = { go, get cur() { return cur; }, get busy() { return !!tl; } };
+    if (G) { gsap.set(chs, { yPercent: 104, visibility: "visible" }); gsap.from(rings, { scaleX: .2, scaleY: .2, opacity: 0, duration: .9, ease: "back.out(1.5)", delay: .3 });
+      gsap.to(chs[0], { yPercent: 0, duration: .95, ease: "back.out(1.4)", delay: .8 }); gsap.fromTo(rings, { "--gl": 1 }, { "--gl": 0, duration: 1.3, ease: "power2.out", delay: .8, immediateRender: false });
+      gsap.from(roll.firstElementChild, { yPercent: 110, duration: .9, ease: "power3.out", delay: .47 }); play(); }
+    else chs[0].classList.add("on"); }
+  // 7 · film: the crew as one looping studio shot. It plays only while the banner is on screen; reduced motion gets the still.
+  if (HV === "7") { const f = $("#hfilm"); f.innerHTML = `<video muted loop playsinline preload="auto" poster="assets7/crew_film.webp"${RM ? "" : ' src="assets7/crew_film.mp4"'}></video>`; const v = $("video", f); v.muted = true; window.R13.film = v;
+    if (!RM) new IntersectionObserver((e) => { if (e[0].isIntersecting) v.play().catch(() => {}); else v.pause(); }, { threshold: .15 }).observe(hero);
+    if (G) gsap.from(v, { scale: 1.09, duration: 2.2, ease: "power3.out", transformOrigin: "50% 100%" }); }
   $$(".h1 .rz").forEach((el, i) => setTimeout(() => el.classList.add("in"), G ? 250 + i * 220 : 0));
   if (G) { const E = "power3.out";
-    gsap.from(".hero .lead, .hero .ctas, .hproof li", { y: 18, opacity: 0, duration: .8, stagger: .1, delay: .8, ease: E });
+    gsap.from(".hero .lead, .hero .ctas, .hproof li, .sfoot", { y: 18, opacity: 0, duration: .8, stagger: .1, delay: .8, ease: E });
     if (HV === "2") gsap.from(".hteam img", { yPercent: 6, scale: 1.12, opacity: 0, duration: 1.8, delay: .2, ease: E, transformOrigin: "50% 100%" });   // the camera settles
     if (HV === "3") { gsap.from(".hsplit figure", { y: 60, opacity: 0, duration: 1.2, delay: .25, ease: E }); gsap.from(".hg", { scale: .7, opacity: 0, duration: .7, stagger: .16, delay: 1, ease: "back.out(1.7)" }); }
     if (HV === "4") gsap.from(".hc", { y: 90, opacity: 0, duration: .9, stagger: .09, delay: .4, ease: "back.out(1.5)" });
     // ---- depth: a light that follows the cursor, layers that move at different speeds, a zoom as you scroll away, dust in the air.
     //      Transforms and opacity only, on wrappers GSAP does not tween, and only while the banner is on screen.
-    const neon = $("#neon"), copy = $(".hcopy"), vis = HV === "2" ? $(".hteam") : HV === "3" ? $(".hsplit") : null, chars = $$(".hc", hero);
+    const neon = $("#neon"), copy = $(".hcopy"), vis = HV === "2" ? $(".hteam") : HV === "3" ? $(".hsplit") : HV === "6" ? $(".svis") : HV === "7" ? $("#hfilm") : null, chars = $$(".hc", hero), lean = $(".sclip", hero);
     const glow = document.createElement("i"); glow.className = "hglow"; $(".hbg").appendChild(glow);
     const dust = document.createElement("div"); dust.className = "hdust"; dust.setAttribute("aria-hidden", "true");
     dust.innerHTML = Array.from({ length: 18 }, (_, i) => `<i style="left:${(rnd(i) * 100).toFixed(1)}%;top:${(25 + rnd(i + 9) * 70).toFixed(1)}%;--s:${(.5 + rnd(i + 3) * 1.5).toFixed(2)};--d:${(9 + rnd(i + 5) * 10).toFixed(1)}s;--dl:${(-rnd(i + 7) * 14).toFixed(1)}s"></i>`).join(""); hero.appendChild(dust);
@@ -67,16 +101,18 @@ if (HV !== "1") { const hero = $("#hero");
       glow.style.transform = `translate3d(${sgx.toFixed(0)}px,${sgy.toFixed(0)}px,0)`;
       if (HV === "2") vis.style.transform = `translate3d(${(px * -26).toFixed(1)}px,${(py * -10).toFixed(1)}px,0) scale(${(1.03 + sc * .14).toFixed(4)})`;
       if (HV === "3") vis.style.transform = `perspective(1300px) translate3d(${(px * -16).toFixed(1)}px,${(py * -10 - sc * 50).toFixed(1)}px,0) rotateY(${(px * -8).toFixed(2)}deg) rotateX(${(py * 5).toFixed(2)}deg)`;
+      if (HV === "6") { vis.style.transform = `translate3d(${(px * -18).toFixed(1)}px,${(py * -8 - sc * 46).toFixed(1)}px,0)`; lean.style.transform = `rotate(${(px * 2.4).toFixed(2)}deg)`; }
+      if (HV === "7") vis.style.transform = `translate3d(${(px * -14).toFixed(1)}px,${(py * -6).toFixed(1)}px,0) scale(${(1.04 + sc * .12).toFixed(4)})`;
       if (HV === "4") chars.forEach((c, i) => { const lean = px - (i - 1.5) / 3; c.style.setProperty("--lx", (lean * 10).toFixed(1)); c.style.setProperty("--ly", (Math.sin(T * 1.6 + i * 1.3) * 5 - sc * 30 * (1 + i % 2)).toFixed(1)); c.style.setProperty("--lr", (lean * 7).toFixed(2)); });
       requestAnimationFrame(frame); };
     new IntersectionObserver((e) => { const v = e[0].isIntersecting; hero.classList.toggle("live", v); if (v && !on) { on = true; frame(); } else if (!v) on = false; }).observe(hero); } }
 
 // ---- hero 1: the pieces ride a neon ring around the headline; the four service characters are the big ones ----
 if (HV === "1") { const hero = $("#hero"), ring = $("#ring"), neon = $("#neon");
-  const PIECES = [[CH("perf"), 1.6], ["assets2/heart_w.webp", .8], ["assets5/laptop_k.webp", 1.05], ["assets2/play_k.webp", .85], ["assets2/hashtag_w.webp", .8],
-    [CH("ads"), 1.5], ["assets2/bubble_w.webp", .9], ["assets5/pen_w.webp", .8], ["assets2/thumb_k.webp", .9], ["assets2/chart_w.webp", .95],
-    [CH("video"), 1.55], ["assets5/swatch_k.webp", .95], ["assets2/envelope_w.webp", .85], ["assets2/coin_w.webp", .75], ["assets2/camera_k.webp", .95],
-    [CH("web"), 1.55], ["assets2/magnifier_k.webp", .9], ["assets2/phone_k.webp", .9], ["assets2/bolt_w.webp", .7]];
+  const PIECES = [[CH("perf"), CM.perf], ["assets2/heart_w.webp", .8], ["assets5/laptop_k.webp", 1.05], ["assets2/play_k.webp", .85], ["assets2/hashtag_w.webp", .8],
+    [CH("ads"), CM.ads], ["assets2/bubble_w.webp", .9], ["assets5/pen_w.webp", .8], ["assets2/thumb_k.webp", .9], ["assets2/chart_w.webp", .95],
+    [CH("video"), CM.video], ["assets5/swatch_k.webp", .95], ["assets2/envelope_w.webp", .85], ["assets2/coin_w.webp", .75], ["assets2/camera_k.webp", .95],
+    [CH("web"), CM.web], ["assets2/magnifier_k.webp", .9], ["assets2/phone_k.webp", .9], ["assets2/bolt_w.webp", .7]];
   const N = PIECES.length;
   const P = PIECES.map(([src, m], i) => { const el = document.createElement("img"); el.className = "pc"; el.src = src; el.alt = ""; el.draggable = false; ring.appendChild(el);
     return { el, m, a: i / N * Math.PI * 2, r: .98 + rnd(i) * .26, v: (rnd(i + 50) - .5) * .12, tilt: (rnd(i + 90) - .5) * 26, px: 0, py: 0, front: null, b: RM ? 1 : 0 }; });
@@ -85,9 +121,9 @@ if (HV === "1") { const hero = $("#hero"), ring = $("#ring"), neon = $("#neon");
     const base = Math.min(w, h) * (w < 700 ? .15 : .122); P.forEach((p, i) => { p.el.style.width = (base * p.m) + "px"; p.el.hidden = w < 700 && i % 2 === 1 && p.m < 1.2; });
     neon.style.width = (ph ? w * 1.12 : A * 2) + "px"; neon.style.height = (ph ? h * .54 : B * 2) + "px"; neon.style.top = (cyf * 100) + "%"; };
   fit(); addEventListener("resize", fit);
-  let ptr = { x: 0, y: 0 }, pt = { x: 0, y: 0 }, mouse = { x: -1e4, y: -1e4 }, lift = 0, t0 = performance.now(), run = true;
+  let ptr = { x: 0, y: 0 }, pt = { x: 0, y: 0 }, mouse = { x: -1e4, y: -1e4 }, lift = 0, t0 = performance.now(), run = true; const kick = { k: 0 };
   function frame() { if (!run) return; const T = (performance.now() - t0) / 1000; ptr.x += (pt.x - ptr.x) * .06; ptr.y += (pt.y - ptr.y) * .06;
-    const ph = w <= 900, ex = 1 + lift * .22, cx = w * .5 + ptr.x * 26, cy = h * cyf + ptr.y * 18, spin = (RM ? 0 : T * .2) + lift * 1.6 + ptr.x * .22;
+    const ph = w <= 900, ex = 1 + lift * .22 + kick.k, cx = w * .5 + ptr.x * 26, cy = h * cyf + ptr.y * 18, spin = (RM ? 0 : T * .2) + lift * 1.6 + ptr.x * .22;
     for (const p of P) { const th = p.a + spin, z = Math.sin(th), d = (z + 1) / 2;
       const x = cx + Math.cos(th) * A * ex * p.r * (.9 + .1 * d); let y = cy + z * B * ex * p.r + p.v * h * .2 + (RM ? 0 : Math.sin(T * 1.3 + p.a * 3) * 7);
       if (ph) { const top = h * .16, bot = h * .57; if (Math.abs(x - w / 2) < w * .42 && y > top && y < bot) y = y - top < bot - y ? top - (y - top) * .2 : bot + (bot - y) * .2; }   // keep the headline clear on phones
@@ -104,9 +140,17 @@ if (HV === "1") { const hero = $("#hero"), ring = $("#ring"), neon = $("#neon");
   if (G) { rise(); const tl = gsap.timeline({ delay: .1 });
       tl.fromTo(neon, { xPercent: -50, yPercent: -50, x: 0, y: 0, scale: .72, opacity: 0 }, { xPercent: -50, yPercent: -50, scale: 1, opacity: 1, duration: 1.3, ease: "power3.out" }, 0).to(P, { b: 1, duration: 1, stagger: { each: .035, from: "random" }, ease: "back.out(1.7)" }, .15)
       .from(".hero .lead, .hero .ctas", { y: 18, opacity: 0, duration: .8, stagger: .12, ease: "power3.out" }, .9)
-      .from(".pp.l", { xPercent: -30, opacity: 0, duration: 1.1, ease: "power3.out" }, .45).from(".pp.r", { xPercent: 30, opacity: 0, duration: 1.1, ease: "power3.out" }, .58);
+;
+    // the two people lean in from the corners as solid cut-outs (no fade: a ghosted photo over the ring read as cheap), and only once both photos are decoded.
+    // When she lands with the megaphone, the ring takes the blast.
+    const pl = $(".pp.l"), pr = $(".pp.r");
+    gsap.set(pl, { xPercent: -105, yPercent: 10, rotation: -13, transformOrigin: "0% 100%" }); gsap.set(pr, { xPercent: 105, yPercent: 10, rotation: 13, transformOrigin: "100% 100%" }); $(".ppl").classList.add("on");
+    const ready = (im) => (im.decode ? im.decode() : Promise.resolve()).catch(() => {});
+    Promise.all([ready(pl), ready(pr), new Promise((r) => setTimeout(r, 600))]).then(() => {
+      gsap.timeline().to(pl, { xPercent: 0, yPercent: 0, rotation: 0, duration: 1, ease: "back.out(1.15)" }, 0).to(pr, { xPercent: 0, yPercent: 0, rotation: 0, duration: 1, ease: "back.out(1.15)" }, .16)
+        .fromTo(kick, { k: .085 }, { k: 0, duration: 1.4, ease: "elastic.out(1,.32)", immediateRender: false }, .78).fromTo(pr, { scale: 1.035 }, { scale: 1, duration: .7, ease: "power2.out", immediateRender: false }, .78); });
     ScrollTrigger.create({ trigger: hero, start: "top top", end: "bottom top", scrub: .4, onUpdate: (s) => { lift = s.progress; } }); }   // scroll widens the ring as you leave; no pin
-  else $$(".h1 .rz").forEach((el) => el.classList.add("in"));
+  else { $$(".h1 .rz").forEach((el) => el.classList.add("in")); $(".ppl").classList.add("on"); }
 
   // pieces that carry on out of the banner and mingle with the next title
   const spill = $("#spill"), ph = PHONE();
