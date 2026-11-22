@@ -35,8 +35,22 @@ if (!RM) { $$("[data-rz]").forEach(split);
   const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { threshold: .3, rootMargin: "0px 0px -6% 0px" });
   $$("[data-rz]").forEach((el) => { if (!el.closest("#hero")) io.observe(el); }); }
 
-// ---- hero: the pieces ride a neon ring around the headline; the four service characters are the big ones ----
-{ const hero = $("#hero"), ring = $("#ring"), neon = $("#neon");
+// ---- hero versions, for review: ?hero=1 ring, 2 team photo, 3 photo split, 4 character line-up, 5 clean type ----
+const HV = document.documentElement.dataset.hero || "1"; window.R13.hero = HV;
+{ const sw = $("#hsw"); if (sw) { const u = new URLSearchParams(location.search);
+  sw.innerHTML = "<span>Hero</span>" + [["1", "Ring"], ["2", "Team"], ["3", "Photo"], ["4", "Line-up"], ["5", "Clean"]].map(([n, t]) => { u.set("hero", n); return `<a href="?${u}"${n === HV ? ' aria-current="true"' : ""}>${t}</a>`; }).join(""); } }
+if (HV !== "1") { const hero = $("#hero");
+  if (HV === "4") { const line = $("#hline");
+    line.innerHTML = [["perf", "Performance"], ["ads", "Advertising"], ["video", "Creative"], ["web", "Web & App"]].map(([k, t], i) => `<button type="button" class="hc" data-i="${i}" aria-label="${t}: see the service"><img src="${CH(k)}" alt="" draggable="false"><span>${t}</span></button>`).join("");
+    $$(".hc", line).forEach((b) => b.addEventListener("click", () => openSvc(+b.dataset.i, true, true))); }
+  $$(".h1 .rz").forEach((el, i) => setTimeout(() => el.classList.add("in"), G ? 250 + i * 220 : 0));
+  if (G) { gsap.from(".hero .lead, .hero .ctas, .hproof li", { y: 18, opacity: 0, duration: .8, stagger: .1, delay: .8, ease: "power3.out" });
+    if (HV === "2") gsap.from(".hteam img", { yPercent: 7, opacity: 0, duration: 1.3, delay: .25, ease: "power3.out" });
+    if (HV === "3") { gsap.from(".hsplit figure", { y: 60, opacity: 0, duration: 1.2, delay: .25, ease: "power3.out" }); gsap.from(".hg", { scale: .7, opacity: 0, duration: .7, stagger: .16, delay: 1, ease: "back.out(1.7)" }); }
+    if (HV === "4") gsap.from(".hc", { y: 90, opacity: 0, duration: .9, stagger: .09, delay: .4, ease: "back.out(1.5)" }); } }
+
+// ---- hero 1: the pieces ride a neon ring around the headline; the four service characters are the big ones ----
+if (HV === "1") { const hero = $("#hero"), ring = $("#ring"), neon = $("#neon");
   const PIECES = [[CH("perf"), 1.6], ["assets2/heart_w.webp", .8], ["assets5/laptop_k.webp", 1.05], ["assets2/play_k.webp", .85], ["assets2/hashtag_w.webp", .8],
     [CH("ads"), 1.5], ["assets2/bubble_w.webp", .9], ["assets5/pen_w.webp", .8], ["assets2/thumb_k.webp", .9], ["assets2/chart_w.webp", .95],
     [CH("video"), 1.55], ["assets5/swatch_k.webp", .95], ["assets2/envelope_w.webp", .85], ["assets2/coin_w.webp", .75], ["assets2/camera_k.webp", .95],

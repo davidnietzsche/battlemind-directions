@@ -434,3 +434,84 @@ body.lock{overflow:hidden}
 }
 @media (max-width:370px){.h1 .b{font-size:14vw}.ctas .btn{padding-left:18px}.wh .v{font-size:28px}.pnm{font-size:16px}}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.rz .w>span{transform:none;transition:none}.spill img,.cnp img{animation:none}.sl>img{transition:none;transform:none}.acc *,.wr,.wb,.wph,.flow figure{transition:none!important}}
+
+/* ================= hero versions for review (David 22 Nov: "give me a few versions for hero section") =================
+   ?hero=1 ring (the first build) · 2 team photo · 3 photo split · 4 character line-up · 5 clean type. The switcher is a review aid, not part of the design. */
+.hteam,.hsplit,.hline,.hproof{display:none}
+html:not([data-hero="1"]) .ring,html:not([data-hero="1"]) .ppl,html:not([data-hero="1"]) .spill{display:none}
+.hsw{position:absolute;right:max(var(--gut),calc((100vw - 1320px)/2 + var(--gut)));top:82px;z-index:9;display:flex;align-items:center;gap:2px;padding:5px;border-radius:999px;background:rgba(14,15,18,.88);color:#fff;font:600 12.5px/1 var(--t);box-shadow:0 14px 30px -14px rgba(0,0,0,.6)}
+.hsw span{padding:0 8px 0 12px;opacity:.66}
+.hsw a{padding:9px 13px;border-radius:999px;text-decoration:none;white-space:nowrap;transition:background .25s}
+.hsw a:hover{background:rgba(255,255,255,.16)}.hsw a[aria-current=true]{background:#fff;color:var(--ink)}
+
+/* 2 · team photo: one campaign photograph on the brand red, the headline above it */
+[data-hero="2"] .hbg{background:radial-gradient(56% 46% at 50% 26%,#F01522,rgba(240,21,34,0) 72%),radial-gradient(60% 60% at 0% 100%,rgba(150,0,10,.7),rgba(150,0,10,0) 70%),radial-gradient(60% 60% at 100% 100%,rgba(150,0,10,.7),rgba(150,0,10,0) 70%),#D90308}
+[data-hero="2"] .neon{display:none}
+[data-hero="2"] .hteam{display:flex;justify-content:center;position:absolute;left:0;right:0;bottom:0;height:64svh;max-height:66%;z-index:1;pointer-events:none}
+.hteam img{height:100%;width:auto;max-width:none;-webkit-mask-image:linear-gradient(transparent,#000 20%),linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);-webkit-mask-composite:source-in;mask-image:linear-gradient(transparent,#000 20%),linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);mask-composite:intersect}
+[data-hero="2"] .hcopy{top:clamp(250px,29%,380px)}
+[data-hero="2"] .h1 .b{font-size:clamp(52px,6.3vw,98px)}
+[data-hero="2"] .lead{margin-top:16px;max-width:52ch}
+[data-hero="2"] .ctas{margin-top:22px}
+[data-hero="2"] .hfade{height:24%}
+
+/* 3 · photo split: the words on the left, one portrait in a frame, two results pinned to it */
+[data-hero="3"] .hcopy{left:max(var(--gut),calc((100vw - 1320px)/2 + var(--gut)));top:50%;translate:0 -50%;width:min(50vw,640px);text-align:left;align-items:flex-start}
+[data-hero="3"] .h1{justify-items:start}
+[data-hero="3"] .h1 .b{white-space:normal;font-size:clamp(58px,7.2vw,116px);line-height:.9}
+[data-hero="3"] .lead{max-width:40ch}
+[data-hero="3"] .ctas{justify-content:flex-start}
+[data-hero="3"] .neon{left:calc(100% - max(var(--gut),(100vw - 1320px)/2 + var(--gut)) - min(18vw,240px));top:53%;width:min(86vh,58vw);height:min(86vh,58vw)}
+[data-hero="3"] .hsplit{display:block;position:absolute;z-index:4;right:max(var(--gut),calc((100vw - 1320px)/2 + var(--gut)));top:136px;bottom:8%;width:min(36vw,480px)}
+.hsplit figure{position:absolute;inset:0;border-radius:36px;overflow:hidden;box-shadow:0 50px 80px -40px rgba(40,0,4,.85)}
+.hsplit img{width:100%;height:100%;object-fit:cover;object-position:50% 22%}
+.hg{position:absolute;z-index:2;display:grid;gap:5px;padding:16px 20px;border-radius:22px;background:#fff;color:var(--ink);box-shadow:0 30px 50px -24px rgba(30,0,3,.7)}
+.hg b{font:700 clamp(38px,3.6vw,54px)/.86 var(--c);color:var(--red)}
+.hg span{max-width:15ch;font:600 13.5px/1.25 var(--t)}
+.hg.g1{left:-24%;bottom:14%}.hg.g2{right:-7%;top:13%}
+[data-hero="3"] .hfade{height:20%}
+
+/* 4 · line-up: the four services stand in a row; tap one to open it */
+[data-hero="4"] .hcopy{top:clamp(262px,33%,400px)}
+[data-hero="4"] .h1 .b{font-size:clamp(56px,6.8vw,104px)}
+@media (max-height:800px) and (min-width:901px){[data-hero="2"] .lead,[data-hero="4"] .lead{display:none}[data-hero="2"] .hcopy,[data-hero="4"] .hcopy{top:clamp(200px,30%,300px)}.hc img{height:clamp(110px,24svh,200px)}}
+[data-hero="4"] .neon{width:150vw;height:150vw;top:calc(56% + 75vw)}
+[data-hero="4"] .hline{display:flex;justify-content:center;align-items:flex-end;gap:clamp(8px,4.6vw,84px);position:absolute;left:0;right:0;bottom:0;z-index:5;padding:0 var(--gut) clamp(20px,4.4vh,46px)}
+.hc{all:unset;box-sizing:border-box;cursor:pointer;display:grid;justify-items:center;gap:14px;-webkit-tap-highlight-color:transparent}
+.hc img{height:clamp(110px,27svh,260px);width:auto;max-width:none;filter:drop-shadow(0 26px 20px rgba(50,0,4,.42));transition:transform .5s var(--ease)}
+.hc span{padding:10px 17px;border-radius:999px;background:#fff;color:var(--ink);font:700 13.5px/1 var(--t);white-space:nowrap;box-shadow:0 14px 26px -14px rgba(40,0,4,.55);transition:background .3s,color .3s}
+@media (hover:hover){.hc:hover img{transform:translateY(-12px) scale(1.05)}.hc:hover span{background:var(--ink);color:#fff}}
+.hc:focus-visible{outline:3px solid #fff;outline-offset:6px;border-radius:18px}
+[data-hero="4"] .hfade{height:26%}
+
+/* 5 · clean: the ring, the words, three numbers. Nothing else */
+[data-hero="5"] .neon{width:min(126vh,88vw);height:min(126vh,88vw);top:50%}
+[data-hero="5"] .hcopy{top:49%}
+[data-hero="5"] .h1 .b{font-size:clamp(60px,8.4vw,134px)}
+[data-hero="5"] .hproof{display:flex;gap:clamp(20px,3.6vw,58px);margin-top:clamp(26px,4.2vh,46px);padding-top:22px;border-top:1px solid rgba(255,255,255,.34)}
+.hproof li{display:grid;gap:5px;text-align:left}
+.hproof b{font:700 clamp(30px,3vw,46px)/.88 var(--c)}
+.hproof span{font:500 13.5px/1.2 var(--t);opacity:.94}
+[data-hero="5"] .hfade{height:24%}
+
+@media (max-width:900px){
+  .hsw{right:auto;left:50%;transform:translateX(-50%);top:70px;font-size:11.5px}.hsw span{display:none}.hsw a{padding:8px 10px}
+  [data-hero="2"] .hcopy{top:34%}[data-hero="2"] .h1 .b{font-size:clamp(50px,14.4vw,72px)}
+  [data-hero="2"] .hteam{height:50svh;max-height:52%}
+  [data-hero="2"] .lead{margin-top:14px}[data-hero="2"] .ctas{margin-top:18px}
+  [data-hero="3"] .hcopy{left:var(--gut);top:118px;translate:none;width:calc(100% - 2*var(--gut))}
+  [data-hero="3"] .h1 .b{font-size:clamp(50px,14.4vw,72px)}
+  [data-hero="3"] .lead{margin-top:12px;font-size:14.5px}[data-hero="3"] .ctas{margin-top:16px}
+  [data-hero="3"] .neon{left:50%;top:76%;width:120vw;height:120vw}
+  [data-hero="3"] .hsplit{left:var(--gut);right:var(--gut);width:auto;top:auto;bottom:5%;height:33svh;max-height:270px}
+  .hsplit figure{border-radius:24px}.hsplit img{object-position:50% 16%}
+  .hg{padding:10px 13px;border-radius:16px}.hg b{font-size:30px}.hg span{font-size:11.5px;max-width:13ch}
+  .hg.g1{left:10px;bottom:10px}.hg.g2{right:10px;top:10px}
+  [data-hero="4"] .hcopy{top:33%}[data-hero="4"] .h1 .b{font-size:clamp(50px,14.4vw,72px)}
+  [data-hero="4"] .neon{width:230vw;height:230vw;top:calc(60% + 115vw)}
+  [data-hero="4"] .hline{gap:4px;justify-content:space-between;padding:0 10px 18px}
+  .hc{gap:9px;flex:1 1 0;min-width:0}.hc img{height:clamp(68px,11.6svh,94px)}.hc span{padding:7px 8px;font-size:10.5px}
+  [data-hero="5"] .neon{width:124vw;height:124vw;top:46%}[data-hero="5"] .hcopy{top:46%}
+  [data-hero="5"] .h1 .b{font-size:clamp(52px,15vw,76px)}
+  [data-hero="5"] .hproof{gap:18px;margin-top:24px;padding-top:18px;align-items:start}.hproof b{font-size:30px}.hproof span{font-size:12px;max-width:11ch}
+}
