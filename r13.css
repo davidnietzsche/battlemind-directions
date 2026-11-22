@@ -218,7 +218,10 @@ body.lock{overflow:hidden}
 .ic p{max-width:24ch;font-size:clamp(15px,1.15vw,17px);line-height:1.38;font-weight:500}
 
 /* ============ analytics: cards spiral in around the title, stack, then one finding at a time ============ */
-.an{isolation:isolate;overflow:hidden;color:#fff;padding:clamp(84px,7vw,104px) 0 calc(clamp(26px,2.6vw,40px) + var(--sr));background:
+/* the stage holds while the scroll organises the cards: overflow is clipped, not hidden, so the sticky stage still works */
+.astk{position:sticky;top:max(72px,calc((100svh - var(--ah))/2));z-index:1}.ahold{height:85svh}
+@media (prefers-reduced-motion:reduce){.ahold{display:none}}
+.an{--ah:calc(clamp(540px,82vh,740px) + 34px);isolation:isolate;overflow:clip;color:#fff;padding:clamp(84px,7vw,104px) 0 calc(clamp(26px,2.6vw,40px) + var(--sr));background:
   radial-gradient(56% 60% at 30% 30%,rgba(238,19,34,.95),rgba(238,19,34,0) 72%),
   radial-gradient(70% 80% at 100% 100%,rgba(70,0,5,.95),rgba(70,0,5,0) 70%),
   radial-gradient(60% 60% at 0% 100%,rgba(100,0,8,.85),rgba(100,0,8,0) 70%),linear-gradient(#C8000E,#A1000B)}
@@ -323,6 +326,7 @@ body.lock{overflow:hidden}
 .chips button:hover{background:rgba(92,0,7,.6)}.chips button[aria-pressed=true]{background:#fff;color:var(--red);box-shadow:none}
 .chips button:focus-visible{outline:2px solid #fff;outline-offset:2px}
 .send{flex:none;width:clamp(54px,4.8vw,68px);aspect-ratio:1;border-radius:50%;border:0;background:#fff;color:var(--red);display:grid;place-items:center;cursor:pointer;transition:transform .45s var(--ease),background .3s,color .3s}
+.send .st,.cnq{display:none}
 .send svg{width:20px;height:20px}.send:hover{transform:rotate(45deg) scale(1.06);background:var(--ink);color:#fff}
 .cnalt{margin-top:22px;font-size:14.5px;color:rgba(255,255,255,.95)}
 
@@ -362,7 +366,7 @@ body.lock{overflow:hidden}
   .pp{height:min(37svh,310px)}.pp.l{left:-7vw}.pp.r{right:-9vw}
   .hfade{height:22%}
   /* clients */
-  .cl{padding:44px 0 24px}.lrib{margin-top:22px;gap:8px}.lrw{gap:8px}.lcp{height:56px;padding-right:20px;gap:10px}.lcp span{font-size:14.5px}
+  .cl{padding:48px 0 30px}.lrib{margin-top:24px;gap:10px}.lrw{gap:10px}.lcp{height:62px;padding:0 22px 0 8px;gap:11px}.lcp span{font-size:15.5px}
   /* services: a stack inside the same red banner */
   .sv{padding:36px 0 56px}.svh{gap:8px}
   .acc{display:block;height:auto;border-radius:26px;margin-top:20px}
@@ -398,7 +402,7 @@ body.lock{overflow:hidden}
   .cards{margin:22px calc(-1*var(--gut)) 0;padding:0 var(--gut) 26px;grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:78%;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
   .cards::-webkit-scrollbar{display:none}.ic{scroll-snap-align:center;border-radius:26px;aspect-ratio:1/1.18;padding:22px}.ic .num{font-size:104px}
   /* analytics */
-  .an{padding:76px 0 calc(22px + var(--sr))}.stage{height:540px}
+  .an{--ah:574px;padding:76px 0 calc(22px + var(--sr))}.stage{height:540px}.ahold{height:78svh}
   .antt{max-width:226px;font-size:clamp(27px,7.6vw,32px)}
   .dc{width:96px;border-radius:18px;padding:11px 12px}.dc b{font-size:19px}.dc small{font-size:8px}.dc .vz{left:12px;right:12px;bottom:11px}.em{width:52px}
   .feat{flex-direction:column;justify-content:flex-start;gap:20px;padding-top:64px}
@@ -421,7 +425,16 @@ body.lock{overflow:hidden}
   .tm{padding:54px 0 calc(40px + var(--sr))}.tmh{grid-template-columns:1fr;gap:10px}.tma{grid-column:1;grid-row:auto;justify-content:flex-start;margin-top:6px}.tma .btn{height:48px}
   .flow{height:74vw;margin-top:24px}.flow figure{border-radius:20px}.tmf{flex-direction:column;align-items:center;text-align:center;margin-top:16px}
   /* connect */
-  .cn{padding:64px 0 calc(66px + var(--sr))}.glass{border-radius:26px;padding:16px}.ask input{font-size:20px}.askb{margin-top:18px;align-items:flex-end}.chips button{padding:10px 14px;font-size:13.5px}.cnalt{font-size:13.5px}
+  /* contact on a phone (David 23 Nov: "too small in mobile version"): a full screen of its own, a big title, thumb-sized goals and one wide send button */
+  .cn{padding:92px 0 calc(92px + var(--sr));min-height:92svh;display:flex;flex-direction:column;justify-content:center}
+  .cn .ttl.xl{font-size:clamp(42px,12.4vw,56px);line-height:.98;letter-spacing:-.045em}
+  .ask{margin-top:34px}.glass{border-radius:30px;padding:22px 18px 18px}.ask input{font-size:clamp(19px,5.4vw,22px);padding:6px 6px 0}
+  .askb{margin-top:22px;flex-direction:column;align-items:stretch;gap:14px}
+  .chips{display:grid;grid-template-columns:1fr 1fr;gap:10px}.chips button{padding:0 12px;height:54px;display:grid;place-items:center;text-align:center;font-size:16px}
+  .send{width:100%;aspect-ratio:auto;height:60px;border-radius:999px;display:flex;align-items:center;justify-content:center;gap:10px;font:700 17px/1 var(--t)}.send .st{display:inline}.send:hover{transform:none}
+  .cnalt{margin-top:18px;font-size:14.5px}.cnd{display:none}
+  .cnq{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+  .cnq a{display:grid;place-items:center;height:54px;border-radius:999px;color:#fff;text-decoration:none;font:600 16px/1 var(--t);background:rgba(92,0,7,.36);box-shadow:inset 0 0 0 1px rgba(255,255,255,.34)}
   /* footer */
   .foot{padding:44px 0 18px}.fmain{grid-template-columns:1fr 1fr;gap:28px 18px}.fmain>:first-child,.fmain>:last-child{grid-column:1/-1}
   .foot .lk img{height:26px}.foot .lk{margin-bottom:0;gap:10px 22px}.fmain>:first-child .plain{display:none}
@@ -448,8 +461,9 @@ html:not([data-hero="1"]) .ring,html:not([data-hero="1"]) .ppl,html:not([data-he
 /* 2 · team photo: one campaign photograph on the brand red, the headline above it */
 [data-hero="2"] .hbg{background:radial-gradient(56% 46% at 50% 26%,#F01522,rgba(240,21,34,0) 72%),radial-gradient(60% 60% at 0% 100%,rgba(150,0,10,.7),rgba(150,0,10,0) 70%),radial-gradient(60% 60% at 100% 100%,rgba(150,0,10,.7),rgba(150,0,10,0) 70%),#D90308}
 [data-hero="2"] .neon{display:none}
-[data-hero="2"] .hteam{display:flex;justify-content:center;position:absolute;left:0;right:0;bottom:0;height:64svh;max-height:66%;z-index:1;pointer-events:none}
-.hteam img{height:100%;width:auto;max-width:none;-webkit-mask-image:linear-gradient(transparent,#000 20%),linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);-webkit-mask-composite:source-in;mask-image:linear-gradient(transparent,#000 20%),linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);mask-composite:intersect}
+[data-hero="2"] .hteam{display:flex;justify-content:center;position:absolute;left:0;right:0;bottom:0;height:61svh;max-height:63%;z-index:1;pointer-events:none}
+.hteam video{display:block;aspect-ratio:16/9;object-fit:cover}
+.hteam img,.hteam video{height:100%;width:auto;max-width:none;-webkit-mask-image:linear-gradient(transparent,#000 20%),linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);-webkit-mask-composite:source-in;mask-image:linear-gradient(transparent,#000 20%),linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);mask-composite:intersect}
 [data-hero="2"] .hcopy{top:clamp(250px,29%,380px)}
 [data-hero="2"] .h1 .b{font-size:clamp(52px,6.3vw,98px)}
 [data-hero="2"] .lead{margin-top:16px;max-width:52ch}
@@ -507,8 +521,8 @@ html:not([data-hero="1"]) .ring,html:not([data-hero="1"]) .ppl,html:not([data-he
 
 @media (max-width:900px){
   .hsw{right:auto;left:50%;transform:translateX(-50%);top:70px;font-size:11.5px}.hsw span{display:none}.hsw a{padding:8px 10px}
-  [data-hero="2"] .hcopy{top:34%}[data-hero="2"] .h1 .b{font-size:clamp(50px,14.4vw,72px)}
-  [data-hero="2"] .hteam{height:50svh;max-height:52%}
+  [data-hero="2"] .hcopy{top:37%}[data-hero="2"] .h1 .b{font-size:clamp(50px,14.4vw,72px)}
+  [data-hero="2"] .hteam{height:41svh;max-height:43%}
   [data-hero="2"] .lead{margin-top:14px}[data-hero="2"] .ctas{margin-top:18px}
   [data-hero="3"] .hcopy{left:var(--gut);top:118px;translate:none;width:calc(100% - 2*var(--gut))}
   [data-hero="3"] .h1 .b{font-size:clamp(50px,14.4vw,72px)}

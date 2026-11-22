@@ -1,4 +1,4 @@
-/* Round 13 · home rebuilt against Sue's sample drafts. Phone first: nothing pins, nothing captures the wheel. */
+/* Round 13 · home rebuilt against Sue's sample drafts. Phone first: nothing captures the wheel; the only hold is one short sticky stage in analytics. */
 (() => {
 const RM = matchMedia("(prefers-reduced-motion: reduce)").matches, q = new URLSearchParams(location.search), $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
 if (window.gsap) gsap.registerPlugin(ScrollTrigger);
@@ -74,13 +74,14 @@ if (HV !== "1") { const hero = $("#hero");
       gsap.from(roll.firstElementChild, { yPercent: 110, duration: .9, ease: "power3.out", delay: .47 }); play(); }
     else chs[0].classList.add("on"); }
   // 7 · film: the crew as one looping studio shot. It plays only while the banner is on screen; reduced motion gets the still.
-  if (HV === "7") { const f = $("#hfilm"); f.innerHTML = `<video muted loop playsinline preload="auto" poster="assets7/crew_film.webp"${RM ? "" : ' src="assets7/crew_film.mp4"'}></video>`; const v = $("video", f); v.muted = true; window.R13.film = v;
+  //     2 · team gets the same treatment: the campaign photograph as a short loop of small movements (a laugh, a glance, a shift of weight).
+  if (HV === "7" || HV === "2") { const f = HV === "7" ? $("#hfilm") : $(".hteam"), nm = HV === "7" ? "crew_film" : "team_film";
+    f.innerHTML = `<video muted loop playsinline preload="auto" poster="assets7/${nm}.webp"${RM ? "" : ` src="assets7/${nm}.mp4"`}></video>`; const v = $("video", f); v.muted = true; window.R13.film = v;
     if (!RM) new IntersectionObserver((e) => { if (e[0].isIntersecting) v.play().catch(() => {}); else v.pause(); }, { threshold: .15 }).observe(hero);
     if (G) gsap.from(v, { scale: 1.09, duration: 2.2, ease: "power3.out", transformOrigin: "50% 100%" }); }
   $$(".h1 .rz").forEach((el, i) => setTimeout(() => el.classList.add("in"), G ? 250 + i * 220 : 0));
   if (G) { const E = "power3.out";
     gsap.from(".hero .lead, .hero .ctas, .hproof li, .sfoot", { y: 18, opacity: 0, duration: .8, stagger: .1, delay: .8, ease: E });
-    if (HV === "2") gsap.from(".hteam img", { yPercent: 6, scale: 1.12, opacity: 0, duration: 1.8, delay: .2, ease: E, transformOrigin: "50% 100%" });   // the camera settles
     if (HV === "3") { gsap.from(".hsplit figure", { y: 60, opacity: 0, duration: 1.2, delay: .25, ease: E }); gsap.from(".hg", { scale: .7, opacity: 0, duration: .7, stagger: .16, delay: 1, ease: "back.out(1.7)" }); }
     if (HV === "4") gsap.from(".hc", { y: 90, opacity: 0, duration: .9, stagger: .09, delay: .4, ease: "back.out(1.5)" });
     // ---- depth: a light that follows the cursor, layers that move at different speeds, a zoom as you scroll away, dust in the air.
@@ -167,10 +168,13 @@ function ribbon(row, dir, speed) { const o = { row, dir, speed, x: 0, half: 0, o
   if (window.ResizeObserver) new ResizeObserver(meas).observe(row); new IntersectionObserver((e) => { o.on = e[0].isIntersecting; }, { rootMargin: "120px" }).observe(row); ribs.push(o); }
 if (G) { let ly = scrollY, v = 0; gsap.ticker.add((t, dt) => { const d = Math.min(64, dt) / 1000, dy = Math.abs(scrollY - ly); ly = scrollY; v += (Math.min(2400, dy / d) - v) * .1;
   for (const o of ribs) { if (!o.on || !o.half) continue; o.x += (o.speed + v * .35) * o.dir * d; o.x = ((o.x % o.half) + o.half) % o.half; o.row.style.transform = `translate3d(${-o.x}px,0,0)`; } }); }
-{ const box = $("#lrib"), L = window.R13_LOGOS || []; if (box) { const per = Math.ceil(L.length / 2);
-  box.innerHTML = [0, 1].map((r) => { const set = L.slice(r * per, (r + 1) * per);
+// On a phone two rows left the section thin (David 23 Nov: "should be 3/4 rows"), so it gets four shorter rows there; rebuilt if the width crosses the breakpoint.
+{ const box = $("#lrib"), L = window.R13_LOGOS || []; if (box) { const build = () => { const rows = PHONE() ? 4 : 2, cut = (r) => Math.round(r * L.length / rows); box.dataset.rows = rows;
+  for (let i = ribs.length - 1; i >= 0; i--) if (box.contains(ribs[i].row)) ribs.splice(i, 1);
+  box.innerHTML = Array.from({ length: rows }, (_, r) => r).map((r) => { const set = L.slice(cut(r), cut(r + 1));
     return `<div class="lrw">${set.concat(set).map(([f, n], i) => `<div class="lcp"${i < set.length ? ' role="listitem"' : ' aria-hidden="true"'}><span class="mk"><img src="assets5/lm_${f}.webp" alt="" loading="lazy" draggable="false"></span><span>${n}</span></div>`).join("")}</div>`; }).join("");
-  $$(".lrw", box).forEach((row, r) => ribbon(row, r ? -1 : 1, 36)); } }
+  $$(".lrw", box).forEach((row, r) => ribbon(row, r % 2 ? -1 : 1, rows > 2 ? 26 + (r % 3) * 5 : 36)); };
+  build(); matchMedia("(max-width:900px)").addEventListener("change", build); } }
 
 // ---- services: one red banner; open one and the others fold into coloured tabs ----
 const SVC = [
@@ -224,7 +228,7 @@ $$("#icards [data-to]").forEach((v, i) => { if (!G) return; const to = +v.datase
   gsap.to(o, { n: to, duration: 1.6, delay: .1 + i * .12, ease: "power3.out", onUpdate: () => (v.textContent = Math.round(o.n)), scrollTrigger: { trigger: "#icards", start: "top 85%", once: true } }); });
 if (G && !PHONE()) gsap.from("#icards .ic", { y: 60, opacity: 0, duration: 1, stagger: .12, ease: "power3.out", scrollTrigger: { trigger: "#icards", start: "top 88%", once: true } });
 
-// ---- analytics: cards spiral in around the title, stack, then show one finding at a time (time-driven; the wheel scrolls on) ----
+// ---- analytics: cards scatter around the title, then stack and show one finding at a time. Driven by the scroll while the stage holds; the wheel is never captured ----
 const MV = [{ b: "74%", l: "Bounce rate", s: "of Instagram visitors bounce", h: "Enhance web UX", p: "Fix the leaky bucket: remove what stops visitors buying, before you spend another ringgit on ads.", vz: "line" },
   { b: "RM63", l: "Cost per lead", s: "per Facebook lead. Google brings them at RM30", h: "Strengthen SEM", p: "Show up where buyers are already searching, on Google and in AI answers.", vz: "bars" },
   { b: "0.8%", l: "Click-through", s: "click-through on the social ads", h: "Engaging, trust-building social ads", p: "Stop the scroll, earn trust, then convert.", vz: "donut" }];
@@ -241,7 +245,7 @@ const viz = (k, i) => k === "bars" ? `<div class="bars">${[0, 1, 2, 3, 4, 5].map
   // the three findings are a real deck of three cards: the front one tucks behind, the next comes forward
   ft.innerHTML = `<div class="fdeck">${MV.map((m, i) => `<div class="fc"><small>${m.l}</small><b>${m.b}</b><p>${m.s}</p><div class="vz">${viz(m.vz, i + 20)}</div></div>`).join("")}</div><i class="fline" aria-hidden="true"></i><div class="ft"><span class="n"></span><h3></h3><p></p></div>`;
   dots.innerHTML = MV.map((_, i) => `<button type="button" aria-label="Finding ${i + 1}"></button>`).join("");
-  const fc = $(".fdeck", ft), fcs = $$(".fc", ft), NF = MV.length, fx = $(".ft", ft), fl = $(".fline", ft), db = $$("button", dots); let cur = 0, st = { k: RM || !G ? 2 : 0, spin: 0 }, played = false, tm = null, inView = false, hold = false, swap = null;
+  const fc = $(".fdeck", ft), fcs = $$(".fc", ft), NF = MV.length, fx = $(".ft", ft), fl = $(".fline", ft), db = $$("button", dots); let cur = 0, st = { k: RM || !G ? 2 : 0, spin: 0, dr: 0 }, played = false, tm = null, inView = false, hold = false, swap = null;
   if (st.k === 2) stage.style.setProperty("--tp", 1);
   const POS = [{ x: 0, y: 0, rotation: 0, scale: 1, filter: "brightness(1)" }, { x: 24, y: 16, rotation: 5, scale: .95, filter: "brightness(.84)" }, { x: -22, y: 26, rotation: -6, scale: .9, filter: "brightness(.7)" }];
   const slot = (i) => (i - cur + NF) % NF;
@@ -252,14 +256,14 @@ const viz = (k, i) => k === "bars" ? `<div class="bars">${[0, 1, 2, 3, 4, 5].map
   const place = () => { const W = stage.clientWidth, H = stage.clientHeight, ph = PHONE(), sb = stage.getBoundingClientRect(), fr = fc.getBoundingClientRect();
     const scx = fr.left - sb.left + fr.width / 2, scy = fr.top - sb.top + fr.height / 2, cx = W / 2, cy = H / 2, Rx = ph ? W * .47 : Math.min(W * .41, 540), Ry = ph ? H * .36 : Math.min(H * .34, 250), R0 = Math.max(W, H) * 1.1;
     const e = (t) => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2, k = st.k, N = cards.length;
-    for (const c of cards) { const cw = c.el.offsetWidth, chh = c.el.offsetHeight || cw, a = c.i / N * Math.PI * 2 + st.spin, ringX = cx + Math.cos(a) * Rx * c.rr, ringY = cy + Math.sin(a) * Ry * c.rr, ringR = c.em ? c.rot * 2 : a * 57.3 + 90;
+    for (const c of cards) { const cw = c.el.offsetWidth, chh = c.el.offsetHeight || cw, a = c.i / N * Math.PI * 2 + st.spin + st.dr, ringX = cx + Math.cos(a) * Rx * c.rr, ringY = cy + Math.sin(a) * Ry * c.rr, ringR = c.em ? c.rot * 2 : a * 57.3 + 90;
       const sx = cx + Math.cos(c.a0) * R0, sy = cy + Math.sin(c.a0) * R0, stkX = scx + (rnd(c.i + 30) - .5) * 44, stkY = scy + (rnd(c.i + 31) - .5) * 34;
       let x, y, r, s; if (k <= 1) { const t = e(k); x = sx + (ringX - sx) * t; y = sy + (ringY - sy) * t; r = c.rot * 6 * (1 - t) + ringR * t; s = 1; }
       else { const t = e(Math.min(1, k - 1)); x = ringX + (stkX - ringX) * t; y = ringY + (stkY - ringY) * t; r = ringR + (c.rot - ringR) * t; s = c.em ? 1 - t : 1 + (fr.width / cw * .92 - 1) * t; }
       c.el.style.transform = `translate(${(x - cw / 2).toFixed(1)}px,${(y - chh / 2).toFixed(1)}px) rotate(${r.toFixed(1)}deg) scale(${s.toFixed(3)})`; } };
   const show = (i, first) => { const to = (i + NF) % NF;
     if (!G) { cur = to; rest(); fill(cur); sw.style.opacity = 0; fc.style.opacity = fx.style.opacity = fl.style.opacity = 1; return; }
-    if (first) { cur = to; rest(); fill(cur); gsap.to(sw, { opacity: 0, duration: .5, delay: .15 }); gsap.fromTo(fc, { opacity: 0, scale: .92 }, { opacity: 1, scale: 1, duration: .55, ease: "power3.out" }); gsap.fromTo(fl, { opacity: 0, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: .5, delay: .2, ease: "power3.out" }); gsap.fromTo(fx, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: .6, delay: .3, ease: "power3.out" }); return; }
+    if (first) { cur = to; rest(); fill(cur); gsap.killTweensOf([sw, fc, fl, fx]); gsap.to(sw, { opacity: 0, duration: .5, delay: .15 }); gsap.fromTo(fc, { opacity: 0, scale: .92 }, { opacity: 1, scale: 1, duration: .55, ease: "power3.out" }); gsap.fromTo(fl, { opacity: 0, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: .5, delay: .2, ease: "power3.out" }); gsap.fromTo(fx, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: .6, delay: .3, ease: "power3.out" }); return; }
     if (to === cur) return;
     if (swap) swap.progress(1);   // a fast second click finishes the first move cleanly instead of fighting it
     const fwd = (to - cur + NF) % NF === 1, front = fcs[cur], back = fcs[fwd ? (cur + 2) % NF : (cur + 1) % NF], mover = fwd ? front : fcs[to]; cur = to;
@@ -275,16 +279,25 @@ const viz = (k, i) => k === "bars" ? `<div class="bars">${[0, 1, 2, 3, 4, 5].map
     void back; };
   const tick = () => { clearInterval(tm); tm = null; if (played && inView && !hold && !RM) tm = setInterval(() => show(cur + 1), 4200); };
   place(); addEventListener("resize", place); if (document.fonts && document.fonts.ready) document.fonts.ready.then(place);
-  const play = () => { if (played) return; played = true;
-    if (!G) { st.k = 2; place(); show(0, true); tick(); return; }
-    const tl = gsap.timeline({ onUpdate: place, onComplete: () => { show(0, true); tick(); } });
-    tl.to(st, { k: 1, duration: 1.5, ease: "none" }).to(st, { spin: Math.PI * .9, duration: 2.8, ease: "power1.inOut" }, 0).to(st, { k: 2, duration: 1, ease: "none" }, 2.3).to(stage, { "--tp": 1, duration: 1, ease: "power3.inOut" }, 2.2); };
-  if (!G) { fill(0); sw.style.opacity = 0; fc.style.opacity = fx.style.opacity = fl.style.opacity = 1; }
-  watch(stage, (on) => { inView = on; if (on) play(); tick(); }, .3);
+  // The scroll drives it (David 23 Nov: "scroll to make it organised from messy"). The stage holds in view (CSS sticky, the wheel is never captured):
+  // the cards arrive scattered as the section comes up, circle the title while it holds, then gather into one stack and the first finding appears. Scroll back up and it comes apart again.
+  const an = $("#data"), stk = $("#astk"), holdEl = $("#ahold"); let finish = () => {}, endY = () => scrollY, prog = () => 1;
+  if (!G) { if (holdEl) holdEl.style.display = "none"; played = true; fill(0); sw.style.opacity = 0; fc.style.opacity = fx.style.opacity = fl.style.opacity = 1; }
+  else { const tl = gsap.timeline({ paused: true, onUpdate: place, defaults: { ease: "none" } });
+    tl.to(st, { k: 1, duration: .42 }, 0).to(st, { spin: Math.PI * .9, duration: .8, ease: "power1.inOut" }, 0).to(st, { k: 2, duration: .3 }, .5).to(stage, { "--tp": 1, duration: .3, ease: "power2.inOut" }, .5).to({}, { duration: .1 }, .9);
+    const done = (d) => { if (d === played) return; played = d; gsap.killTweensOf([sw, fc, fl, fx]);
+      if (d) show(0, true); else { if (swap) swap.progress(1); gsap.to(sw, { opacity: 1, duration: .3 }); gsap.to([fc, fx, fl], { opacity: 0, duration: .22 }); } tick(); };
+    const geo = () => { const top = parseFloat(getComputedStyle(stk).top) || 0, nat = an.getBoundingClientRect().top + parseFloat(getComputedStyle(an).paddingTop), pre = innerHeight * .5, len = holdEl.offsetHeight; return { top, nat, pre, len }; };
+    prog = () => { const g = geo(); return Math.max(0, Math.min(1, (g.top + g.pre - g.nat) / (g.pre + g.len * .92))); };
+    const upd = () => gsap.to(tl, { progress: prog(), duration: .45, ease: "power2.out", overwrite: true, onUpdate: () => done(tl.progress() >= .9) });
+    addEventListener("scroll", upd, { passive: true }); addEventListener("resize", upd); tl.progress(prog()); done(tl.progress() >= .9);
+    endY = () => { const g = geo(); return Math.round(scrollY + g.nat - g.top + g.len * .9); }; finish = () => glideTo(endY(), 1.1);
+    gsap.ticker.add((t, dt) => { if (!inView || played || st.k >= 1.98) return; st.dr += Math.min(64, dt) / 1000 * .05; place(); }); }   // a slow drift while it is still scattered, so it never sits dead
+  watch(stage, (on) => { inView = on; tick(); }, .3);
   stage.addEventListener("pointerenter", (e) => { if (e.pointerType === "mouse") { hold = true; tick(); } }); stage.addEventListener("pointerleave", () => { hold = false; tick(); });
-  $$(".arw", stage).forEach((b) => b.addEventListener("click", () => { if (!played) play(); else show(cur + +b.dataset.d); tick(); }));
-  db.forEach((d, i) => d.addEventListener("click", () => { if (played) show(i); tick(); }));
-  window.R13.an = { get cur() { return cur; }, get played() { return played; }, get playing() { return !!tm; }, get k() { return st.k; } }; } }
+  $$(".arw", stage).forEach((b) => b.addEventListener("click", () => { if (!played) finish(); else show(cur + +b.dataset.d); tick(); }));
+  db.forEach((d, i) => d.addEventListener("click", () => { if (played) show(i); else finish(); tick(); }));
+  window.R13.an = { get cur() { return cur; }, get played() { return played; }, get playing() { return !!tm; }, get k() { return st.k; }, get p() { return prog(); }, get endY() { return endY(); } }; } }
 
 // ---- wins: results first; the brand and the photo appear only when opened, each in its own colour ----
 const CS = [{ k: "yakisoul", v: "+450%", l: "monthly revenue, single outlet", w: "Yaki Soul", tags: ["F&B", "Walk-in traffic", "Seasonal campaigns"], p: "Seasonal campaigns turned an izakaya off the main street into a KL destination, now serving 7,000+ customers a month." },
@@ -329,7 +342,7 @@ const CS = [{ k: "yakisoul", v: "+450%", l: "monthly revenue, single outlet", w:
   btns.forEach((b) => b.addEventListener("click", () => { goal = goal === b.dataset.g ? "" : b.dataset.g; btns.forEach((x) => x.setAttribute("aria-pressed", String(x.dataset.g === goal))); }));
   ask.addEventListener("submit", (e) => { e.preventDefault(); const v = $("#askin").value.trim(), g = goal ? `My primary goal: ${goal}. ` : ""; open(WA(`Hi Battle, ${g}${v || "I'd like a 15-minute call about my marketing."}`), "_blank", "noopener"); }); }
   const box = $("#cnp"); if (box) { const ph = PHONE();
-    const C = ph ? [["assets2/megaphone_w.webp", "left:-5%;top:4%", 86, -14], ["assets2/bubble_w.webp", "right:-4%;top:9%", 70, 10], ["assets2/heart_w.webp", "right:7%;bottom:3%", 54, 12]]
+    const C = ph ? [["assets2/megaphone_w.webp", "left:-5%;top:.8%", 72, -14], ["assets2/bubble_w.webp", "right:-3%;top:1.6%", 58, 10], ["assets2/heart_w.webp", "right:7%;bottom:3%", 54, 12]]
       : [["assets2/megaphone_w.webp", "left:5%;top:16%", 168, -14], ["assets2/bubble_w.webp", "right:7%;top:13%", 132, 10], ["assets2/heart_w.webp", "left:13%;bottom:13%", 100, -10], ["assets2/cursor_k.webp", "right:13%;bottom:16%", 112, 8], ["assets2/coin_w.webp", "left:27%;top:7%", 62, 16], ["assets2/play_k.webp", "right:27%;bottom:6%", 78, -12]];
     box.innerHTML = C.map(([s, pos, wd, r]) => `<img src="${s}" alt="" loading="lazy" draggable="false" style="${pos};width:${ph ? wd + "px" : `clamp(${Math.round(wd * .6)}px,${(wd / 14.4).toFixed(2)}vw,${wd}px)`};${G ? "" : `rotate:${r}deg`}">`).join("");
     if (G) $$("img", box).forEach((im, i) => gsap.fromTo(im, { y: 60 + i * 14, rotation: C[i][3] }, { y: -40 - i * 10, rotation: C[i][3] + (i % 2 ? -8 : 8), ease: "none", scrollTrigger: { trigger: "#connect", start: "top bottom", end: "bottom top", scrub: true } })); } }
