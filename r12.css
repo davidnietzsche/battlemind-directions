@@ -251,3 +251,89 @@
   .x-lrib .lcp{height:56px}.x-lrib .lcp .mk{width:42px}
 }
 @media (prefers-reduced-motion:reduce){.x-grad i{animation:none}.x-sl>img{transition:none}.x-acc *,.x-crb,.x-flow figure{transition:none!important}}
+
+/* ================= phone pass (David 22 Nov: "make it mobile optimised") ================= */
+.x-dock{display:none}
+@media (max-width:760px){
+  .r12 .sec{padding:52px 0}
+  .r12 .bd{font-size:15.5px;line-height:1.5}
+  .x-t{font-size:clamp(26px,7.4vw,32px);line-height:1.08}
+  .x-t.md{font-size:clamp(23px,6.4vw,28px)}
+  .x-t.sm{font-size:clamp(19px,5.4vw,22px);line-height:1.25}
+  .x-t.xl{font-size:clamp(38px,11vw,48px)}
+  .x-big{font-size:clamp(50px,15vw,66px)}
+  /* hero: copy up top, the two people stand on the white, the fade stays under them */
+  .x-hero{height:auto;min-height:0;height:100svh;max-height:780px}
+  .x-hero .hcopy{top:36%}
+  .x-hero .ctas{margin-top:20px;gap:10px}.x-hero .ctas .cta{height:52px;font-size:15px}
+  .x-hero .ppl{z-index:5}
+  .x-hero .pp{height:min(36svh,300px);bottom:0}.x-hero .pp.l{left:-6vw}.x-hero .pp.r{right:-8vw}
+  .x-fade{height:16%;z-index:4}
+  .x-seam{display:none}
+  .x-cl{padding-top:36px!important;padding-bottom:20px!important}
+  .x-lrib{margin-top:22px;gap:8px}
+  /* services: tighter rows */
+  .x-sv{padding-top:44px!important}
+  .x-sv .shead{gap:10px}
+  .x-acc{margin-top:22px;gap:8px}
+  .x-pn{border-radius:20px}
+  .x-pb{grid-template-columns:60px minmax(0,1fr) 40px;padding:10px 12px;gap:12px}
+  .x-ch,.x-pn.open .x-ch{width:60px}
+  .x-nm{font-size:19px}
+  .x-pm{width:40px;height:40px}
+  /* chat: no repeated CTA, the photo carousel carries it */
+  .x-chl .still{display:none}
+  .x-chg{gap:16px}
+  .x-track{aspect-ratio:1/1.08;border-radius:22px}
+  .x-bubs{left:5%;right:5%;bottom:5%;gap:8px}
+  .x-bubs .q,.x-bubs .a{font-size:15px;padding:11px 16px}
+  .x-ans{padding:16px}.x-ans b{font-size:22px}.x-ans p{font-size:14px}
+  .x-ctl{margin-top:12px;justify-content:center}
+  /* impact */
+  .x-cards{margin-top:20px;grid-auto-columns:78%}
+  .x-ic{min-height:300px;border-radius:22px;padding:20px}
+  .x-ic .dn{font-size:96px}
+  /* analytics: smaller stage */
+  .x-anh{gap:10px}
+  .x-stage{height:400px;margin-top:16px}
+  .x-dc{width:104px;border-radius:16px;padding:11px}.x-dc b{font-size:22px}
+  .x-fc{width:min(100%,290px);padding:22px;border-radius:22px}.x-fc b{font-size:76px}
+  .x-ft h3{font-size:24px}.x-ft p{font-size:14.5px;margin-top:8px}.x-ft .n{margin-bottom:6px}
+  .x-actl{justify-content:center}.x-actl small{width:100%;text-align:center}
+  /* cases: one compact line each, number left */
+  .x-cl2{margin-top:20px;gap:6px}
+  .x-cr{border-radius:16px}
+  .x-crh{grid-template-columns:4.2em minmax(0,1fr) 34px;grid-template-rows:auto;gap:0 12px;padding:12px 12px 12px 14px}
+  .x-crh .v{grid-column:1;grid-row:1;font-size:31px;min-width:0;white-space:nowrap}
+  .x-crh .v small{display:none}
+  .x-crh .l{grid-column:2;grid-row:1;font-size:14px;line-height:1.3}
+  .x-crh .w{display:none}
+  .x-crh .x-pm{grid-column:3;grid-row:1;width:34px;height:34px}
+  .x-crg{padding:0 14px 16px;gap:14px}.x-crg img{border-radius:14px;aspect-ratio:16/10}
+  .x-cs .cfoot{margin-top:18px}.x-cs .cfoot small{font-size:12px}
+  /* team */
+  .x-tmh{gap:12px}.x-tma .cta{height:48px}
+  .x-flow{height:72vw;margin-top:22px}
+  .x-tmf{flex-direction:column;align-items:center}.x-tmf .tcap{text-align:center;margin-top:10px}
+  /* connect */
+  .x-cn{padding-bottom:64px!important}
+  .x-cn .askp{height:60px}.x-cn .goal{margin-top:16px}.x-cn .seg button{padding:9px 13px;font-size:14px}
+  /* footer: two columns, short */
+  .x-foot{padding:44px 0 18px}
+  .x-foot .fmain{grid-template-columns:1fr 1fr;gap:28px 18px}
+  .x-foot .fbrand,.x-foot .fmain>div:last-child{grid-column:1/-1}
+  .x-foot .lk img{height:26px}.x-foot .lk{margin-bottom:12px;gap:10px 22px}
+  .x-foot .fbrand p{display:none}
+  .x-foot ul{gap:9px}.x-foot ul a{font-size:14px;white-space:nowrap}
+  .x-foot .addr{font-size:12.5px;margin-top:10px}
+  .x-foot .fbot{margin-top:28px;padding-top:16px;font-size:11.5px}
+  .x-foot .big{margin-top:20px;font-size:23vw}
+  .note{font-size:11px;padding:12px 16px 90px}
+  /* a contact bar that follows the thumb, hidden in the hero and the contact section */
+  .x-dock{display:flex;position:fixed;z-index:55;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));gap:8px;padding:6px;border-radius:999px;background:rgba(13,19,26,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 18px 40px -16px rgba(0,0,0,.55);transform:translateY(140%);transition:transform .45s var(--ease)}
+  .x-dock.on{transform:none}
+  .x-dock a{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;height:48px;border-radius:999px;font:600 15px var(--t);text-decoration:none;color:#fff}
+  .x-dock a.wa{background:var(--red)}
+  .x-dock a svg{width:18px;height:18px}
+}
+@media (max-width:370px){.x-h1 .b{font-size:13.4vw}.x-hero .ctas .cta{padding-left:18px}.x-crh .v{font-size:28px}}

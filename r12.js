@@ -45,7 +45,8 @@ const watch = (el, cb, th) => new IntersectionObserver((e) => cb(e[0].isIntersec
     const ph = w < 700, ex = 1 + lift * .7, cx = w * .5 + ptr.x * 30, cy = h * (ph ? .47 : .47) + ptr.y * 20 + lift * h * .12, A = w * (ph ? .64 : .45) * ex, B = h * (ph ? .44 : .4) * ex;
     const spin = (R ? 0 : T * .22) + lift * 1.8 + ptr.x * .25;
     for (const p of P) { const th = p.a + spin, z = Math.sin(th), d = (z + 1) / 2;
-      const x = cx + Math.cos(th) * A * p.r * (.86 + .14 * d), y = cy + z * B * p.r + p.v * h * .28 + (R ? 0 : Math.sin(T * 1.3 + p.a * 3) * 7);
+      const x = cx + Math.cos(th) * A * p.r * (.86 + .14 * d); let y = cy + z * B * p.r + p.v * h * .28 + (R ? 0 : Math.sin(T * 1.3 + p.a * 3) * 7);
+      if (ph) { const top = h * .15, bot = h * .6; if (Math.abs(x - w / 2) < w * .4 && y > top && y < bot) y = y - top < bot - y ? top - (y - top) * .2 : bot + (bot - y) * .2; }   // keep the headline clear on phones
       const dx = x - mouse.x, dy = y - mouse.y, dist = Math.hypot(dx, dy); let tx = 0, ty = 0; if (dist < 190 && dist > 0) { const f = (190 - dist) / 190 * 46; tx = dx / dist * f; ty = dy / dist * f; }
       p.px += (tx - p.px) * .12; p.py += (ty - p.py) * .12; const s = (.6 + .5 * d) * p.b;
       p.el.style.transform = `translate(${(x + p.px).toFixed(1)}px,${(y + p.py).toFixed(1)}px) translate(-50%,-50%) rotate(${(p.tilt + (R ? 0 : Math.sin(T * .8 + p.a * 2) * 8)).toFixed(1)}deg) scale(${s.toFixed(3)})`;
@@ -210,6 +211,14 @@ const CS = [{ k: "yakisoul", v: "+450%", l: "monthly revenue, single outlet", w:
   btns.forEach((b) => b.addEventListener("click", () => { goal = goal === b.dataset.g ? "" : b.dataset.g; btns.forEach((x) => x.setAttribute("aria-pressed", String(x.dataset.g === goal))); mv(goal ? b : null); }));
   addEventListener("resize", () => mv(btns.find((x) => x.getAttribute("aria-pressed") === "true")));
   ask.addEventListener("submit", (e) => { e.preventDefault(); const v = $("#askin").value.trim(), g = goal ? `My primary goal: ${goal}. ` : ""; open(WA(`Hi Battle, ${g}${v || "I'd like a 15-minute call about my marketing."}`), "_blank", "noopener"); }); } }
+
+// ---- phone: a contact bar that follows the thumb; hidden over the hero, the contact section and the footer ----
+{ const d = document.createElement("div"); d.className = "x-dock"; d.setAttribute("aria-label", "Contact Battle");
+  d.innerHTML = `<a class="wa" href="${WA("Hi Battle, I'd like a 15-minute call about my marketing.")}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.9 11.9 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7.5-.1 1.5-.6 1.8-1.2.2-.6.2-1.1.1-1.2l-.4-.2Z"/></svg>WhatsApp us</a><a href="#connect">Let's talk</a>`;
+  document.body.appendChild(d); const seen = new Set();
+  const io = new IntersectionObserver((es) => { es.forEach((e) => e.isIntersecting ? seen.add(e.target) : seen.delete(e.target)); d.classList.toggle("on", seen.size === 0); }, { threshold: .15 });
+  ["#hero", "#connect", ".foot"].forEach((s) => { const el = $(s); if (el) io.observe(el); });
+  window.R12.dock = d; }
 
 if (G) { const cnp = $(".cnp"); if (cnp) gsap.from(cnp, { xPercent: 26, opacity: 0, duration: 1.1, ease: "power3.out", scrollTrigger: { trigger: "#connect", start: "top 62%", once: true } });
   addEventListener("load", () => ScrollTrigger.refresh()); }
