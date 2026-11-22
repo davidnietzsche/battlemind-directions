@@ -194,34 +194,41 @@ let openSvc = () => {};
     if (reveal && on) { if (PHONE()) setTimeout(() => { const r = pn[i].getBoundingClientRect(); showBlock(r.top + scrollY, r.height); }, 640); else { const r = acc.getBoundingClientRect(); showBlock(r.top + scrollY, r.height); } } };
   pn.forEach((p, i) => $(".pb", p).addEventListener("click", () => openSvc(i, true))); window.R13.openSvc = openSvc; } }
 
-// ---- headache chat: one topic per picture, auto-plays while in view; tap a bubble for our answer ----
-const SL = [
-  { img: "sc_walkin", b: ["We have no walk-in traffic", "There's a lot of new competition in the area"], s: 1, why: "Location-targeted Meta and Google ads that bring people through the door, measured in walk-ins, not likes." },
-  { img: "sc_social", b: ["Our social media is dry", "Our ads look like generic AI graphics", "People are scrolling past us despite our efforts"], s: 2, why: "Thumb-stopping content and UGC campaigns that people actually stop for." },
-  { img: "sc_web", b: ["We get website visitors", "But nobody converts or fills out the form"], s: 3, why: "A fast, mobile-first site and landing pages built to turn visits into enquiries." },
-  { img: "sc_return", b: ["We spend everything getting new customers", "But very few of them come back"], s: 0, why: "Automated CRM and WhatsApp nurturing, plus loyalty, that brings buyers back." },
-  { img: "sc_legit", b: ["We're launching a new brand", "Competitors look way more legit than us"], s: 2, why: "A brand identity and content that make you look like the leader from day one." }];
-{ const tr = $("#strack"), dots = $("#sdots"), car = $("#scar"); if (tr) {
-  tr.innerHTML = SL.map((s, i) => `<div class="sl" role="group" aria-roledescription="slide" aria-label="${i + 1} of ${SL.length}"><img src="assets6/${s.img}.webp" alt="" ${i ? 'loading="lazy"' : ""} draggable="false">
-    <div class="bubs"><span class="q"><span>How can we help you?</span></span>${s.b.map((t) => `<button type="button" class="a"><span>${t}</span></button>`).join("")}</div>
-    <div class="ans" aria-live="polite"><small>That's a job for</small><b>${SVC[s.s].n}</b><p>${s.why}</p><div class="acts"><a class="btn ink sm" href="#connect" data-ask="${s.b.join(". ")}">Talk about this${AR}</a><button type="button" class="btn ln sm" data-svc="${s.s}">See the service</button><button type="button" class="btn ln sm" data-back>Back</button></div></div></div>`).join("");
-  dots.innerHTML = SL.map((_, i) => `<button type="button" aria-label="Headache ${i + 1}"></button>`).join("");
-  const sl = $$(".sl", tr), db = $$("button", dots); let cur = -1, tm = null, inView = false, hold = false;
-  const go = (i) => { i = (i + SL.length) % SL.length; if (i === cur) return; sl.forEach((s, j) => { s.classList.toggle("on", j === i); s.classList.remove("aq"); s.inert = j !== i; }); db.forEach((d, j) => d.setAttribute("aria-current", String(j === i))); cur = i; };
-  const tick = () => { clearInterval(tm); tm = null; if (inView && !hold && !RM) tm = setInterval(() => go(cur + 1), 5200); };
-  // a bubble whose line wraps hugs its longest line instead of stretching to the full width
-  const hug = () => $$(".bubs > *", tr).forEach((el) => { el.style.width = ""; const cs = getComputedStyle(el), w = el.firstElementChild.getBoundingClientRect().width; if (w) el.style.width = Math.ceil(w + parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight) + 1) + "px"; });
-  hug(); addEventListener("resize", hug); if (document.fonts && document.fonts.ready) document.fonts.ready.then(hug);
-  go(0); watch(car, (on) => { inView = on; tick(); });
-  car.addEventListener("pointerenter", (e) => { if (e.pointerType === "mouse") { hold = true; tick(); } }); car.addEventListener("pointerleave", () => { hold = !!$(".sl.aq", tr); tick(); });
-  car.addEventListener("focusin", () => { hold = true; tick(); });
-  $$(".arw", car).forEach((b) => b.addEventListener("click", () => { go(cur + +b.dataset.d); tick(); })); db.forEach((d, i) => d.addEventListener("click", () => { go(i); tick(); }));
-  let sx = null; tr.addEventListener("pointerdown", (e) => { sx = e.clientX; }); tr.addEventListener("pointerup", (e) => { if (sx !== null && Math.abs(e.clientX - sx) > 44) { go(cur + (e.clientX < sx ? 1 : -1)); tick(); } sx = null; });
-  sl.forEach((s) => { $$(".a", s).forEach((a) => a.addEventListener("click", () => { s.classList.add("aq"); hold = true; tick(); }));
-    $("[data-back]", s).addEventListener("click", () => { s.classList.remove("aq"); hold = false; tick(); });
-    $("[data-ask]", s).addEventListener("click", (e) => { const inp = $("#askin"); if (inp && !inp.value) inp.value = e.currentTarget.dataset.ask; });
-    $("[data-svc]", s).addEventListener("click", (e) => openSvc(+e.currentTarget.dataset.svc, true, true)); });
-  window.R13.chat = { go, get cur() { return cur; }, get playing() { return !!tm; } }; } }
+// ---- headache match (revamped 23 Nov, David: "this section sucks bro. revamp it"): one dark panel. Pick the headache on the left;
+//      on the right it plays out as a chat: your line, Battle typing, then the service that fixes it with one result, and the character for that service steps up.
+//      The red bar under the active line is the autoplay clock: when it fills, the next headache plays. It pauses on hover, on focus and off screen. Nothing fades in: bubbles pop, characters rise.
+const DG = [
+  { t: "No walk-ins", q: "We have no walk-in traffic, and there's a lot of new competition in the area.", s: 1, why: "Location-targeted Meta and Google ads that bring people through the door, measured in walk-ins, not likes." },
+  { t: "Dry social media", q: "Our social media is dry, our ads look like generic AI graphics, and people scroll past us.", s: 2, why: "Thumb-stopping content and UGC campaigns that people actually stop for." },
+  { t: "Visitors, no enquiries", q: "We get website visitors, but nobody converts or fills out the form.", s: 3, why: "A fast, mobile-first site and landing pages built to turn visits into enquiries." },
+  { t: "Customers don't come back", q: "We spend everything getting new customers, but very few of them come back.", s: 0, why: "Automated CRM and WhatsApp nurturing, plus loyalty, that brings buyers back." },
+  { t: "New brand, no trust yet", q: "We're launching a new brand, and competitors look way more legit than us.", s: 2, why: "A brand identity and content that make you look like the leader from day one." }];
+{ const pn = $("#dgp"); if (pn) {
+  pn.innerHTML = `<div class="dgl" role="group" aria-label="Common marketing headaches"><p class="dgk">What's your headache?</p>${DG.map((d, i) => `<button type="button" class="dgr" aria-pressed="false"><i>0${i + 1}</i><span>${d.t}</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M8.5 3.5 13 8l-4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>`).join("")}</div>
+    <div class="dgs"><div class="dgch" aria-hidden="true">${SVC.map((s) => `<img src="${CH(s.k)}" alt="" loading="lazy" draggable="false">`).join("")}</div>
+    <div class="dgc" aria-live="polite"><div class="dgb bt"><span>How can we help you?</span></div><div class="dgb me" id="dgq"><span></span></div>
+      <div class="dgre"><div class="dgb bt ty" id="dgty" aria-hidden="true"><i></i><i></i><i></i></div><div class="dgb bt rp" id="dga"><small>That's a job for</small><b></b><p></p><div class="dgst"><b></b><span></span></div></div></div>
+      <div class="dgx" id="dgx"><button type="button" class="btn sm" id="dgsvc">See the service${AR}</button><a class="btn sm gh" href="#connect" id="dgask">Talk about this</a></div></div></div>`;
+  const rows = $$(".dgr", pn), chs = $$(".dgch img", pn), q = $("#dgq"), ty = $("#dgty"), a = $("#dga"), ax = $("#dgx"), dots = $$("i", ty); let cur = -1, tl = null, inView = false, hold = false;
+  const fill = (i) => { const d = DG[i], sv = SVC[d.s]; $("span", q).textContent = d.q; $("b", a).textContent = sv.n; $("p", a).textContent = d.why; $(".dgst b", a).textContent = sv.st[0]; $(".dgst span", a).textContent = sv.st[1]; };
+  const clock = () => pn.classList.toggle("run", inView && !hold && !RM);
+  function go(i) { i = (i + DG.length) % DG.length; if (i === cur) return; if (tl) tl.progress(1); const from = cur < 0 ? -1 : DG[cur].s, to = DG[i].s; cur = i;
+    rows.forEach((r, j) => { r.setAttribute("aria-pressed", String(j === i)); r.classList.remove("on"); }); void pn.offsetWidth; rows[i].classList.add("on");   // restarts the clock bar
+    if (!G) { fill(i); chs.forEach((c, j) => c.classList.toggle("on", j === to)); return; }
+    tl = gsap.timeline({ onComplete: () => { tl = null; } });
+    tl.to([ax, a, q], { scale: 0, duration: .16, ease: "power2.in", stagger: .03 }, 0).add(() => fill(i), .26)
+      .fromTo(q, { scale: 0 }, { scale: 1, duration: .42, ease: "back.out(1.6)" }, .28).fromTo(ty, { scale: 0 }, { scale: 1, duration: .24, ease: "back.out(2)" }, .6).to(ty, { scale: 0, duration: .14, ease: "power2.in" }, 1.06).fromTo(dots, { y: 0 }, { y: -4, duration: .15, stagger: .09, yoyo: true, repeat: 1, ease: "sine.inOut" }, .7)
+      .fromTo(a, { scale: 0 }, { scale: 1, duration: .5, ease: "back.out(1.4)" }, 1.18).fromTo(ax, { scale: 0 }, { scale: 1, duration: .4, ease: "back.out(1.6)" }, 1.38);
+    if (from !== to) { if (from >= 0) tl.to(chs[from], { yPercent: 106, duration: .34, ease: "power2.in" }, 0); tl.fromTo(chs[to], { yPercent: 106 }, { yPercent: 0, duration: .8, ease: "back.out(1.3)" }, from >= 0 ? .36 : .1); } }
+  if (G) { gsap.set(chs, { yPercent: 106, visibility: "visible" }); gsap.set([q, a, ax, ty], { scale: 0 }); }
+  rows.forEach((r, i) => { r.addEventListener("click", () => go(i)); r.addEventListener("animationend", (e) => { if (e.target === r && i === cur) go(cur + 1); }); });
+  pn.addEventListener("pointerenter", (e) => { if (e.pointerType === "mouse") { hold = true; clock(); } }); pn.addEventListener("pointerleave", () => { hold = false; clock(); });
+  pn.addEventListener("focusin", () => { hold = true; clock(); }); pn.addEventListener("focusout", () => { if (!pn.matches(":hover")) { hold = false; clock(); } });
+  $("#dgsvc").addEventListener("click", () => openSvc(DG[cur].s, true, true));
+  $("#dgask").addEventListener("click", () => { const inp = $("#askin"); if (inp && !inp.value) inp.value = DG[cur].q; });
+  let seen = false; watch(pn, (on) => { inView = on; if (on && !seen) { seen = true; go(0); } clock(); }, .3);   // the first one plays when the panel is first seen
+  if (!G) { seen = true; go(0); }
+  window.R13.chat = { go, get cur() { return cur; }, get playing() { return pn.classList.contains("run"); }, get busy() { return !!tl; } }; } }
 
 // ---- impact: count up once, cards rise in ----
 $$("#icards [data-to]").forEach((v, i) => { if (!G) return; const to = +v.dataset.to, o = { n: 0 }; v.textContent = "0";

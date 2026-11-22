@@ -602,3 +602,54 @@ html:not([data-hero="1"]) .ring,html:not([data-hero="1"]) .ppl,html:not([data-he
   [data-hero="7"] .hfilm{height:calc(124vw*9/16);max-height:none}
   .hfilm video{translate:2.3% 0}
 }
+
+/* ============ headache match, revamped (David 23 Nov): one dark panel. The headaches on the left; on the right the chat plays out and the character for the answer steps up ============ */
+.dg{background:var(--paper);padding:clamp(60px,7vw,116px) 0}
+.dgp{position:relative;isolation:isolate;overflow:hidden;margin-top:clamp(26px,3.2vw,48px);border-radius:clamp(26px,2.8vw,40px);color:#fff;display:grid;grid-template-columns:minmax(0,40fr) minmax(0,60fr);min-height:clamp(540px,68vh,640px);
+  background:radial-gradient(58% 86% at 100% 100%,rgba(215,0,15,.62),rgba(215,0,15,0) 72%),radial-gradient(46% 60% at 0% 0%,rgba(215,0,15,.2),rgba(215,0,15,0) 70%),#101114}
+.dgl{position:relative;z-index:2;display:flex;flex-direction:column;padding:clamp(24px,2.8vw,42px) 0 clamp(18px,2vw,30px) clamp(22px,3vw,46px)}
+.dgk{margin:0 0 4px;font:600 12.5px/1 var(--t);letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.56)}
+.dgr{all:unset;box-sizing:border-box;position:relative;flex:1;display:flex;align-items:center;gap:16px;cursor:pointer;padding:0 14px 0 2px;border-bottom:1px solid rgba(255,255,255,.13);color:rgba(255,255,255,.5);transition:color .3s,padding .45s var(--ease);-webkit-tap-highlight-color:transparent}
+.dgr i{flex:none;width:26px;font:700 14px/1 var(--c);font-style:normal;letter-spacing:.04em;color:var(--hot)}
+.dgr span{flex:1;font:600 clamp(19px,1.95vw,28px)/1.12 var(--t);letter-spacing:-.03em}
+.dgr svg{flex:none;width:18px;height:18px;transform:translateX(-10px) scale(0);transition:transform .4s var(--ease)}
+.dgr[aria-pressed=true]{color:#fff;padding-left:12px}.dgr[aria-pressed=true] svg{transform:none}
+@media (hover:hover){.dgr:hover{color:#fff}}
+.dgr:focus-visible{outline:2px solid #fff;outline-offset:-3px;border-radius:10px}
+/* the autoplay clock: it only runs while the panel is on screen and nobody is hovering or focused in it */
+.dgr::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--hot);transform:scaleX(0);transform-origin:0 50%}
+.dgr.on::after{animation:dgclk 6.4s linear forwards;animation-play-state:paused}.dgp.run .dgr.on::after{animation-play-state:running}
+@keyframes dgclk{to{transform:scaleX(1)}}
+.dgs{position:relative;z-index:1;min-width:0}
+.dgch{position:absolute;right:clamp(6px,2.2vw,38px);top:7%;bottom:0;width:44%;overflow:hidden;pointer-events:none}
+.dgch img{position:absolute;left:0;right:0;bottom:0;margin:0 auto;width:auto;height:auto;max-width:100%;max-height:100%;visibility:hidden;user-select:none;-webkit-user-drag:none}
+.dgch img.on{visibility:visible}
+.dgc{position:absolute;z-index:2;left:clamp(18px,3.2vw,52px);top:0;bottom:0;width:min(60%,440px);display:flex;flex-direction:column;justify-content:center;gap:12px}
+.dgb{box-sizing:border-box;max-width:100%;padding:13px 18px;border-radius:22px;font:500 15.5px/1.4 var(--t);will-change:transform;box-shadow:0 18px 34px -20px rgba(0,0,0,.7)}
+.dgb.bt{align-self:flex-start;background:#fff;color:var(--ink);border-bottom-left-radius:6px;transform-origin:0 100%}
+.dgc>.dgb.bt:first-child{font-weight:700;color:var(--red)}
+.dgb.me{align-self:flex-end;max-width:92%;background:var(--red);color:#fff;font-weight:600;border-bottom-right-radius:6px;transform-origin:100% 100%}
+.dgre{display:grid;grid-template-columns:minmax(0,1fr);justify-items:start;align-items:start;flex:none}.dgre>*{grid-area:1/1}.dgc>*{flex:none}
+.dgb.ty{display:flex;gap:5px;padding:17px 18px}.dgb.ty i{width:7px;height:7px;border-radius:50%;background:#A9ACB3}
+.dgb.rp{padding:17px 19px 15px}
+.dgb.rp small{display:block;font:600 11.5px/1 var(--t);letter-spacing:.1em;text-transform:uppercase;color:var(--grey)}
+.dgb.rp>b{display:block;margin-top:7px;font:700 clamp(21px,1.9vw,27px)/1.05 var(--t);letter-spacing:-.03em;color:var(--red)}
+.dgb.rp p{margin:8px 0 0;font-size:14.5px;line-height:1.42;color:#3A3C42}
+.dgst{display:flex;align-items:baseline;gap:9px;margin-top:12px;padding-top:11px;border-top:1px solid rgba(14,15,18,.1)}
+.dgst b{font:700 27px/.9 var(--c);color:var(--ink)}.dgst span{font:500 12.5px/1.2 var(--t);color:var(--grey)}
+.dgx{display:flex;gap:8px;flex-wrap:wrap;margin-top:2px;transform-origin:0 0}
+.dgx .btn.gh{padding:0 20px;background:none;color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.42)}.dgx .btn.gh:hover{background:rgba(255,255,255,.12)}
+.dgf{margin-top:clamp(22px,2.4vw,34px);display:flex;align-items:center;justify-content:space-between;gap:14px 30px;flex-wrap:wrap;font-weight:500}
+@media (prefers-reduced-motion:reduce){.dgr.on::after{animation:none;transform:scaleX(1)}.dgr,.dgr svg{transition:none}}
+@media (max-width:900px){
+  .dg{padding:54px 0 58px}
+  .dgp{grid-template-columns:1fr;min-height:0;border-radius:26px;margin-top:22px}
+  .dgl{padding:20px 16px 4px 16px}.dgr{flex:none;min-height:48px;gap:10px;padding-right:6px}.dgr i{width:22px;font-size:13px}.dgr span{font-size:17.5px}.dgr[aria-pressed=true]{padding-left:8px}
+  .dgs{height:536px}
+  .dgch{top:8px;right:10px;bottom:auto;width:92px;height:116px}
+  .dgc{left:14px;right:14px;width:auto;top:74px;bottom:auto;justify-content:flex-start;gap:9px}
+  .dgb{font-size:14.5px;padding:11px 15px;border-radius:19px}.dgb.me{max-width:88%}.dgb.rp{padding:14px 15px 13px}.dgb.rp>b{font-size:21px}.dgb.rp p{font-size:14px}.dgst b{font-size:24px}
+  .dgx .btn{height:44px;font-size:14px}.dgx .btn .ar{width:32px;height:32px}.dgx .btn.gh{padding:0 16px}
+  .dgf{flex-direction:column;align-items:flex-start}
+}
+@media (max-width:374px){.dgs{height:566px}}
