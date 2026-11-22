@@ -44,10 +44,32 @@ if (HV !== "1") { const hero = $("#hero");
     line.innerHTML = [["perf", "Performance"], ["ads", "Advertising"], ["video", "Creative"], ["web", "Web & App"]].map(([k, t], i) => `<button type="button" class="hc" data-i="${i}" aria-label="${t}: see the service"><img src="${CH(k)}" alt="" draggable="false"><span>${t}</span></button>`).join("");
     $$(".hc", line).forEach((b) => b.addEventListener("click", () => openSvc(+b.dataset.i, true, true))); }
   $$(".h1 .rz").forEach((el, i) => setTimeout(() => el.classList.add("in"), G ? 250 + i * 220 : 0));
-  if (G) { gsap.from(".hero .lead, .hero .ctas, .hproof li", { y: 18, opacity: 0, duration: .8, stagger: .1, delay: .8, ease: "power3.out" });
-    if (HV === "2") gsap.from(".hteam img", { yPercent: 7, opacity: 0, duration: 1.3, delay: .25, ease: "power3.out" });
-    if (HV === "3") { gsap.from(".hsplit figure", { y: 60, opacity: 0, duration: 1.2, delay: .25, ease: "power3.out" }); gsap.from(".hg", { scale: .7, opacity: 0, duration: .7, stagger: .16, delay: 1, ease: "back.out(1.7)" }); }
-    if (HV === "4") gsap.from(".hc", { y: 90, opacity: 0, duration: .9, stagger: .09, delay: .4, ease: "back.out(1.5)" }); } }
+  if (G) { const E = "power3.out";
+    gsap.from(".hero .lead, .hero .ctas, .hproof li", { y: 18, opacity: 0, duration: .8, stagger: .1, delay: .8, ease: E });
+    if (HV === "2") gsap.from(".hteam img", { yPercent: 6, scale: 1.12, opacity: 0, duration: 1.8, delay: .2, ease: E, transformOrigin: "50% 100%" });   // the camera settles
+    if (HV === "3") { gsap.from(".hsplit figure", { y: 60, opacity: 0, duration: 1.2, delay: .25, ease: E }); gsap.from(".hg", { scale: .7, opacity: 0, duration: .7, stagger: .16, delay: 1, ease: "back.out(1.7)" }); }
+    if (HV === "4") gsap.from(".hc", { y: 90, opacity: 0, duration: .9, stagger: .09, delay: .4, ease: "back.out(1.5)" });
+    // ---- depth: a light that follows the cursor, layers that move at different speeds, a zoom as you scroll away, dust in the air.
+    //      Transforms and opacity only, on wrappers GSAP does not tween, and only while the banner is on screen.
+    const neon = $("#neon"), copy = $(".hcopy"), vis = HV === "2" ? $(".hteam") : HV === "3" ? $(".hsplit") : null, chars = $$(".hc", hero);
+    const glow = document.createElement("i"); glow.className = "hglow"; $(".hbg").appendChild(glow);
+    const dust = document.createElement("div"); dust.className = "hdust"; dust.setAttribute("aria-hidden", "true");
+    dust.innerHTML = Array.from({ length: 18 }, (_, i) => `<i style="left:${(rnd(i) * 100).toFixed(1)}%;top:${(25 + rnd(i + 9) * 70).toFixed(1)}%;--s:${(.5 + rnd(i + 3) * 1.5).toFixed(2)};--d:${(9 + rnd(i + 5) * 10).toFixed(1)}s;--dl:${(-rnd(i + 7) * 14).toFixed(1)}s"></i>`).join(""); hero.appendChild(dust);
+    let tx = 0, ty = 0, px = 0, py = 0, gx = hero.clientWidth / 2, gy = hero.clientHeight * .4, sgx = gx, sgy = gy, sc = 0, on = false; const intro = { k: 0 }, t0 = performance.now();
+    gsap.to(intro, { k: 1, duration: 1.7, ease: E, delay: .1 }); gsap.fromTo(neon, { opacity: 0 }, { opacity: 1, duration: 1.2 });
+    if (matchMedia("(pointer:fine)").matches) { hero.addEventListener("pointermove", (e) => { const r = hero.getBoundingClientRect(); tx = (e.clientX - r.left) / r.width * 2 - 1; ty = (e.clientY - r.top) / r.height * 2 - 1; gx = e.clientX - r.left; gy = e.clientY - r.top; glow.style.opacity = 1; });
+      hero.addEventListener("pointerleave", () => { tx = ty = 0; glow.style.opacity = 0; }); }
+    ScrollTrigger.create({ trigger: hero, start: "top top", end: "bottom top", onUpdate: (s) => { sc = s.progress; } });
+    const frame = () => { if (!on) return; const T = (performance.now() - t0) / 1000; px += (tx - px) * .06; py += (ty - py) * .06; sgx += (gx - sgx) * .1; sgy += (gy - sgy) * .1;
+      const k = (.72 + .28 * intro.k) * (1 + Math.sin(T * .9) * .012) * (1 + sc * .3);
+      neon.style.transform = `translate(-50%,-50%) translate3d(${(-px * 20).toFixed(1)}px,${(-py * 14 + sc * 40).toFixed(1)}px,0)${HV === "5" ? ` perspective(1100px) rotateX(${(-py * 9).toFixed(2)}deg) rotateY(${(px * 11).toFixed(2)}deg)` : ""} scale(${k.toFixed(4)})`;
+      copy.style.transform = `translate3d(${(px * 12).toFixed(1)}px,${(py * 8 - sc * 110).toFixed(1)}px,0)`; copy.style.opacity = Math.max(0, 1 - sc * 1.7).toFixed(3);
+      glow.style.transform = `translate3d(${sgx.toFixed(0)}px,${sgy.toFixed(0)}px,0)`;
+      if (HV === "2") vis.style.transform = `translate3d(${(px * -26).toFixed(1)}px,${(py * -10).toFixed(1)}px,0) scale(${(1.03 + sc * .14).toFixed(4)})`;
+      if (HV === "3") vis.style.transform = `perspective(1300px) translate3d(${(px * -16).toFixed(1)}px,${(py * -10 - sc * 50).toFixed(1)}px,0) rotateY(${(px * -8).toFixed(2)}deg) rotateX(${(py * 5).toFixed(2)}deg)`;
+      if (HV === "4") chars.forEach((c, i) => { const lean = px - (i - 1.5) / 3; c.style.setProperty("--lx", (lean * 10).toFixed(1)); c.style.setProperty("--ly", (Math.sin(T * 1.6 + i * 1.3) * 5 - sc * 30 * (1 + i % 2)).toFixed(1)); c.style.setProperty("--lr", (lean * 7).toFixed(2)); });
+      requestAnimationFrame(frame); };
+    new IntersectionObserver((e) => { const v = e[0].isIntersecting; hero.classList.toggle("live", v); if (v && !on) { on = true; frame(); } else if (!v) on = false; }).observe(hero); } }
 
 // ---- hero 1: the pieces ride a neon ring around the headline; the four service characters are the big ones ----
 if (HV === "1") { const hero = $("#hero"), ring = $("#ring"), neon = $("#neon");
@@ -172,12 +194,17 @@ const viz = (k, i) => k === "bars" ? `<div class="bars">${[0, 1, 2, 3, 4, 5].map
   const cards = []; DC.forEach(([b, s, v, c], i) => { const el = document.createElement("div"); el.className = "dc " + c; el.innerHTML = `<small>${s}</small><b>${b}</b>${v ? `<div class="vz">${viz(v, i)}</div>` : ""}`; sw.appendChild(el); cards.push({ el });
     if (EM[i]) { const im = document.createElement("img"); im.className = "em"; im.src = EM[i]; im.alt = ""; im.draggable = false; sw.appendChild(im); cards.push({ el: im, em: true }); } });
   cards.forEach((c, i) => Object.assign(c, { i, a0: rnd(i + 3) * 6.28, rr: c.em ? .72 : .86 + rnd(i + 5) * .3, rot: (rnd(i + 8) - .5) * 14 }));
-  ft.innerHTML = `<div class="fc"><small></small><b></b><p></p><div class="vz"></div></div><i class="fline" aria-hidden="true"></i><div class="ft"><span class="n"></span><h3></h3><p></p></div>`;
+  // the three findings are a real deck of three cards: the front one tucks behind, the next comes forward
+  ft.innerHTML = `<div class="fdeck">${MV.map((m, i) => `<div class="fc"><small>${m.l}</small><b>${m.b}</b><p>${m.s}</p><div class="vz">${viz(m.vz, i + 20)}</div></div>`).join("")}</div><i class="fline" aria-hidden="true"></i><div class="ft"><span class="n"></span><h3></h3><p></p></div>`;
   dots.innerHTML = MV.map((_, i) => `<button type="button" aria-label="Finding ${i + 1}"></button>`).join("");
-  const fc = $(".fc", ft), fx = $(".ft", ft), fl = $(".fline", ft), db = $$("button", dots); let cur = 0, st = { k: RM || !G ? 2 : 0, spin: 0 }, played = false, tm = null, inView = false, hold = false;
+  const fc = $(".fdeck", ft), fcs = $$(".fc", ft), NF = MV.length, fx = $(".ft", ft), fl = $(".fline", ft), db = $$("button", dots); let cur = 0, st = { k: RM || !G ? 2 : 0, spin: 0 }, played = false, tm = null, inView = false, hold = false, swap = null;
   if (st.k === 2) stage.style.setProperty("--tp", 1);
-  const fill = (i) => { const m = MV[i]; $("small", fc).textContent = m.l; $("b", fc).textContent = m.b; $("p", fc).textContent = m.s; $(".vz", fc).innerHTML = viz(m.vz, i + 20);
+  const POS = [{ x: 0, y: 0, rotation: 0, scale: 1, filter: "brightness(1)" }, { x: 24, y: 16, rotation: 5, scale: .95, filter: "brightness(.84)" }, { x: -22, y: 26, rotation: -6, scale: .9, filter: "brightness(.7)" }];
+  const slot = (i) => (i - cur + NF) % NF;
+  const rest = () => fcs.forEach((el, i) => { const s = slot(i), p = POS[s]; if (G) gsap.set(el, { ...p, xPercent: 0, zIndex: NF - s }); else { el.style.zIndex = NF - s; el.style.transform = `translate(${p.x}px,${p.y}px) rotate(${p.rotation}deg) scale(${p.scale})`; el.style.filter = p.filter; } el.setAttribute("aria-hidden", String(s !== 0)); });
+  const fill = (i) => { const m = MV[i];
     $(".n", fx).textContent = `Move ${i + 1} of 3`; $("h3", fx).textContent = m.h; $("p", fx).textContent = m.p; db.forEach((d, j) => d.setAttribute("aria-current", String(j === i))); };
+  rest();
   const place = () => { const W = stage.clientWidth, H = stage.clientHeight, ph = PHONE(), sb = stage.getBoundingClientRect(), fr = fc.getBoundingClientRect();
     const scx = fr.left - sb.left + fr.width / 2, scy = fr.top - sb.top + fr.height / 2, cx = W / 2, cy = H / 2, Rx = ph ? W * .47 : Math.min(W * .41, 540), Ry = ph ? H * .36 : Math.min(H * .34, 250), R0 = Math.max(W, H) * 1.1;
     const e = (t) => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2, k = st.k, N = cards.length;
@@ -186,17 +213,29 @@ const viz = (k, i) => k === "bars" ? `<div class="bars">${[0, 1, 2, 3, 4, 5].map
       let x, y, r, s; if (k <= 1) { const t = e(k); x = sx + (ringX - sx) * t; y = sy + (ringY - sy) * t; r = c.rot * 6 * (1 - t) + ringR * t; s = 1; }
       else { const t = e(Math.min(1, k - 1)); x = ringX + (stkX - ringX) * t; y = ringY + (stkY - ringY) * t; r = ringR + (c.rot - ringR) * t; s = c.em ? 1 - t : 1 + (fr.width / cw * .92 - 1) * t; }
       c.el.style.transform = `translate(${(x - cw / 2).toFixed(1)}px,${(y - chh / 2).toFixed(1)}px) rotate(${r.toFixed(1)}deg) scale(${s.toFixed(3)})`; } };
-  const show = (i, first) => { cur = (i + MV.length) % MV.length; if (!G) { fill(cur); fc.style.opacity = fx.style.opacity = fl.style.opacity = 1; return; }
-    if (first) { fill(cur); gsap.fromTo(fc, { opacity: 0, y: 30, scale: .9 }, { opacity: 1, y: 0, scale: 1, duration: .6, ease: "back.out(1.6)" }); gsap.fromTo(fl, { opacity: 0, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: .5, delay: .2, ease: "power3.out" }); gsap.fromTo(fx, { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: .7, delay: .3, ease: "power3.out" }); return; }
-    gsap.timeline().to(fc, { x: 140, y: -40, rotation: 12, opacity: 0, duration: .4, ease: "power2.in" }).to(fx, { opacity: 0, x: -20, duration: .3 }, 0).to(fl, { scaleX: 0, duration: .3 }, 0)
-      .add(() => fill(cur)).fromTo(fc, { x: -30, y: 30, rotation: -6, opacity: 0 }, { x: 0, y: 0, rotation: 0, opacity: 1, duration: .55, ease: "back.out(1.5)" }).to(fl, { scaleX: 1, duration: .4, ease: "power3.out" }, "-=.3").fromTo(fx, { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: .6, ease: "power3.out" }, "-=.35"); };
+  const show = (i, first) => { const to = (i + NF) % NF;
+    if (!G) { cur = to; rest(); fill(cur); sw.style.opacity = 0; fc.style.opacity = fx.style.opacity = fl.style.opacity = 1; return; }
+    if (first) { cur = to; rest(); fill(cur); gsap.to(sw, { opacity: 0, duration: .5, delay: .15 }); gsap.fromTo(fc, { opacity: 0, scale: .92 }, { opacity: 1, scale: 1, duration: .55, ease: "power3.out" }); gsap.fromTo(fl, { opacity: 0, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: .5, delay: .2, ease: "power3.out" }); gsap.fromTo(fx, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: .6, delay: .3, ease: "power3.out" }); return; }
+    if (to === cur) return;
+    if (swap) swap.progress(1);   // a fast second click finishes the first move cleanly instead of fighting it
+    const fwd = (to - cur + NF) % NF === 1, front = fcs[cur], back = fcs[fwd ? (cur + 2) % NF : (cur + 1) % NF], mover = fwd ? front : fcs[to]; cur = to;
+    swap = gsap.timeline({ defaults: { ease: "power3.out" }, onComplete: () => { rest(); swap = null; } });
+    // the words: out upwards, back in from below, with the line drawing again
+    swap.to(fx, { opacity: 0, y: -12, duration: .2, ease: "power2.in" }, 0).to(fl, { scaleX: 0, duration: .2, ease: "power2.in" }, 0)
+      .add(() => fill(cur), .22).fromTo(fx, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: .5 }, .26).to(fl, { scaleX: 1, duration: .45 }, .26);
+    // the deck: one card slides out to the side, changes its place in the pile, and slides back in
+    swap.to(mover, { xPercent: -62, y: 14, rotation: -11, scale: .94, duration: .3, ease: "power2.out" }, 0)
+      .set(mover, { zIndex: fwd ? 0 : NF + 1 }, .3)
+      .to(mover, { xPercent: 0, ...POS[fwd ? 2 : 0], duration: .46 }, .3);
+    fcs.forEach((el, j) => { if (el === mover) return; const s = slot(j); swap.to(el, { ...POS[s], duration: .56 }, .06).set(el, { zIndex: NF - s }, fwd ? .06 : .3); });
+    void back; };
   const tick = () => { clearInterval(tm); tm = null; if (played && inView && !hold && !RM) tm = setInterval(() => show(cur + 1), 4200); };
   place(); addEventListener("resize", place); if (document.fonts && document.fonts.ready) document.fonts.ready.then(place);
   const play = () => { if (played) return; played = true;
     if (!G) { st.k = 2; place(); show(0, true); tick(); return; }
     const tl = gsap.timeline({ onUpdate: place, onComplete: () => { show(0, true); tick(); } });
     tl.to(st, { k: 1, duration: 1.5, ease: "none" }).to(st, { spin: Math.PI * .9, duration: 2.8, ease: "power1.inOut" }, 0).to(st, { k: 2, duration: 1, ease: "none" }, 2.3).to(stage, { "--tp": 1, duration: 1, ease: "power3.inOut" }, 2.2); };
-  if (!G) { fill(0); fc.style.opacity = fx.style.opacity = fl.style.opacity = 1; }
+  if (!G) { fill(0); sw.style.opacity = 0; fc.style.opacity = fx.style.opacity = fl.style.opacity = 1; }
   watch(stage, (on) => { inView = on; if (on) play(); tick(); }, .3);
   stage.addEventListener("pointerenter", (e) => { if (e.pointerType === "mouse") { hold = true; tick(); } }); stage.addEventListener("pointerleave", () => { hold = false; tick(); });
   $$(".arw", stage).forEach((b) => b.addEventListener("click", () => { if (!played) play(); else show(cur + +b.dataset.d); tick(); }));

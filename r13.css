@@ -238,7 +238,8 @@ body.lock{overflow:hidden}
 .vz svg{width:100%;height:100%;overflow:visible}
 .em{position:absolute;left:0;top:0;width:clamp(58px,6vw,96px);height:auto;will-change:transform;filter:drop-shadow(0 20px 18px rgba(30,0,3,.5))}
 .feat{position:absolute;inset:0;z-index:3;display:flex;align-items:center;justify-content:center;padding:20px 0 40px;pointer-events:none}
-.fc{position:relative;flex:none;width:clamp(264px,25vw,350px);aspect-ratio:1/1;border-radius:32px;background:#fff;color:var(--ink);padding:clamp(22px,2.2vw,30px);box-shadow:0 54px 80px -34px rgba(20,0,2,.8);opacity:0}
+.fdeck{position:relative;flex:none;width:clamp(264px,25vw,350px);aspect-ratio:1/1;opacity:0}
+.fc{position:absolute;inset:0;border-radius:32px;background:#fff;color:var(--ink);padding:clamp(22px,2.2vw,30px);box-shadow:0 40px 60px -30px rgba(20,0,2,.75);will-change:transform}
 .fc small{display:block;font:700 11.5px/1 var(--t);letter-spacing:.1em;text-transform:uppercase;color:var(--grey)}
 .fc b{display:block;margin-top:12px;font:700 clamp(88px,9vw,138px)/.8 var(--c);color:var(--red)}
 .fc p{margin-top:14px;max-width:18ch;font-size:15px;line-height:1.35;font-weight:500}
@@ -401,7 +402,7 @@ body.lock{overflow:hidden}
   .antt{max-width:226px;font-size:clamp(27px,7.6vw,32px)}
   .dc{width:96px;border-radius:18px;padding:11px 12px}.dc b{font-size:19px}.dc small{font-size:8px}.dc .vz{left:12px;right:12px;bottom:11px}.em{width:52px}
   .feat{flex-direction:column;justify-content:flex-start;gap:20px;padding-top:64px}
-  .fc{width:min(72vw,270px);border-radius:26px;padding:20px}.fc b{font-size:84px}.fc p{font-size:14px;margin-top:10px}
+  .fdeck{width:min(72vw,270px)}.fc{border-radius:26px;padding:20px}.fc b{font-size:84px}.fc p{font-size:14px;margin-top:10px}
   .fline{display:none}.ft{width:auto;padding:0 26px;text-align:center}.ft .n{margin-bottom:6px}.ft h3{font-size:26px}.ft p{font-size:14.5px;margin-top:8px}
   /* wins */
   .cs{padding:40px 0 calc(48px + var(--sr))}.ghost{font-size:16.2vw}.cs .wrap{margin-top:-8px}
@@ -465,10 +466,19 @@ html:not([data-hero="1"]) .ring,html:not([data-hero="1"]) .ppl,html:not([data-he
 [data-hero="3"] .hsplit{display:block;position:absolute;z-index:4;right:max(var(--gut),calc((100vw - 1320px)/2 + var(--gut)));top:136px;bottom:8%;width:min(36vw,480px)}
 .hsplit figure{position:absolute;inset:0;border-radius:36px;overflow:hidden;box-shadow:0 50px 80px -40px rgba(40,0,4,.85)}
 .hsplit img{width:100%;height:100%;object-fit:cover;object-position:50% 22%}
-.hg{position:absolute;z-index:2;display:grid;gap:5px;padding:16px 20px;border-radius:22px;background:#fff;color:var(--ink);box-shadow:0 30px 50px -24px rgba(30,0,3,.7)}
+[data-hero="3"] .hsplit{transform-style:preserve-3d}
+.hgw{position:absolute;z-index:2;transform:translateZ(80px)}
+.hg{display:grid;gap:5px;padding:16px 20px;border-radius:22px;background:#fff;color:var(--ink);box-shadow:0 30px 50px -24px rgba(30,0,3,.7)}
 .hg b{font:700 clamp(38px,3.6vw,54px)/.86 var(--c);color:var(--red)}
 .hg span{max-width:15ch;font:600 13.5px/1.25 var(--t)}
-.hg.g1{left:-24%;bottom:14%}.hg.g2{right:-7%;top:13%}
+.hgw.g1{left:-24%;bottom:14%}.hgw.g2{right:-7%;top:13%}
+/* depth layers shared by the hero versions: a light under the cursor, dust in the air (paused whenever the banner is off screen) */
+.hglow{position:absolute;left:0;top:0;width:70vmax;height:70vmax;margin:-35vmax 0 0 -35vmax;border-radius:50%;background:radial-gradient(closest-side,rgba(255,160,168,.42),rgba(255,80,95,.14) 55%,rgba(255,80,95,0));opacity:0;transition:opacity .7s;pointer-events:none;will-change:transform}
+.hdust{position:absolute;inset:0;z-index:5;overflow:hidden;pointer-events:none}
+.hdust i{position:absolute;width:calc(9px*var(--s));height:calc(9px*var(--s));border-radius:50%;background:rgba(255,236,238,.9);filter:blur(calc(1.6px*var(--s)));opacity:0;animation:dust var(--d) linear var(--dl) infinite;animation-play-state:paused}
+.hero.live .hdust i{animation-play-state:running}
+@keyframes dust{0%{transform:translate3d(0,50px,0);opacity:0}18%{opacity:.55}80%{opacity:.3}100%{transform:translate3d(36px,-240px,0);opacity:0}}
+.hteam{transform-origin:50% 100%}.hcopy,.hteam,.hsplit,.neon{will-change:transform}
 [data-hero="3"] .hfade{height:20%}
 
 /* 4 · line-up: the four services stand in a row; tap one to open it */
@@ -478,9 +488,10 @@ html:not([data-hero="1"]) .ring,html:not([data-hero="1"]) .ppl,html:not([data-he
 [data-hero="4"] .neon{width:150vw;height:150vw;top:calc(56% + 75vw)}
 [data-hero="4"] .hline{display:flex;justify-content:center;align-items:flex-end;gap:clamp(8px,4.6vw,84px);position:absolute;left:0;right:0;bottom:0;z-index:5;padding:0 var(--gut) clamp(20px,4.4vh,46px)}
 .hc{all:unset;box-sizing:border-box;cursor:pointer;display:grid;justify-items:center;gap:14px;-webkit-tap-highlight-color:transparent}
-.hc img{height:clamp(110px,27svh,260px);width:auto;max-width:none;filter:drop-shadow(0 26px 20px rgba(50,0,4,.42));transition:transform .5s var(--ease)}
+.hc img{height:clamp(110px,27svh,260px);width:auto;max-width:none;filter:drop-shadow(0 26px 20px rgba(50,0,4,.42));transform:translate(calc(var(--lx,0)*1px),calc(var(--ly,0)*1px - var(--hv,0)*14px)) rotate(calc(var(--lr,0)*1deg)) scale(calc(1 + var(--hv,0)*.06));transition:transform .28s ease-out}
+.hc:hover,.hc:focus-visible{--hv:1}
 .hc span{padding:10px 17px;border-radius:999px;background:#fff;color:var(--ink);font:700 13.5px/1 var(--t);white-space:nowrap;box-shadow:0 14px 26px -14px rgba(40,0,4,.55);transition:background .3s,color .3s}
-@media (hover:hover){.hc:hover img{transform:translateY(-12px) scale(1.05)}.hc:hover span{background:var(--ink);color:#fff}}
+@media (hover:hover){.hc:hover span{background:var(--ink);color:#fff}}
 .hc:focus-visible{outline:3px solid #fff;outline-offset:6px;border-radius:18px}
 [data-hero="4"] .hfade{height:26%}
 
@@ -506,7 +517,7 @@ html:not([data-hero="1"]) .ring,html:not([data-hero="1"]) .ppl,html:not([data-he
   [data-hero="3"] .hsplit{left:var(--gut);right:var(--gut);width:auto;top:auto;bottom:5%;height:33svh;max-height:270px}
   .hsplit figure{border-radius:24px}.hsplit img{object-position:50% 16%}
   .hg{padding:10px 13px;border-radius:16px}.hg b{font-size:30px}.hg span{font-size:11.5px;max-width:13ch}
-  .hg.g1{left:10px;bottom:10px}.hg.g2{right:10px;top:10px}
+  .hgw.g1{left:10px;bottom:10px}.hgw.g2{right:10px;top:10px}
   [data-hero="4"] .hcopy{top:33%}[data-hero="4"] .h1 .b{font-size:clamp(50px,14.4vw,72px)}
   [data-hero="4"] .neon{width:230vw;height:230vw;top:calc(60% + 115vw)}
   [data-hero="4"] .hline{gap:4px;justify-content:space-between;padding:0 10px 18px}
