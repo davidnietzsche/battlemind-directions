@@ -683,3 +683,7 @@ html:not([data-hero="1"]) .ring,html:not([data-hero="1"]) .ppl,html:not([data-he
 @media (prefers-reduced-motion:reduce){[data-cast="team"] .pch img{translate:0 0!important}.pch.land,.dgch.land{animation:none}}
 /* Crew hero: the bull now carries an arrow on its left, so it stands a little further right and stays clear of the headline */
 @media (min-width:901px){.sch[src*="ch_perf"]{left:52px}}
+/* avatar: the flyers pass BEHIND the logos and the titles (David 23 Nov: "can these avatar go behind the logos and text?") but in front of the page background, the red banner and the chat panel.
+   The logo section stops being its own layer, and the titles and logo rows are lifted above the travelling layer. */
+[data-cast="toy"] .cl{z-index:auto}
+[data-cast="toy"] .cl>.wrap,[data-cast="toy"] .lrib,[data-cast="toy"] .sv .svh,[data-cast="toy"] .dg .svh{position:relative;z-index:51}
