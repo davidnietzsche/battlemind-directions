@@ -653,3 +653,33 @@ html:not([data-hero="1"]) .ring,html:not([data-hero="1"]) .ppl,html:not([data-he
   .dgf{flex-direction:column;align-items:flex-start}
 }
 @media (max-width:374px){.dgs{height:566px}}
+
+/* ============ round 15 (David 23 Nov): two split-out versions. home-avatar.html is the art-toy crew, home-team.html is real people ============ */
+/* avatar: the travelling crew. A fixed layer above the sections and under the nav; each flyer is placed by the script from the page's own slots */
+.trav{position:fixed;inset:0;z-index:50;pointer-events:none;overflow:hidden}
+.trav img{position:absolute;left:0;top:0;width:0;height:0;visibility:hidden;will-change:transform;transform-origin:50% 70%;filter:drop-shadow(0 30px 22px rgba(50,0,4,calc(.5*var(--sh,1))))}
+.away,.dgch.away img{visibility:hidden!important}
+@keyframes trvland{0%{transform:scale(1.06,.9)}45%{transform:scale(.97,1.05)}100%{transform:none}}
+.pch.land,.dgch.land{animation:trvland .5s cubic-bezier(.3,1.3,.5,1);transform-origin:50% 100%}
+/* team: people instead of characters. They are cut at the thigh, so every slot stands them on its bottom edge and they rise from it, solid from the first frame */
+[data-cast="team"] .pn[data-k="ads"]{--i:1}[data-cast="team"] .pn[data-k="video"]{--i:2}[data-cast="team"] .pn[data-k="web"]{--i:3}
+[data-cast="team"] .pch img{filter:none;transform-origin:50% 100%}
+@media (min-width:901px){
+  [data-cast="team"] .pch{top:34px;bottom:108px;align-items:flex-end;overflow:hidden;border-radius:0 0 22px 22px}
+  [data-cast="team"] .pn:first-child .pch{left:18px}[data-cast="team"] .pn:last-child .pch{right:18px}
+  [data-cast="team"] .pch img{max-width:100%;max-height:100%;translate:0 104%}
+  [data-cast="team"] .acc.seen .pch img{translate:0 0;transition:translate .95s cubic-bezier(.2,1.25,.35,1) calc(var(--i,0)*90ms + 80ms),transform .6s var(--ease)}
+  [data-cast="team"] .pstage img{left:auto;right:0;top:auto;bottom:0;translate:0 0;max-width:88%;max-height:90%;filter:none;opacity:1;transform:translateY(104%);transform-origin:50% 100%;transition:transform .85s cubic-bezier(.2,1.2,.35,1) .3s}
+  [data-cast="team"] .pstage::after{content:"";position:absolute;left:0;right:0;bottom:0;height:44%;background:linear-gradient(rgba(46,0,4,0),rgba(46,0,4,.92));pointer-events:none}
+  [data-cast="team"] .dgch{width:50%;right:0;top:3%}
+}
+@media (hover:hover) and (min-width:901px){[data-cast="team"] .acc:not(.has) .pn:hover .pch img{transform:scale(1.045)}}
+@media (max-width:900px){
+  [data-cast="team"] .pch{overflow:hidden;border-radius:18px;background:rgba(255,255,255,.16);align-items:flex-start}
+  [data-cast="team"] .pch img{max-width:none;max-height:none;width:250%;height:auto;margin-top:3px}
+  [data-cast="team"] .dgch{width:96px;height:112px;border-radius:20px;background:rgba(255,255,255,.1)}
+  [data-cast="team"] .dgch img{max-width:none;max-height:none;width:240%;left:50%;right:auto;margin:0 0 0 -120%;top:4px;bottom:auto}
+}
+@media (prefers-reduced-motion:reduce){[data-cast="team"] .pch img{translate:0 0!important}.pch.land,.dgch.land{animation:none}}
+/* Crew hero: the bull now carries an arrow on its left, so it stands a little further right and stays clear of the headline */
+@media (min-width:901px){.sch[src*="ch_perf"]{left:52px}}

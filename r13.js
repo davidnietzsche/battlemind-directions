@@ -7,9 +7,12 @@ const AR = '<span class="ar" aria-hidden="true"><svg viewBox="0 0 16 16"><path d
 const WA = (t) => "https://wa.me/60197707927?text=" + encodeURIComponent(t);
 const rnd = (i) => { const g = Math.sin(i * 127.1 + 311.7) * 43758.5453; return g - Math.floor(g); };
 // the service characters: "c" is the art-toy crew (bull, rabbit, cat, robot); ?ch=a and ?ch=b keep the earlier object mascots for comparison
-const CH = (k) => FIN === "c" ? `assets7/ch_${k}.webp` : `assets5/ch_${k}_${FIN}.webp`;
-const CM = FIN === "c" ? { perf: 1.46, ads: .96, video: 1.26, web: 1.22 } : { perf: 1.6, ads: 1.5, video: 1.55, web: 1.55 };   // ring size by width: the crew are taller and narrower
-window.R13 = { fin: FIN };
+// Two split-out versions (David 23 Nov): data-cast="team" uses real people everywhere, each with the tools of the job; data-cast="toy" is the art-toy crew, who travel down the page with the scroll.
+const CAST = document.documentElement.dataset.cast || "";
+const CH = (k) => CAST === "team" ? `assets7/hu_${k}.webp` : FIN === "c" ? `assets7/ch_${k}.webp` : `assets5/ch_${k}_${FIN}.webp`;
+const CM = FIN === "c" ? { perf: 1.5, ads: .96, video: 1.26, web: 1.42 } : { perf: 1.6, ads: 1.5, video: 1.55, web: 1.55 };   // ring size by width: the crew are taller and narrower
+window.R13 = { fin: FIN, cast: CAST };
+let TRV = null;   // the travelling crew, set up after the sections it moves between
 
 // ---- nav tone, drawer ----
 const nav = $("#nav"), nb = $("#nb"), drawer = $("#drawer");
@@ -192,7 +195,9 @@ let openSvc = () => {};
     pn.forEach((p, j) => { const o = on && j === i; p.classList.toggle("open", o); p.classList.remove("t0", "t1", "t2"); if (on && !o) p.classList.add("t" + t++); $(".pb", p).setAttribute("aria-expanded", o); $(".pd", p).inert = !o; });
     acc.classList.toggle("has", on);
     if (reveal && on) { if (PHONE()) setTimeout(() => { const r = pn[i].getBoundingClientRect(); showBlock(r.top + scrollY, r.height); }, 640); else { const r = acc.getBoundingClientRect(); showBlock(r.top + scrollY, r.height); } } };
-  pn.forEach((p, i) => $(".pb", p).addEventListener("click", () => openSvc(i, true))); window.R13.openSvc = openSvc; } }
+  pn.forEach((p, i) => $(".pb", p).addEventListener("click", () => openSvc(i, true))); window.R13.openSvc = openSvc;
+  // team version: the four people step up into their tiles when the banner is first seen (a solid rise from the tile's edge, in the stylesheet)
+  if (CAST === "team") { if (RM) acc.classList.add("seen"); else { const io = new IntersectionObserver((e) => { if (e[0].isIntersecting) { acc.classList.add("seen"); io.disconnect(); } }, { threshold: .3 }); io.observe(acc); } } } }
 
 // ---- headache match (revamped 23 Nov, David: "this section sucks bro. revamp it"): one dark panel. Pick the headache on the left;
 //      on the right it plays out as a chat: your line, Battle typing, then the service that fixes it with one result, and the character for that service steps up.
@@ -211,24 +216,71 @@ const DG = [
       <div class="dgx" id="dgx"><button type="button" class="btn sm" id="dgsvc">See the service${AR}</button><a class="btn sm gh" href="#connect" id="dgask">Talk about this</a></div></div></div>`;
   const rows = $$(".dgr", pn), chs = $$(".dgch img", pn), q = $("#dgq"), ty = $("#dgty"), a = $("#dga"), ax = $("#dgx"), dots = $$("i", ty); let cur = -1, tl = null, inView = false, hold = false;
   const fill = (i) => { const d = DG[i], sv = SVC[d.s]; $("span", q).textContent = d.q; $("b", a).textContent = sv.n; $("p", a).textContent = d.why; $(".dgst b", a).textContent = sv.st[0]; $(".dgst span", a).textContent = sv.st[1]; };
-  const clock = () => pn.classList.toggle("run", inView && !hold && !RM);
+  // with the travelling crew, the clock waits until the character has arrived.
+  // A bar that was created while the clock was held is started afresh when the clock is released: resuming a bar that has never run can end it at once in Chrome, and the next headache would skip in.
+  //    As a second guard the script keeps its own count of how long the bar has really run (CLK matches the 6.4s in the stylesheet): a bar that reports its end early is simply started again.
+  const CLK = 6400; let fresh = false, ran = 0, t0 = 0;
+  const rebar = (r) => { r.classList.remove("on"); void pn.offsetWidth; r.classList.add("on"); ran = 0; t0 = pn.classList.contains("run") ? performance.now() : 0; fresh = !t0; };
+  const clock = () => { const on = inView && !hold && !RM && (!TRV || TRV.docked), was = pn.classList.contains("run"); pn.classList.toggle("run", on);
+    if (on && !was) t0 = performance.now(); if (!on && was && t0) { ran += performance.now() - t0; t0 = 0; } if (on && fresh && cur >= 0) rebar(rows[cur]); };
   function go(i) { i = (i + DG.length) % DG.length; if (i === cur) return; if (tl) tl.progress(1); const from = cur < 0 ? -1 : DG[cur].s, to = DG[i].s; cur = i;
-    rows.forEach((r, j) => { r.setAttribute("aria-pressed", String(j === i)); r.classList.remove("on"); }); void pn.offsetWidth; rows[i].classList.add("on");   // restarts the clock bar
+    rows.forEach((r, j) => { r.setAttribute("aria-pressed", String(j === i)); r.classList.remove("on"); }); rebar(rows[i]);   // restarts the clock bar
     if (!G) { fill(i); chs.forEach((c, j) => c.classList.toggle("on", j === to)); return; }
     tl = gsap.timeline({ onComplete: () => { tl = null; } });
     tl.to([ax, a, q], { scale: 0, duration: .16, ease: "power2.in", stagger: .03 }, 0).add(() => fill(i), .26)
       .fromTo(q, { scale: 0 }, { scale: 1, duration: .42, ease: "back.out(1.6)" }, .28).fromTo(ty, { scale: 0 }, { scale: 1, duration: .24, ease: "back.out(2)" }, .6).to(ty, { scale: 0, duration: .14, ease: "power2.in" }, 1.06).fromTo(dots, { y: 0 }, { y: -4, duration: .15, stagger: .09, yoyo: true, repeat: 1, ease: "sine.inOut" }, .7)
       .fromTo(a, { scale: 0 }, { scale: 1, duration: .5, ease: "back.out(1.4)" }, 1.18).fromTo(ax, { scale: 0 }, { scale: 1, duration: .4, ease: "back.out(1.6)" }, 1.38);
-    if (from !== to) { if (from >= 0) tl.to(chs[from], { yPercent: 106, duration: .34, ease: "power2.in" }, 0); tl.fromTo(chs[to], { yPercent: 106 }, { yPercent: 0, duration: .8, ease: "back.out(1.3)" }, from >= 0 ? .36 : .1); } }
+    if (from !== to) { if (from >= 0) tl.to(chs[from], { yPercent: 106, duration: .34, ease: "power2.in" }, 0); if (from < 0 && TRV && !TRV.docked) tl.set(chs[to], { yPercent: 0 }, 0);   // the first character is carried in by the scroll, so it does not also rise
+      else tl.fromTo(chs[to], { yPercent: 106 }, { yPercent: 0, duration: .8, ease: "back.out(1.3)" }, from >= 0 ? .36 : .1); } }
   if (G) { gsap.set(chs, { yPercent: 106, visibility: "visible" }); gsap.set([q, a, ax, ty], { scale: 0 }); }
-  rows.forEach((r, i) => { r.addEventListener("click", () => go(i)); r.addEventListener("animationend", (e) => { if (e.target === r && i === cur) go(cur + 1); }); });
+  rows.forEach((r, i) => { r.addEventListener("click", () => go(i)); r.addEventListener("animationend", (e) => { if (e.target !== r || i !== cur) return; if (ran + (t0 ? performance.now() - t0 : 0) < CLK * .9) rebar(r); else go(cur + 1); }); });
   pn.addEventListener("pointerenter", (e) => { if (e.pointerType === "mouse") { hold = true; clock(); } }); pn.addEventListener("pointerleave", () => { hold = false; clock(); });
   pn.addEventListener("focusin", () => { hold = true; clock(); }); pn.addEventListener("focusout", () => { if (!pn.matches(":hover")) { hold = false; clock(); } });
   $("#dgsvc").addEventListener("click", () => openSvc(DG[cur].s, true, true));
   $("#dgask").addEventListener("click", () => { const inp = $("#askin"); if (inp && !inp.value) inp.value = DG[cur].q; });
   let seen = false; watch(pn, (on) => { inView = on; if (on && !seen) { seen = true; go(0); } clock(); }, .3);   // the first one plays when the panel is first seen
   if (!G) { seen = true; go(0); }
-  window.R13.chat = { go, get cur() { return cur; }, get playing() { return pn.classList.contains("run"); }, get busy() { return !!tl; } }; } }
+  window.R13.chat = { go, sync: clock, get cur() { return cur; }, get svc() { return DG[Math.max(cur, 0)].s; }, get playing() { return pn.classList.contains("run"); }, get busy() { return !!tl; } }; } }
+
+// ---- avatar version: the crew travels with the scroll (David 23 Nov: "the avatar is on hero, service, marketing headache. anyways to let them transition smoothly to the next section?").
+//      One fixed layer carries four flyers. Seam A: as the hero leaves, each character drops out from under the film, past the logos, and lands in its services tile.
+//      Seam B: the character answering the current headache leaves its tile and comes down into the chat panel. Both follow the scroll and run backwards; nothing fades.
+//      While a character is in the air its place on the page is empty, so there is only ever one of it. Positions are read from the page every frame, so it holds at any size.
+if (CAST === "toy" && G) { const hero = $("#hero"), acc = $("#acc"), dgch = $(".dgch"), filmBox = $("#hfilm");
+  if (hero && acc && dgch) { const layer = document.createElement("div"); layer.className = "trav"; layer.setAttribute("aria-hidden", "true"); document.body.appendChild(layer);
+    const FX = [.2, .405, .595, .82];   // where each character stands across the film frame
+    const F = SVC.map((s, i) => { const im = new Image(); im.src = CH(s.k); im.alt = ""; im.draggable = false; layer.appendChild(im); const pn = $(`.pn[data-k="${s.k}"]`, acc), chat = $$("img", dgch)[i]; chat.loading = "eager";
+      return { im, i, pn, pch: $(".pch", pn), tile: $(".pch img", pn), big: $(".pstage img", pn), chat, a: 0, b: 0, show: false }; });
+    const clamp = (v) => Math.max(0, Math.min(1, v)), mix = (a, b, t) => a + (b - a) * t, navH = () => (nav ? nav.offsetHeight : 0);
+    let docked = false, last = -1, first = true, moving = false, dirty = 150, ly = -1;
+    const tileOf = (f) => { const open = f.pn.classList.contains("open"); if (acc.classList.contains("has") && !open) return null; const r = (open && !PHONE() ? f.big : f.tile).getBoundingClientRect(); return r.width > 4 ? r : null; };
+    const chatRect = (f) => { const e = f.chat; if (!e.offsetWidth) return null; const c = dgch.getBoundingClientRect(); return { left: c.left + e.offsetLeft, top: c.top + e.offsetTop, width: e.offsetWidth, height: e.offsetHeight, bottom: c.top + e.offsetTop + e.offsetHeight }; };
+    const land = (el) => { el.classList.remove("land"); void el.offsetWidth; el.classList.add("land"); };
+    function frame() { const vh = innerHeight, hb = hero.getBoundingClientRect().bottom, fr = ((filmBox && $("video", filmBox)) || hero).getBoundingClientRect(), sv = window.R13.chat ? window.R13.chat.svc : 1, snap = first || sv !== last, ph = PHONE();
+      // under the film the page is a white mist, so the layer is masked with a short soft edge there: the characters come out of the mist, not out of a hard line
+      const mk = hb > -70 ? `linear-gradient(transparent ${Math.round(hb - 26)}px,#000 ${Math.round(hb + 46)}px)` : "none"; if (mk !== layer._mk) { layer._mk = mk; layer.style.webkitMaskImage = layer.style.maskImage = mk; } moving = false;
+      F.forEach((f) => { const t = tileOf(f), isB = f.i === sv, c = isB ? chatRect(f) : null;
+        // seam A, hero to tile: it ends when the tile is in view and, where the layout allows, starts as the film slips under the nav, so the film and the flyers are not on screen together for long
+        const dEnd = t ? t.bottom - (vh - 40) + (ph ? 0 : f.i * vh * .05) : 0, ta = t ? clamp(1 - dEnd / Math.max(vh * .34, Math.min(vh * .6, navH() + 30 - hb + dEnd))) : 1;
+        const tb = !isB ? 0 : c ? clamp(1 - (c.bottom - (vh - 30)) / (vh * .6)) : 1;                            // seam B: tile to chat, only for the one answering now
+        const a0 = f.a, b0 = f.b;
+        if (snap) { f.a = ta; f.b = tb; } else { f.a += (ta - f.a) * .24; f.b += (tb - f.b) * .24; if (Math.abs(ta - f.a) < .003) f.a = ta; if (Math.abs(tb - f.b) < .003) f.b = tb; }
+        if (f.a !== ta || f.b !== tb) moving = true;
+        let x = 0, y = 0, w = 0, h = 0, rot = 0, sh = 1, show = false;
+        if (c && f.b > 0 && f.b < 1) { const s = t || { left: c.left, top: -c.height - 80, width: c.width * .8, height: c.height * .8 }, e = f.b * f.b * (3 - 2 * f.b), arc = Math.sin(Math.PI * e);
+          w = mix(s.width, c.width, e); h = mix(s.height, c.height, e); x = mix(s.left, c.left, e); y = mix(s.top, c.top, e) - arc * vh * .06; rot = arc * (c.left > s.left ? 8 : -8); sh = 1 - e; show = true; }
+        else if (t && f.b <= 0 && f.a > 0 && f.a < 1) { const e = f.a, h0 = Math.max(t.height * .7, Math.min(fr.height * .56, t.height * 2.6)), w0 = h0 * t.width / t.height;
+          w = mix(w0, t.width, e); h = mix(h0, t.height, e); x = mix(fr.left + FX[f.i] * fr.width - w0 / 2, t.left, 1 - (1 - e) * (1 - e)); y = mix(Math.max(hb, 0) - h0 - 10, t.top, Math.pow(e, 1.7)); rot = (1 - e) * (f.i % 2 ? 11 : -11); show = true; }
+        const s = f.im.style; if (show) { s.width = w.toFixed(1) + "px"; s.height = h.toFixed(1) + "px"; s.transform = `translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0) rotate(${rot.toFixed(2)}deg)`; s.setProperty("--sh", sh.toFixed(2)); }
+        if (show !== f.show) { f.show = show; s.visibility = show ? "visible" : "hidden"; }
+        // the character's own place is empty until it has arrived, and again once it has left for the chat
+        const gone = !!t && (f.a < 1 || (isB && f.b > 0 && (f.b < 1 || t.bottom > navH()))); f.tile.classList.toggle("away", gone); f.big.classList.toggle("away", gone);
+        if (!snap && t && a0 < 1 && f.a >= 1) land(f.pch); if (!snap && isB && b0 < 1 && f.b >= 1) land(dgch); });
+      const d = F[sv].b >= 1; dgch.classList.toggle("away", !d); if (d !== docked || first) { docked = d; if (window.R13.chat) window.R13.chat.sync(); }
+      last = sv; first = false; }
+    gsap.ticker.add(() => { const sv = window.R13.chat ? window.R13.chat.svc : 1; if (scrollY === ly && !moving && dirty <= 0 && sv === last) return; ly = scrollY; if (dirty > 0) dirty--; frame(); });
+    const poke = () => { dirty = 90; }; ["resize", "load", "click", "pointerup", "keyup", "orientationchange"].forEach((ev) => addEventListener(ev, poke, { passive: true }));
+    TRV = window.R13.trav = { get docked() { return docked; }, get state() { return F.map((f) => ({ a: +f.a.toFixed(3), b: +f.b.toFixed(3), show: f.show })); }, poke }; } }
 
 // ---- impact: count up once, cards rise in ----
 $$("#icards [data-to]").forEach((v, i) => { if (!G) return; const to = +v.dataset.to, o = { n: 0 }; v.textContent = "0";
