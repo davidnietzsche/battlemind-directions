@@ -30,7 +30,8 @@ function glideTo(y, dur) { y = Math.max(0, Math.round(y)); if (Math.abs(y - scro
 function showBlock(top, h) { const navH = (nav ? nav.offsetHeight : 0) + 14, pad = 26, vh = innerHeight; let y = scrollY;
   if (h > vh - navH - pad) y = top - navH; else if (top + h > y + vh - pad) y = top + h + pad - vh; else if (top < y + navH) y = top - navH; glideTo(y); }
 window.R13.glideTo = glideTo;
-const watch = (el, cb, th) => new IntersectionObserver((e) => cb(e[0].isIntersecting), { threshold: th || .35 }).observe(el);
+// observers can hand over several entries at once (a jump on load, a layout shift); the last one is the current state, the first can be stale
+const watch = (el, cb, th) => new IntersectionObserver((e) => cb(e[e.length - 1].isIntersecting), { threshold: th || .35 }).observe(el);
 
 // ---- titles: words rise into place when they come into view ----
 function split(el) { let i = 0; const wrap = (node) => { const w = document.createElement("span"); w.className = "w"; const s = document.createElement("span"); s.style.setProperty("--i", i++); s.appendChild(node); w.appendChild(s); return w; };
@@ -70,7 +71,7 @@ if (HV !== "1") { const hero = $("#hero");
     dots.forEach((d, i) => d.addEventListener("click", () => { go(i); play(); }));
     $("#stag").addEventListener("click", () => openSvc(cur, true, true)); chs.forEach((c) => c.addEventListener("click", () => openSvc(cur, true, true)));
     st.addEventListener("pointerenter", () => { hold = true; }); st.addEventListener("pointerleave", () => { hold = false; });
-    new IntersectionObserver((e) => { live = e[0].isIntersecting; }, { threshold: .4 }).observe(hero);
+    new IntersectionObserver((e) => { live = e[e.length - 1].isIntersecting; }, { threshold: .4 }).observe(hero);
     window.R13.crew = { go, get cur() { return cur; }, get busy() { return !!tl; } };
     if (G) { gsap.set(chs, { yPercent: 104, visibility: "visible" }); gsap.from(rings, { scaleX: .2, scaleY: .2, opacity: 0, duration: .9, ease: "back.out(1.5)", delay: .3 });
       gsap.to(chs[0], { yPercent: 0, duration: .95, ease: "back.out(1.4)", delay: .8 }); gsap.fromTo(rings, { "--gl": 1 }, { "--gl": 0, duration: 1.3, ease: "power2.out", delay: .8, immediateRender: false });
@@ -80,7 +81,7 @@ if (HV !== "1") { const hero = $("#hero");
   //     2 · team gets the same treatment: the campaign photograph as a short loop of small movements (a laugh, a glance, a shift of weight).
   if (HV === "7" || HV === "2") { const f = HV === "7" ? $("#hfilm") : $(".hteam"), nm = HV === "7" ? "crew_film" : "team_film";
     f.innerHTML = `<video muted loop playsinline preload="auto" poster="assets7/${nm}.webp"${RM ? "" : ` src="assets7/${nm}.mp4"`}></video>`; const v = $("video", f); v.muted = true; window.R13.film = v;
-    if (!RM) new IntersectionObserver((e) => { if (e[0].isIntersecting) v.play().catch(() => {}); else v.pause(); }, { threshold: .15 }).observe(hero);
+    if (!RM) new IntersectionObserver((e) => { if (e[e.length - 1].isIntersecting) v.play().catch(() => {}); else v.pause(); }, { threshold: .15 }).observe(hero);
     if (G) gsap.from(v, { scale: 1.09, duration: 2.2, ease: "power3.out", transformOrigin: "50% 100%" }); }
   $$(".h1 .rz").forEach((el, i) => setTimeout(() => el.classList.add("in"), G ? 250 + i * 220 : 0));
   if (G) { const E = "power3.out";
@@ -109,7 +110,7 @@ if (HV !== "1") { const hero = $("#hero");
       if (HV === "7") vis.style.transform = `translate3d(${(px * -14).toFixed(1)}px,${(py * -6).toFixed(1)}px,0) scale(${(1.04 + sc * .12).toFixed(4)})`;
       if (HV === "4") chars.forEach((c, i) => { const lean = px - (i - 1.5) / 3; c.style.setProperty("--lx", (lean * 10).toFixed(1)); c.style.setProperty("--ly", (Math.sin(T * 1.6 + i * 1.3) * 5 - sc * 30 * (1 + i % 2)).toFixed(1)); c.style.setProperty("--lr", (lean * 7).toFixed(2)); });
       requestAnimationFrame(frame); };
-    new IntersectionObserver((e) => { const v = e[0].isIntersecting; hero.classList.toggle("live", v); if (v && !on) { on = true; frame(); } else if (!v) on = false; }).observe(hero); } }
+    new IntersectionObserver((e) => { const v = e[e.length - 1].isIntersecting; hero.classList.toggle("live", v); if (v && !on) { on = true; frame(); } else if (!v) on = false; }).observe(hero); } }
 
 // ---- hero 1: the pieces ride a neon ring around the headline; the four service characters are the big ones ----
 if (HV === "1") { const hero = $("#hero"), ring = $("#ring"), neon = $("#neon");
@@ -137,7 +138,7 @@ if (HV === "1") { const hero = $("#hero"), ring = $("#ring"), neon = $("#neon");
       p.el.style.transform = `translate(${(x + p.px).toFixed(1)}px,${(y + p.py).toFixed(1)}px) translate(-50%,-50%) rotate(${(p.tilt + (RM ? 0 : Math.sin(T * .8 + p.a * 2) * 7)).toFixed(1)}deg) scale(${s.toFixed(3)})`;
       const front = z > -.15; if (front !== p.front) { p.front = front; p.el.classList.toggle("near", front); p.el.classList.toggle("far", !front); } }
     requestAnimationFrame(frame); }
-  new IntersectionObserver((e) => { const on = e[0].isIntersecting; if (on && !run) { run = true; frame(); } else if (!on) run = false; }).observe(hero); frame();
+  new IntersectionObserver((e) => { const on = e[e.length - 1].isIntersecting; if (on && !run) { run = true; frame(); } else if (!on) run = false; }).observe(hero); frame();
   hero.addEventListener("pointermove", (e) => { const r = hero.getBoundingClientRect(); pt = { x: (e.clientX - r.left) / r.width * 2 - 1, y: (e.clientY - r.top) / r.height * 2 - 1 }; mouse = { x: e.clientX - r.left, y: e.clientY - r.top }; });
   hero.addEventListener("pointerleave", () => { pt = { x: 0, y: 0 }; mouse = { x: -1e4, y: -1e4 }; });
   const rise = () => $$(".h1 .rz").forEach((el, i) => setTimeout(() => el.classList.add("in"), 250 + i * 220));
@@ -168,7 +169,7 @@ if (HV === "1") { const hero = $("#hero"), ring = $("#ring"), neon = $("#neon");
 // ---- logos: square marks in circles, the name beside; two ribbons that speed up with the scroll ----
 const ribs = [];
 function ribbon(row, dir, speed) { const o = { row, dir, speed, x: 0, half: 0, on: false }; const meas = () => { o.half = row.scrollWidth / 2; }; meas();
-  if (window.ResizeObserver) new ResizeObserver(meas).observe(row); new IntersectionObserver((e) => { o.on = e[0].isIntersecting; }, { rootMargin: "120px" }).observe(row); ribs.push(o); }
+  if (window.ResizeObserver) new ResizeObserver(meas).observe(row); new IntersectionObserver((e) => { o.on = e[e.length - 1].isIntersecting; }, { rootMargin: "120px" }).observe(row); ribs.push(o); }
 if (G) { let ly = scrollY, v = 0; gsap.ticker.add((t, dt) => { const d = Math.min(64, dt) / 1000, dy = Math.abs(scrollY - ly); ly = scrollY; v += (Math.min(2400, dy / d) - v) * .1;
   for (const o of ribs) { if (!o.on || !o.half) continue; o.x += (o.speed + v * .35) * o.dir * d; o.x = ((o.x % o.half) + o.half) % o.half; o.row.style.transform = `translate3d(${-o.x}px,0,0)`; } }); }
 // On a phone two rows left the section thin (David 23 Nov: "should be 3/4 rows"), so it gets four shorter rows there; rebuilt if the width crosses the breakpoint.
@@ -197,7 +198,7 @@ let openSvc = () => {};
     if (reveal && on) { if (PHONE()) setTimeout(() => { const r = pn[i].getBoundingClientRect(); showBlock(r.top + scrollY, r.height); }, 640); else { const r = acc.getBoundingClientRect(); showBlock(r.top + scrollY, r.height); } } };
   pn.forEach((p, i) => $(".pb", p).addEventListener("click", () => openSvc(i, true))); window.R13.openSvc = openSvc;
   // team version: the four people step up into their tiles when the banner is first seen (a solid rise from the tile's edge, in the stylesheet)
-  if (CAST === "team") { if (RM) acc.classList.add("seen"); else { const io = new IntersectionObserver((e) => { if (e[0].isIntersecting) { acc.classList.add("seen"); io.disconnect(); } }, { threshold: .3 }); io.observe(acc); } } } }
+  if (CAST === "team") { if (RM) acc.classList.add("seen"); else { const io = new IntersectionObserver((e) => { if (e.some((x) => x.isIntersecting)) { acc.classList.add("seen"); io.disconnect(); } }, { threshold: .3 }); io.observe(acc); } } } }
 
 // ---- headache match (revamped 23 Nov, David: "this section sucks bro. revamp it"): one dark panel. Pick the headache on the left;
 //      on the right it plays out as a chat: your line, Battle typing, then the service that fixes it with one result, and the character for that service steps up.
