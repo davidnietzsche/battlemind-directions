@@ -687,3 +687,10 @@ html:not([data-hero="1"]) .ring,html:not([data-hero="1"]) .ppl,html:not([data-he
    The logo section stops being its own layer, and the titles and logo rows are lifted above the travelling layer. */
 [data-cast="toy"] .cl{z-index:auto}
 [data-cast="toy"] .cl>.wrap,[data-cast="toy"] .lrib,[data-cast="toy"] .sv .svh,[data-cast="toy"] .dg .svh{position:relative;z-index:51}
+/* team, David 23 Nov: "when hover the human is cropped" and, in the chat, "when switch, it jumps and top bottom got cropped".
+   The people keep a little headroom in their tiles so the hover zoom stays inside, and the chat slot reaches the top of the panel. */
+@media (min-width:901px){
+  [data-cast="team"] .pch img{max-width:93%;max-height:93%}
+  [data-cast="team"] .dgch{top:0}[data-cast="team"] .dgch img{max-height:95%}
+}
+@media (hover:hover) and (min-width:901px){[data-cast="team"] .acc:not(.has) .pn:hover .pch img{transform:scale(1.04)}}

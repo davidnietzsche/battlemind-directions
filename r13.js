@@ -231,7 +231,8 @@ const DG = [
       .fromTo(q, { scale: 0 }, { scale: 1, duration: .42, ease: "back.out(1.6)" }, .28).fromTo(ty, { scale: 0 }, { scale: 1, duration: .24, ease: "back.out(2)" }, .6).to(ty, { scale: 0, duration: .14, ease: "power2.in" }, 1.06).fromTo(dots, { y: 0 }, { y: -4, duration: .15, stagger: .09, yoyo: true, repeat: 1, ease: "sine.inOut" }, .7)
       .fromTo(a, { scale: 0 }, { scale: 1, duration: .5, ease: "back.out(1.4)" }, 1.18).fromTo(ax, { scale: 0 }, { scale: 1, duration: .4, ease: "back.out(1.6)" }, 1.38);
     if (from !== to) { if (from >= 0) tl.to(chs[from], { yPercent: 106, duration: .34, ease: "power2.in" }, 0); if (from < 0 && TRV && !TRV.docked) tl.set(chs[to], { yPercent: 0 }, 0);   // the first character is carried in by the scroll, so it does not also rise
-      else tl.fromTo(chs[to], { yPercent: 106 }, { yPercent: 0, duration: .8, ease: "back.out(1.3)" }, from >= 0 ? .36 : .1); } }
+      // people are cut at the thigh, so they rise without a bounce: an overshoot would lift the cut edge off the floor and push the head out of the top
+      else tl.fromTo(chs[to], { yPercent: 106 }, { yPercent: 0, duration: CAST === "team" ? .7 : .8, ease: CAST === "team" ? "power3.out" : "back.out(1.3)" }, from >= 0 ? .36 : .1); } }
   if (G) { gsap.set(chs, { yPercent: 106, visibility: "visible" }); gsap.set([q, a, ax, ty], { scale: 0 }); }
   rows.forEach((r, i) => { r.addEventListener("click", () => go(i)); r.addEventListener("animationend", (e) => { if (e.target !== r || i !== cur) return; if (ran + (t0 ? performance.now() - t0 : 0) < CLK * .9) rebar(r); else go(cur + 1); }); });
   pn.addEventListener("pointerenter", (e) => { if (e.pointerType === "mouse") { hold = true; clock(); } }); pn.addEventListener("pointerleave", () => { hold = false; clock(); });
