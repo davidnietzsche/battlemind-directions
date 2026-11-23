@@ -219,7 +219,7 @@ body.lock{overflow:hidden}
 
 /* ============ analytics: cards spiral in around the title, stack, then one finding at a time ============ */
 /* the stage holds while the scroll organises the cards: overflow is clipped, not hidden, so the sticky stage still works */
-.astk{position:sticky;top:max(72px,calc((100svh - var(--ah))/2));z-index:1}.ahold{height:85svh}
+.astk{position:sticky;top:max(72px,calc((100svh - var(--ah))/2));z-index:1}.ahold{height:170svh}
 @media (prefers-reduced-motion:reduce){.ahold{display:none}}
 .an{--ah:calc(clamp(540px,82vh,740px) + 34px);isolation:isolate;overflow:clip;color:#fff;padding:clamp(84px,7vw,104px) 0 calc(clamp(26px,2.6vw,40px) + var(--sr));background:
   radial-gradient(56% 60% at 30% 30%,rgba(238,19,34,.95),rgba(238,19,34,0) 72%),
@@ -402,7 +402,7 @@ body.lock{overflow:hidden}
   .cards{margin:22px calc(-1*var(--gut)) 0;padding:0 var(--gut) 26px;grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:78%;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
   .cards::-webkit-scrollbar{display:none}.ic{scroll-snap-align:center;border-radius:26px;aspect-ratio:1/1.18;padding:22px}.ic .num{font-size:104px}
   /* analytics */
-  .an{--ah:574px;padding:76px 0 calc(22px + var(--sr))}.stage{height:540px}.ahold{height:78svh}
+  .an{--ah:574px;padding:76px 0 calc(22px + var(--sr))}.stage{height:540px}.ahold{height:156svh}
   .antt{max-width:226px;font-size:clamp(27px,7.6vw,32px)}
   .dc{width:96px;border-radius:18px;padding:11px 12px}.dc b{font-size:19px}.dc small{font-size:8px}.dc .vz{left:12px;right:12px;bottom:11px}.em{width:52px}
   .feat{flex-direction:column;justify-content:flex-start;gap:20px;padding-top:64px}
