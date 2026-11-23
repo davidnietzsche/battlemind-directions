@@ -243,43 +243,66 @@ const DG = [
   if (!G) { seen = true; go(0); }
   window.R13.chat = { go, sync: clock, get cur() { return cur; }, get svc() { return DG[Math.max(cur, 0)].s; }, get playing() { return pn.classList.contains("run"); }, get busy() { return !!tl; } }; } }
 
-// ---- avatar version: the crew travels with the scroll (David 23 Nov: "the avatar is on hero, service, marketing headache. anyways to let them transition smoothly to the next section?").
-//      One fixed layer carries four flyers. Seam A: as the hero leaves, each character drops out from under the film, past the logos, and lands in its services tile.
-//      Seam B: the character answering the current headache leaves its tile and comes down into the chat panel. Both follow the scroll and run backwards; nothing fades.
+// ---- avatar version: the crew travels down the page (David 23 Nov: "the avatar is on hero, service, marketing headache. anyways to let them transition smoothly to the next section?",
+//      then "able to do like they jumped down and landed?" and "can the bunny do a front flip jump to the bottom?").
+//      One fixed layer carries four flyers. Jump A: when the services tiles are in view the four drop from the film, fall, and land with a squash, one after another.
+//      Jump B, for the character answering the headache, has two parts, because its tile and its place in the chat are never on screen together:
+//      first it hops out of its tile onto the top edge of the chat panel and rides there; when the panel is fully in view it crouches, turns one full front flip and lands in the chat.
+//      A jump is a real jump: the scroll only sets it off, then it plays in its own time (and plays backwards when you scroll back up), so nobody is ever left hanging upside down.
 //      While a character is in the air its place on the page is empty, so there is only ever one of it. Positions are read from the page every frame, so it holds at any size.
-if (CAST === "toy" && G) { const hero = $("#hero"), acc = $("#acc"), dgch = $(".dgch"), filmBox = $("#hfilm");
+if (CAST === "toy" && G) { const hero = $("#hero"), acc = $("#acc"), dgch = $(".dgch"), dgp = $("#dgp"), filmBox = $("#hfilm");
   if (hero && acc && dgch) { const layer = document.createElement("div"); layer.className = "trav"; layer.setAttribute("aria-hidden", "true"); document.body.appendChild(layer);
     const FX = [.2, .405, .595, .82];   // where each character stands across the film frame
     const F = SVC.map((s, i) => { const im = new Image(); im.src = CH(s.k); im.alt = ""; im.draggable = false; layer.appendChild(im); const pn = $(`.pn[data-k="${s.k}"]`, acc), chat = $$("img", dgch)[i]; chat.loading = "eager";
-      return { im, i, pn, pch: $(".pch", pn), tile: $(".pch img", pn), big: $(".pstage img", pn), chat, a: 0, b: 0, show: false }; });
-    const clamp = (v) => Math.max(0, Math.min(1, v)), mix = (a, b, t) => a + (b - a) * t, navH = () => (nav ? nav.offsetHeight : 0);
+      return { im, i, pn, tile: $(".pch img", pn), big: $(".pstage img", pn), chat, a: 0, b: 0, A: false, B: 0, wait: 0, seenA: 0, seenB: 0, show: false }; });   // a: 0 film, 1 tile. b: 0 tile, 1 perched on the panel's edge, 2 in the chat
+    const clamp = (v) => Math.max(0, Math.min(1, v)), mix = (a, b, t) => a + (b - a) * t, navH = () => (nav ? nav.offsetHeight : 0), io = (u) => u * u * (3 - 2 * u);
+    const DUR = { aDown: .85, aUp: .6, hop: .8, hopUp: .6, flip: 1.05, flipUp: .85 }, FALL = .74, C0 = .13, C1 = .85;
+    const squash = (p) => 1 - .18 * Math.sin(Math.PI * Math.pow(p, .6)) * (1 - p);   // a landing: down fast, back up slower, ends exactly at rest
+    // one jump from rect s to rect d: crouch, leave the ground, land with a squash. flip turns one full turn in the air, about the body's middle
+    const jump = (e, s, d, flip, lift) => { const o = { x: s.left, y: s.top, w: s.width, h: s.height, rot: 0, sx: 1, sy: 1, org: "50% 100%", u: 0 }, dir = d.left >= s.left - 2 ? 1 : -1;
+      if (e < C0) { o.sy = 1 - .14 * Math.sin(Math.PI * e / C0); o.sx = 1 + (1 - o.sy) * .6; }
+      else if (e < C1) { const u = o.u = (e - C0) / (C1 - C0); o.w = mix(s.width, d.width, u); o.h = mix(s.height, d.height, u); o.x = mix(s.left, d.left, u); o.y = s.top + (d.top - s.top) * u * u - lift * 4 * u * (1 - u);
+        if (flip) { o.rot = dir * 360 * io(u); o.org = "50% 50%"; } else o.rot = dir * 9 * Math.sin(Math.PI * u); }
+      else { o.u = 1; o.x = d.left; o.y = d.top; o.w = d.width; o.h = d.height; o.sy = squash((e - C1) / (1 - C1)); o.sx = 1 + (1 - o.sy) * .6; }
+      return o; };
     let docked = false, last = -1, first = true, moving = false, dirty = 150, ly = -1;
     const tileOf = (f) => { const open = f.pn.classList.contains("open"); if (acc.classList.contains("has") && !open) return null; const r = (open && !PHONE() ? f.big : f.tile).getBoundingClientRect(); return r.width > 4 ? r : null; };
     const chatRect = (f) => { const e = f.chat; if (!e.offsetWidth) return null; const c = dgch.getBoundingClientRect(); return { left: c.left + e.offsetLeft, top: c.top + e.offsetTop, width: e.offsetWidth, height: e.offsetHeight, bottom: c.top + e.offsetTop + e.offsetHeight }; };
-    const land = (el) => { el.classList.remove("land"); void el.offsetWidth; el.classList.add("land"); };
-    function frame() { const vh = innerHeight, hb = hero.getBoundingClientRect().bottom, fr = ((filmBox && $("video", filmBox)) || hero).getBoundingClientRect(), sv = window.R13.chat ? window.R13.chat.svc : 1, snap = first || sv !== last, ph = PHONE();
+    function frame(dt) { const vh = innerHeight, hb = hero.getBoundingClientRect().bottom, fr = ((filmBox && $("video", filmBox)) || hero).getBoundingClientRect(), sv = window.R13.chat ? window.R13.chat.svc : 1, swap = first || sv !== last, ph = PHONE(), floor = ph ? vh - 84 : vh - 8, nh = navH(), pt = dgp.getBoundingClientRect().top;
       // under the film the page is a white mist, so the layer is masked with a short soft edge there: the characters come out of the mist, not out of a hard line
       const mk = hb > -70 ? `linear-gradient(transparent ${Math.round(hb - 26)}px,#000 ${Math.round(hb + 46)}px)` : "none"; if (mk !== layer._mk) { layer._mk = mk; layer.style.webkitMaskImage = layer.style.maskImage = mk; } moving = false;
-      F.forEach((f) => { const t = tileOf(f), isB = f.i === sv, c = isB ? chatRect(f) : null;
-        // seam A, hero to tile: it ends when the tile is in view and, where the layout allows, starts as the film slips under the nav, so the film and the flyers are not on screen together for long
-        const dEnd = t ? t.bottom - (vh - 40) + (ph ? 0 : f.i * vh * .05) : 0, ta = t ? clamp(1 - dEnd / Math.max(vh * .34, Math.min(vh * .6, navH() + 30 - hb + dEnd))) : 1;
-        const tb = !isB ? 0 : c ? clamp(1 - (c.bottom - (vh - 30)) / (vh * .6)) : 1;                            // seam B: tile to chat, only for the one answering now
-        const a0 = f.a, b0 = f.b;
-        if (snap) { f.a = ta; f.b = tb; } else { f.a += (ta - f.a) * .24; f.b += (tb - f.b) * .24; if (Math.abs(ta - f.a) < .003) f.a = ta; if (Math.abs(tb - f.b) < .003) f.b = tb; }
-        if (f.a !== ta || f.b !== tb) moving = true;
-        let x = 0, y = 0, w = 0, h = 0, rot = 0, sh = 1, show = false;
-        if (c && f.b > 0 && f.b < 1) { const s = t || { left: c.left, top: -c.height - 80, width: c.width * .8, height: c.height * .8 }, e = f.b * f.b * (3 - 2 * f.b), arc = Math.sin(Math.PI * e);
-          w = mix(s.width, c.width, e); h = mix(s.height, c.height, e); x = mix(s.left, c.left, e); y = mix(s.top, c.top, e) - arc * vh * .06; rot = arc * (c.left > s.left ? 8 : -8); sh = 1 - e; show = true; }
-        else if (t && f.b <= 0 && f.a > 0 && f.a < 1) { const e = f.a, h0 = Math.max(t.height * .7, Math.min(fr.height * .56, t.height * 2.6)), w0 = h0 * t.width / t.height;
-          w = mix(w0, t.width, e); h = mix(h0, t.height, e); x = mix(fr.left + FX[f.i] * fr.width - w0 / 2, t.left, 1 - (1 - e) * (1 - e)); y = mix(Math.max(hb, 0) - h0 - 10, t.top, Math.pow(e, 1.7)); rot = (1 - e) * (f.i % 2 ? 11 : -11); show = true; }
-        const s = f.im.style; if (show) { s.width = w.toFixed(1) + "px"; s.height = h.toFixed(1) + "px"; s.transform = `translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0) rotate(${rot.toFixed(2)}deg)`; s.setProperty("--sh", sh.toFixed(2)); }
+      F.forEach((f) => { const t = tileOf(f), isB = f.i === sv, c = isB ? chatRect(f) : null, a0 = f.a, b0 = f.b;
+        // jump A is set off when the whole tile picture is on screen (so the landing is seen), or after a moment if only part of it ever is; it is undone when the tile has all but left by the bottom
+        if (!t) { f.A = true; f.a = 1; } else { const seen = (vh - t.top) / t.height, full = t.bottom <= floor || t.top <= nh + 30; f.seenA = seen > .4 && !f.A ? f.seenA + dt : 0;
+          if (first) { f.A = seen > .5; f.a = f.A ? 1 : 0; }
+          else if (t.top > vh * 1.8 || t.bottom < -vh * .8) { f.A = (f.A && seen > .1) || full; f.a = f.A ? 1 : 0; }
+          else if (!f.A && (full || f.seenA > .9)) { f.A = true; f.wait = ph ? 0 : f.i * .09; } else if (f.A && seen < .1) { f.A = false; f.wait = ph ? 0 : (3 - f.i) * .05; } }
+        // jump B, only for the one answering now. Onto the panel's edge once that edge is on screen; down into the chat once its place there is fully on screen (or after a moment, if only part ever is)
+        if (!isB) { f.B = 0; f.b = 0; } else if (!c) { f.B = 2; f.b = 2; } else { const seen = (floor - c.top) / c.height, full = (ph ? c.bottom <= floor : seen >= .85) || c.top <= nh + 20, rest = pt <= vh - 40 ? 1 : 0; f.seenB = seen > .4 && f.B < 2 && f.a >= 1 ? f.seenB + dt : 0;   // on a desktop the flip goes while the perch is still on screen: 85% of the landing place is enough
+          if (first) { f.B = seen > .5 ? 2 : rest; f.b = f.B; }
+          else if (swap) { f.B = (docked && seen > .12) || full ? 2 : rest; f.b = f.B; }   // the headache changed: the new one stands where the last one stood
+          else if (c.top > vh * 1.8 || c.bottom < -vh * .8) { f.B = (f.B === 2 && seen > .12) || full ? 2 : rest; f.b = f.B; }
+          else if (f.a >= 1) { if (f.B < 2 && (full || f.seenB > 1.1)) f.B = 2; else if (f.B === 2 && seen < .12) f.B = 1; if (f.B === 0 && rest) f.B = 1; else if (f.B === 1 && pt > vh + 10) f.B = 0; } }
+        if (f.seenA > 0 || f.seenB > 0) moving = true;
+        // each jump then runs on the clock
+        if (f.wait > 0 && f.a === (f.A ? 0 : 1)) { f.wait -= dt; moving = true; } else if (f.a !== (f.A ? 1 : 0)) { f.a = clamp(f.a + (f.A ? dt / DUR.aDown : -dt / DUR.aUp)); moving = true; }
+        if (f.b !== f.B) { const down = f.B > f.b, two = down ? f.b >= 1 : f.b > 1, step = dt / (two ? (down ? DUR.flip : DUR.flipUp) : (down ? DUR.hop : DUR.hopUp));   // one part at a time: it never skips the perch
+          f.b = down ? Math.min(f.b + step, f.B, Math.floor(f.b) + 1) : Math.max(f.b - step, f.B, Math.ceil(f.b) - 1); moving = true; }
+        let x = 0, y = 0, w = 0, h = 0, rot = 0, sx = 1, sy = 1, org = "50% 100%", sh = 1, show = false;
+        if (c && f.b > 0 && f.b < 2) { const ht = c.height * (ph ? 1.15 : .62), wd = ht * c.width / c.height, P = { left: c.left + (c.width - wd) / 2, top: pt - ht + 7, width: wd, height: ht };   // the perch: standing on the panel's top edge, above its place
+          const src = t || { left: P.left - P.width * .3, top: -P.height - 80, width: P.width, height: P.height }, o = f.b < 1 ? jump(f.b, src, P, false, vh * .1) : jump(f.b - 1, P, c, true, vh * .11);
+          x = o.x; y = o.y; w = o.w; h = o.h; rot = o.rot; sx = o.sx; sy = o.sy; org = o.org; sh = f.b < 1 ? 1 : 1 - o.u; show = true; }
+        else if (t && f.b <= 0 && f.a > 0 && f.a < 1) { const e = f.a, h0 = Math.max(t.height * .7, Math.min(fr.height * .56, t.height * 2.6)), w0 = h0 * t.width / t.height, inFilm = hb > nh + 40; show = true;
+          if (e < FALL) { const u = e / FALL; w = mix(w0, t.width, u); h = mix(h0, t.height, u); x = mix(inFilm ? fr.left + FX[f.i] * fr.width - w0 / 2 : t.left + (f.i % 2 ? 26 : -26), t.left, 1 - (1 - u) * (1 - u));       // fall, gathering speed
+            y = mix(Math.max(hb, 0) - h0 - 10, t.top, u * u); rot = (1 - u) * (f.i % 2 ? 9 : -9); sy = 1 + .06 * Math.sin(Math.PI * u); sx = 1 - .03 * Math.sin(Math.PI * u); }
+          else { x = t.left; y = t.top; w = t.width; h = t.height; sy = squash((e - FALL) / (1 - FALL)); sx = 1 + (1 - sy) * .6; } }                                                  // land
+        const s = f.im.style; if (show) { s.width = w.toFixed(1) + "px"; s.height = h.toFixed(1) + "px"; s.transformOrigin = org; s.transform = `translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0) rotate(${rot.toFixed(2)}deg) scale(${sx.toFixed(4)},${sy.toFixed(4)})`; s.setProperty("--sh", sh.toFixed(2)); }
         if (show !== f.show) { f.show = show; s.visibility = show ? "visible" : "hidden"; }
         // the character's own place is empty until it has arrived, and again once it has left for the chat
-        const gone = !!t && (f.a < 1 || (isB && f.b > 0 && (f.b < 1 || t.bottom > navH()))); f.tile.classList.toggle("away", gone); f.big.classList.toggle("away", gone);
-        if (!snap && t && a0 < 1 && f.a >= 1) land(f.pch); if (!snap && isB && b0 < 1 && f.b >= 1) land(dgch); });
-      const d = F[sv].b >= 1; dgch.classList.toggle("away", !d); if (d !== docked || first) { docked = d; if (window.R13.chat) window.R13.chat.sync(); }
+        const gone = !!t && (f.a < 1 || (isB && f.b > 0 && (f.b < 2 || t.bottom > nh))); f.tile.classList.toggle("away", gone); f.big.classList.toggle("away", gone); });
+      const d = F[sv].b >= 2; dgch.classList.toggle("away", !d); if (d !== docked || first) { docked = d; if (window.R13.chat) window.R13.chat.sync(); }
       last = sv; first = false; }
-    gsap.ticker.add(() => { const sv = window.R13.chat ? window.R13.chat.svc : 1; if (scrollY === ly && !moving && dirty <= 0 && sv === last) return; ly = scrollY; if (dirty > 0) dirty--; frame(); });
+    gsap.ticker.add((time, delta) => { const sv = window.R13.chat ? window.R13.chat.svc : 1; if (scrollY === ly && !moving && dirty <= 0 && sv === last) return; ly = scrollY; if (dirty > 0) dirty--; frame(Math.min(50, delta || 16) / 1000); });
     const poke = () => { dirty = 90; }; ["resize", "load", "click", "pointerup", "keyup", "orientationchange"].forEach((ev) => addEventListener(ev, poke, { passive: true }));
     TRV = window.R13.trav = { get docked() { return docked; }, get state() { return F.map((f) => ({ a: +f.a.toFixed(3), b: +f.b.toFixed(3), show: f.show })); }, poke }; } }
 
