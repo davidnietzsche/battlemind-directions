@@ -88,8 +88,8 @@ if (HV !== "1") { const hero = $("#hero");
     f.innerHTML = `<video muted loop playsinline preload="auto" poster="${AS}assets7/${nm}.webp"${RM ? "" : ` src="${AS}assets7/${nm}.mp4"`}></video>`; const v = $("video", f); v.muted = true; window.R13.film = v;
     if (!RM) new IntersectionObserver((e) => { if (e[e.length - 1].isIntersecting) v.play().catch(() => {}); else v.pause(); }, { threshold: .15 }).observe(hero);
     if (G) gsap.from(v, { scale: 1.09, duration: 2.2, ease: "power3.out", transformOrigin: "50% 100%" }); }
-  $$(".h1 .rz").forEach((el, i) => setTimeout(() => el.classList.add("in"), G ? 250 + i * 220 : 0));
-  if (G) { const E = "power3.out";
+  if (HV !== "8") $$(".h1 .rz").forEach((el, i) => setTimeout(() => el.classList.add("in"), G ? 250 + i * 220 : 0));
+  if (G && HV !== "8") { const E = "power3.out";
     gsap.from(".hero .lead, .hero .ctas, .hproof li, .sfoot", { y: 18, opacity: 0, duration: .8, stagger: .1, delay: .8, ease: E });
     if (HV === "3") { gsap.from(".hsplit figure", { y: 60, opacity: 0, duration: 1.2, delay: .25, ease: E }); gsap.from(".hg", { scale: .7, opacity: 0, duration: .7, stagger: .16, delay: 1, ease: "back.out(1.7)" }); }
     if (HV === "4") gsap.from(".hc", { y: 90, opacity: 0, duration: .9, stagger: .09, delay: .4, ease: "back.out(1.5)" });
@@ -117,6 +117,46 @@ if (HV !== "1") { const hero = $("#hero");
       requestAnimationFrame(frame); };
     new IntersectionObserver((e) => { const v = e[e.length - 1].isIntersecting; hero.classList.toggle("live", v); if (v && !on) { on = true; frame(); } else if (!v) on = false; }).observe(hero); } }
 
+if (HV === "8") { const hero = $("#hero"), copy = $(".hcopy", hero), RMq = RM;
+  // the ring's centre and the radius of its empty middle, measured on each key frame (fractions of the frame); k = extra zoom, ty = where the ring's centre sits down the screen
+  const SH = { wide: { nm: "portal_wide", w: 1920, h: 1080, cx: .4936, cy: .4595, hole: .2574 * 1080, k: 1, ty: .46 }, tall: { nm: "portal_tall", w: 1080, h: 1920, cx: .5039, cy: .4419, hole: .2574 * 1080, k: 1.12, ty: .4 } };
+  const st = document.createElement("div"); st.className = "hp8"; while (hero.firstChild) st.appendChild(hero.firstChild); hero.appendChild(st);
+  const z = document.createElement("div"); z.className = "hp8z"; z.setAttribute("aria-hidden", "true"); st.insertBefore(z, st.firstChild.nextSibling);
+  const glow = document.createElement("i"); glow.className = "hp8g"; glow.setAttribute("aria-hidden", "true"); z.after(glow);
+  const fly = !RMq; if (fly) document.documentElement.classList.add("p8");
+  let cur = null, vid = null, W = 0, H = 0, D = 0, ox = 0, oy = 0, hole = 0, Rmax = 0;
+  const fit = () => { W = st.clientWidth; H = st.clientHeight; const sh = W / H < .8 ? SH.tall : SH.wide;
+    if (sh !== cur) { cur = sh; z.innerHTML = `<video muted loop playsinline preload="auto" poster="${AS}assets7/${sh.nm}.webp"${RMq ? "" : ` src="${AS}assets7/${sh.nm}.mp4"`}></video>`; vid = $("video", z); vid.muted = true; window.R13.film = vid; if (!RMq) vid.play().catch(() => {}); }
+    const sc = Math.max(W / sh.w, H / sh.h) * sh.k, fw = sh.w * sc, fh = sh.h * sc; let l = W / 2 - sh.cx * fw, t = H * sh.ty - sh.cy * fh;
+    l = Math.min(0, Math.max(W - fw, l)); t = Math.min(0, Math.max(H - fh, t)); ox = l + sh.cx * fw; oy = t + sh.cy * fh; hole = sh.hole * sc * 2;
+    z.style.cssText = `left:${l.toFixed(1)}px;top:${t.toFixed(1)}px;width:${fw.toFixed(1)}px;height:${fh.toFixed(1)}px;transform-origin:${(sh.cx * 100).toFixed(2)}% ${(sh.cy * 100).toFixed(2)}%`;
+    st.style.setProperty("--rx", ox.toFixed(1) + "px"); st.style.setProperty("--ry", oy.toFixed(1) + "px"); st.style.setProperty("--hole", hole.toFixed(1) + "px");
+    D = fly ? Math.round(H * (W <= 900 ? .75 : .95)) : 0; document.documentElement.style.setProperty("--p8d", D + "px"); document.documentElement.style.setProperty("--p8m", Math.round(H * (W <= 900 ? .62 : .7)) + "px");
+    Rmax = Math.hypot(Math.max(ox, W - ox), Math.max(oy, H - oy)) + 80; };
+  fit(); addEventListener("resize", fit);
+  let px = 0, py = 0, tx = 0, ty = 0, gx = W / 2, gy = H * .4, sgx = gx, sgy = gy, on = false, zp = -1, gone = false, lastMask = ""; const intro = { k: G ? 0 : 1 };
+  if (G) gsap.to(intro, { k: 1, duration: 2.2, ease: "power3.out" });
+  if (matchMedia("(pointer:fine)").matches) { st.addEventListener("pointermove", (e) => { tx = e.clientX / W * 2 - 1; ty = e.clientY / H * 2 - 1; gx = e.clientX; gy = e.clientY; glow.style.opacity = 1; });
+    st.addEventListener("pointerleave", () => { tx = ty = 0; glow.style.opacity = 0; }); }
+  const clamp = (v) => Math.max(0, Math.min(1, v)), bw = $$(".h1 .b .w", copy), half = Math.ceil(bw.length / 2); let le1 = -1;
+  const up = [$(".h1 .a", copy)].concat(bw.length > 1 ? bw.slice(0, half) : []).filter(Boolean), down = (bw.length > 1 ? bw.slice(half) : $$(".h1 .b", copy)).concat($$(".ctas", copy));
+  const frame = () => { if (!on) return; px += (tx - px) * .06; py += (ty - py) * .06; sgx += (gx - sgx) * .1; sgy += (gy - sgy) * .1;
+    const p = fly && D ? clamp(scrollY / D) : 0, e1 = Math.pow(clamp(p / .74), 2.1), zoom = (1.035 + (1 - intro.k) * .13) * (1 + e1 * 3.6);
+    // the film: a little parallax and tilt under the pointer; on scroll the camera pushes through the middle of the ring
+    z.style.transform = `perspective(1500px) translate3d(${(-px * 14 * (1 - e1)).toFixed(1)}px,${(-py * 8 * (1 - e1)).toFixed(1)}px,0) rotateY(${(px * 1.3 * (1 - e1)).toFixed(3)}deg) rotateX(${(-py * .9 * (1 - e1)).toFixed(3)}deg) scale(${zoom.toFixed(4)})`;
+    // the words part as the camera goes through: the top lines leave upwards, the last word and the buttons downwards, so the opening is clear
+    copy.style.transform = `translate3d(${(px * 9).toFixed(1)}px,${(py * 6).toFixed(1)}px,0) scale(${(1 + e1 * 1.5).toFixed(4)})`;
+    if (e1 !== le1) { le1 = e1; const dy = e1 * H * .6; up.forEach((el) => { el.style.transform = dy ? `translate3d(0,${(-dy).toFixed(1)}px,0)` : ""; }); down.forEach((el) => { el.style.transform = dy ? `translate3d(0,${dy.toFixed(1)}px,0)` : ""; }); }
+    glow.style.transform = `translate3d(${sgx.toFixed(0)}px,${sgy.toFixed(0)}px,0)`;
+    if (p !== zp) { zp = p; copy.style.pointerEvents = p > .08 ? "none" : "";
+      // the opening: a soft-edged hole grows from the middle of the ring and the page behind shows through
+      const e2 = Math.pow(clamp((p - .4) / .6), 1.7), r = e2 * Rmax, m = e2 > 0 ? `radial-gradient(circle at ${ox.toFixed(0)}px ${oy.toFixed(0)}px,transparent ${Math.max(0, r - 70).toFixed(0)}px,#000 ${r.toFixed(0)}px)` : "";
+      if (m !== lastMask) { lastMask = m; st.style.webkitMaskImage = st.style.maskImage = m; }
+      const g = p >= 1; if (g !== gone) { gone = g; st.classList.toggle("gone", g); if (vid && !RMq) { if (g) vid.pause(); else vid.play().catch(() => {}); } } }
+    requestAnimationFrame(frame); };
+  new IntersectionObserver((e) => { const v = e[e.length - 1].isIntersecting; if (v && !on) { on = true; frame(); if (vid && !RMq && !gone) vid.play().catch(() => {}); } else if (!v) { on = false; if (vid) vid.pause(); } }).observe(hero);
+  $$(".h1 .rz").forEach((el, i) => setTimeout(() => el.classList.add("in"), 350 + i * 220));
+  window.R13.portal = { get p() { return zp; }, get D() { return D; }, get shot() { return cur.nm; }, get hole() { return hole; }, get centre() { return [ox, oy]; }, get gone() { return gone; } }; }
 // ---- hero 1: the pieces ride a neon ring around the headline; the four service characters are the big ones ----
 //      The Team and Avatar pages use it as "the circle" (Sue, 24 Nov): no glowing ring, the pieces packed closer on a gently wavy circle round the headline.
 //      Avatar keeps its four characters in the circle (they jump down into the services from there); Team has objects only, with the two people leaning in.
@@ -302,7 +342,7 @@ if (CAST === "toy" && G) { const hero = $("#hero"), acc = $("#acc"), dgch = $(".
     let docked = false, last = -1, first = true, moving = false, dirty = 150, ly = -1;
     const tileOf = (f) => { const open = f.pn.classList.contains("open"); if (acc.classList.contains("has") && !open) return null; const r = (open && !PHONE() ? f.big : f.tile).getBoundingClientRect(); return r.width > 4 ? r : null; };
     const chatRect = (f) => { const e = f.chat; if (!e.offsetWidth) return null; const c = dgch.getBoundingClientRect(); return { left: c.left + e.offsetLeft, top: c.top + e.offsetTop, width: e.offsetWidth, height: e.offsetHeight, bottom: c.top + e.offsetTop + e.offsetHeight }; };
-    function frame(dt) { const vh = innerHeight, hb = hero.getBoundingClientRect().bottom, fr = ((filmBox && $("video", filmBox)) || hero).getBoundingClientRect(), sv = window.R13.chat ? window.R13.chat.svc : 1, swap = first || sv !== last, ph = PHONE(), floor = ph ? vh - 84 : vh - 8, nh = navH(), pt = dgp.getBoundingClientRect().top;
+    function frame(dt) { const vh = innerHeight, hb = HV === "8" ? -999 : hero.getBoundingClientRect().bottom, fr = ((filmBox && $("video", filmBox)) || hero).getBoundingClientRect(), sv = window.R13.chat ? window.R13.chat.svc : 1, swap = first || sv !== last, ph = PHONE(), floor = ph ? vh - 84 : vh - 8, nh = navH(), pt = dgp.getBoundingClientRect().top;
       // under the film the page is a white mist, so the layer is masked with a short soft edge there: the characters come out of the mist, not out of a hard line
       const mk = hb > -70 ? `linear-gradient(transparent ${Math.round(hb - 26)}px,#000 ${Math.round(hb + 46)}px)` : "none"; if (mk !== layer._mk) { layer._mk = mk; layer.style.webkitMaskImage = layer.style.maskImage = mk; } moving = false;
       F.forEach((f) => { const t = tileOf(f), isB = !window.R13.dgPhotos && f.i === sv, c = isB ? chatRect(f) : null, a0 = f.a, b0 = f.b;
