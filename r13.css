@@ -700,3 +700,77 @@ html:not([data-hero="1"]) .ring,html:not([data-hero="1"]) .ppl,html:not([data-he
 [data-cast][data-hero="1"] .hbg{background:radial-gradient(62% 56% at 30% 24%,#FF3F1F 0%,rgba(255,63,31,0) 62%),radial-gradient(70% 70% at 88% 92%,#76002E 0%,rgba(118,0,46,0) 64%),radial-gradient(64% 58% at 50% 46%,#E8121A 0%,rgba(232,18,26,0) 78%),radial-gradient(120% 90% at 50% 120%,#5A0012,rgba(90,0,18,0) 60%),#C2000D}
 [data-cast="toy"] .ppl{display:none}
 .pc.away{visibility:hidden!important}
+
+/* ===== Round 16 (24 Nov meeting): Team and Avatar pages only ===== */
+/* the circle rides above the page while the banner is in view, so it can open out over the logo section */
+.ring.fx{position:fixed;inset:0;z-index:30;pointer-events:none}
+/* logos: an off-white ground and a more designed headline */
+[data-cast] .cl{background:#F6F2EC}
+[data-cast] .cl .ttl{font-weight:400;font-size:clamp(32px,4.2vw,64px);letter-spacing:-.045em;line-height:1.02;max-width:19ch}
+[data-cast] .cl .ttl b{font-size:1.7em;line-height:.74;display:inline-block;transform:translateY(.06em)}
+[data-cast] .lcp{background:#fff}
+/* services: no boxes, no circle line, the warmer gradient, a round plus, tags under the name and clickable */
+[data-cast] .acc{background:radial-gradient(60% 70% at 20% 0%,#FF3F1F 0%,rgba(255,63,31,0) 60%),radial-gradient(70% 80% at 92% 100%,#76002E 0%,rgba(118,0,46,0) 62%),#C2000D}
+[data-cast] .acc .arc{display:none}
+[data-cast] .acc:not(.has) .pn::before{background:none;box-shadow:none}
+[data-cast] .acc:not(.has) .pn+.pn{box-shadow:-1px 0 0 rgba(255,255,255,.16)}
+[data-cast] .pm{border-radius:50%}
+[data-cast] .pstage{background:none;box-shadow:none}
+[data-cast] .pl .tags{margin-top:18px}[data-cast] .pl .tags a{color:inherit;text-decoration:none}[data-cast] .pl .tags li:has(a):hover{background:#fff;color:var(--red)}
+[data-cast] .pl .pline{margin-top:18px;font-size:clamp(15px,1.25vw,18px);opacity:.92}
+/* impact: off-white so the white cards stand out; bigger words under the figures */
+[data-cast] .imp{background:#F6F2EC}
+[data-cast] .ic p{font-size:clamp(15px,1.2vw,17.5px);line-height:1.35;font-weight:600}
+/* analytics: the three findings are a big chart and plain words, no figures */
+[data-cast] .fc h4{font:700 clamp(22px,2vw,30px)/1.05 var(--t);letter-spacing:-.03em;margin:0 0 14px;text-transform:none;color:var(--ink)}
+[data-cast] .fc .vz.big{height:58%;min-height:120px}[data-cast] .fc .vz.big svg{width:100%;height:100%}
+.bars.trend{display:flex;align-items:flex-end;gap:7%;height:100%}.bars.trend i{flex:1;background:var(--red);border-radius:6px 6px 2px 2px}
+/* Battle wins: a cascade of cards, industry and goal first, the figure on the right; open one and it unfolds */
+[data-cast] .wl{display:grid;gap:10px;counter-reset:w}
+[data-cast] .wr{--o:calc(var(--i) * clamp(18px,4.2vw,64px));margin-left:var(--o);width:calc(100% - 4 * clamp(18px,4.2vw,64px));border-radius:22px;overflow:hidden;color:#fff;background:var(--wc);box-shadow:0 22px 40px -26px rgba(0,0,0,.6);animation:wstep 7s ease-in-out infinite;animation-delay:calc(var(--i) * -1.4s)}
+[data-cast] .wr.k1{--wc:#E3101A}[data-cast] .wr.k2{--wc:#8E000B}[data-cast] .wr.k3{--wc:#2B2C31}[data-cast] .wr.k4{--wc:#F6F2EC;color:var(--ink)}[data-cast] .wr.k5{--wc:#9A9CA1}
+[data-cast] .wr.open{animation:none}
+@keyframes wstep{0%,100%{translate:0 0}50%{translate:10px 0}}
+@media (prefers-reduced-motion:reduce){[data-cast] .wr{animation:none}}
+[data-cast] .wh{display:grid;grid-template-columns:minmax(0,1fr) auto 44px;gap:18px;align-items:center;width:100%;padding:18px 22px;background:none;border:0;color:inherit;text-align:left;cursor:pointer}
+[data-cast] .wh .ig b{display:block;font:800 clamp(15px,1.3vw,19px)/1.05 var(--t);letter-spacing:.02em;text-transform:uppercase}
+[data-cast] .wh .ig span{display:block;font:600 clamp(13px,1.05vw,15px)/1.2 var(--t);text-transform:uppercase;letter-spacing:.06em;opacity:.8;margin-top:3px}
+[data-cast] .wh .v{font:700 clamp(32px,3.2vw,52px)/.9 var(--c);text-align:right}[data-cast] .wh .v small{display:block;font:600 11px var(--t);letter-spacing:.1em;text-transform:uppercase;opacity:.75}
+[data-cast] .wh .l{display:none}
+[data-cast] .wr .pm{position:static;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.14);box-shadow:inset 0 0 0 1px currentColor}
+[data-cast] .wb{display:grid;grid-template-rows:0fr;transition:grid-template-rows .75s var(--ease)}[data-cast] .wr.open .wb{grid-template-rows:1fr}[data-cast] .wb>div{overflow:hidden}
+[data-cast] .wbg{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:22px;padding:0 22px 22px}
+[data-cast] .wb .wph{position:static;border-radius:16px;overflow:hidden;aspect-ratio:4/3;opacity:1;transform:none}[data-cast] .wb .wph img{width:100%;height:100%;object-fit:cover;transform:scale(1.08);transition:transform 1s var(--ease)}[data-cast] .wr.open .wph img{transform:none}
+[data-cast] .wbi{display:flex;flex-direction:column;gap:10px;padding:4px 0}[data-cast] .wl3{font:600 17px/1.3 var(--t)}[data-cast] .wl3 b{font:700 1.5em var(--c);margin-right:4px}
+[data-cast] .wbi .brand{font:700 12px var(--t);letter-spacing:.14em;text-transform:uppercase;opacity:.8}[data-cast] .wbi p{font-size:15px;line-height:1.55}[data-cast] .wbi cite{font-style:normal;opacity:.8;font-size:13.5px}
+[data-cast] .wbi .tags{margin-top:4px}[data-cast] .wbi .tags li{box-shadow:inset 0 0 0 1.5px currentColor}[data-cast] .wbi .tags a{color:inherit;text-decoration:none}
+[data-cast] .wmore{margin-top:auto;font-weight:700;color:inherit}
+/* team photos: a strip that keeps moving, with Google reviews as red cards */
+[data-cast] .tmf .ctl{display:none}
+[data-cast] .flow.marq{overflow:hidden;cursor:grab;touch-action:pan-y;padding:10px 0 20px;-webkit-mask:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+[data-cast] .flow.marq.drag{cursor:grabbing}
+.mqt{display:flex;gap:16px;width:max-content;will-change:transform}
+.mq{flex:none;margin:0;width:clamp(230px,22vw,320px);aspect-ratio:4/5;border-radius:24px;overflow:hidden;position:relative;transform:none!important;opacity:1!important;filter:none!important}
+.mq img{width:100%;height:100%;object-fit:cover;pointer-events:none}
+.mq.rq{display:flex;flex-direction:column;gap:12px;padding:24px;background:radial-gradient(70% 70% at 20% 0%,#FF3F1F,rgba(255,63,31,0) 60%),#C2000D;color:#fff}
+.rq .st{color:#FFD24D;letter-spacing:2px;margin:0}.rq p{margin:0;font:500 clamp(15px,1.25vw,18px)/1.45 var(--t)}
+.rq footer{margin-top:auto;display:flex;align-items:center;gap:10px}.rq footer img{width:40px;height:40px;border-radius:50%}.rq b{display:block}.rq small{opacity:.8}
+/* the contact box: smaller words, no line, a white field with a glass rim; WhatsApp is its own round button */
+[data-cast] .cn .arc,[data-cast] .cnp{display:none}
+[data-cast] .cn .ttl.xl{font-size:clamp(34px,4.6vw,72px)}
+[data-cast] .ask{background:rgba(255,255,255,.16);padding:10px;border-radius:30px;backdrop-filter:blur(18px) saturate(1.3);-webkit-backdrop-filter:blur(18px) saturate(1.3);box-shadow:inset 0 0 0 1px rgba(255,255,255,.5),inset 0 1px 0 rgba(255,255,255,.75),0 30px 60px -30px rgba(40,0,6,.7)}
+[data-cast] .ask input{background:#fff;color:var(--ink);border-radius:22px}[data-cast] .ask input::placeholder{color:#7a7e85}
+.wafab{position:fixed;right:20px;bottom:20px;z-index:60;width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:#25D366;color:#fff;box-shadow:0 14px 30px -10px rgba(0,0,0,.5);transition:transform .3s var(--ease)}.wafab:hover{transform:scale(1.08)}.wafab svg{width:30px;height:30px}
+@media (max-width:900px){.wafab{display:none}}
+/* footer: the two logos larger, no description, BATTLE across the full width fading out, the copyright under it */
+[data-cast] .foot .fmain>div:first-child .plain{display:none}
+[data-cast] .foot .lk img{height:clamp(38px,3.2vw,48px)}
+[data-cast] .foot>.wrap{display:flex;flex-direction:column}[data-cast] .foot .fbot{order:3;margin-top:0;border-top:0;padding-top:6px}
+[data-cast] .foot .big{order:2;font-size:24.6vw;letter-spacing:-.07em;margin:40px 0 0;background:linear-gradient(180deg,rgba(215,0,15,.22),rgba(215,0,15,0) 85%);-webkit-background-clip:text;background-clip:text;color:transparent;overflow:visible}
+@media (max-width:900px){[data-cast] .wr{--o:calc(var(--i) * 10px);width:calc(100% - 40px)}[data-cast] .wbg{grid-template-columns:1fr}[data-cast] .wh{grid-template-columns:minmax(0,1fr) auto 36px;padding:14px 16px;gap:10px}}
+[data-cast] .wl:hover .wr,[data-cast] .wl:focus-within .wr{animation-play-state:paused}
+[data-cast] .wr{display:block}[data-cast] .wr .pm{position:relative}[data-cast] .wb{grid-column:auto}
+[data-cast] .wb .wph{grid-row:auto;display:block}[data-cast] .wb .wph img{position:static;opacity:1;inset:auto;width:100%;height:100%;border-radius:0;aspect-ratio:auto}
+.flow.marq{height:auto;perspective:none}.flow.marq .mq{position:relative;left:auto;top:auto;translate:none;height:auto;box-shadow:0 18px 40px -28px rgba(14,15,18,.45)}
+[data-cast] .foot .big{font-size:21.5vw}
+.rq p:not(.st){display:-webkit-box;-webkit-line-clamp:8;-webkit-box-orient:vertical;overflow:hidden}

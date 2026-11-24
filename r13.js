@@ -126,11 +126,11 @@ if (HV === "1") { const hero = $("#hero"), ring = $("#ring"), neon = $("#neon"),
     [CH("video"), CM.video], [AS + "assets5/swatch_k.webp", .95], [AS + "assets2/envelope_w.webp", .85], [AS + "assets2/coin_w.webp", .75], [AS + "assets2/camera_k.webp", .95],
     [CH("web"), CM.web], [AS + "assets2/magnifier_k.webp", .9], [AS + "assets2/phone_k.webp", .9], [AS + "assets2/bolt_w.webp", .7]];
   const MORE = [[AS + "assets2/bag_w.webp", .8], [AS + "assets2/cursor_w.webp", .7], [AS + "assets5/cart_k.webp", .85], [AS + "assets5/clapper_k.webp", .85], [AS + "assets5/browser_w.webp", .9]];
-  const KEYS = ["perf", "ads", "video", "web"], PIECES = CAST === "team" ? ALL.filter((x, i) => i % 5 !== 0).concat(MORE) : CAST === "toy" ? ALL.concat(MORE) : ALL;   // Team: no cut-out people in the circle
-  const N = PIECES.length;
+  const KEYS = CAST === "toy" ? ["perf", "video", "web"] : ["perf", "ads", "video", "web"], PIECES = CAST === "team" ? ALL.filter((x, i) => i % 5 !== 0).concat(MORE) : CAST === "toy" ? ALL.filter((x, i) => i !== 5).concat(MORE) : ALL;   // Avatar: three services, three characters (24 Nov)   // Team: no cut-out people in the circle
+  const N = PIECES.length; if (WR) ring.classList.add("fx");
   const P = PIECES.map(([src, m], i) => { const el = document.createElement("img"); el.className = "pc"; el.src = src; el.alt = ""; el.draggable = false; ring.appendChild(el);
     const ck = KEYS.find((kk) => CH(kk) === src); if (CAST === "toy" && ck) el.dataset.k = ck;   // a character: the crew's jump starts here
-    return { el, m, a: i / N * Math.PI * 2, r: WR ? .95 + rnd(i) * .1 : .98 + rnd(i) * .26, v: (rnd(i + 50) - .5) * (WR ? .04 : .12), tilt: (rnd(i + 90) - .5) * 26, px: 0, py: 0, front: null, b: RM ? 1 : 0 }; });
+    return { el, m: WR && el.dataset.k ? m * 1.32 : m, a: i / N * Math.PI * 2, r: WR ? .95 + rnd(i) * .1 : .98 + rnd(i) * .26, v: (rnd(i + 50) - .5) * (WR ? .04 : .12), tilt: (rnd(i + 90) - .5) * 26, px: 0, py: 0, front: null, b: RM ? 1 : 0 }; });
   let w = 0, h = 0, A = 0, B = 0, cyf = .46;
   const fit = () => { w = hero.clientWidth; h = hero.clientHeight; const ph = w <= 900; cyf = ph ? .36 : WR ? .43 : .46; A = ph ? w * (WR ? .56 : .6) : Math.min(w * (WR ? .4 : .41), h * (WR ? .78 : .8)); B = ph ? h * (WR ? .29 : .3) : h * (WR ? .345 : .335);
     const base = Math.min(w, h) * (w < 700 ? .15 : .122); P.forEach((p, i) => { p.el.style.width = (base * p.m) + "px"; p.el.hidden = w < 700 && i % 2 === 1 && p.m < 1.2; });
@@ -138,18 +138,18 @@ if (HV === "1") { const hero = $("#hero"), ring = $("#ring"), neon = $("#neon"),
   fit(); addEventListener("resize", fit);
   let ptr = { x: 0, y: 0 }, pt = { x: 0, y: 0 }, mouse = { x: -1e4, y: -1e4 }, lift = 0, t0 = performance.now(), run = true; const kick = { k: 0 };
   function frame() { if (!run) return; const T = (performance.now() - t0) / 1000; ptr.x += (pt.x - ptr.x) * .06; ptr.y += (pt.y - ptr.y) * .06;
-    const ph = w <= 900, ex = 1 + lift * .22 + kick.k, cx = w * .5 + ptr.x * 26, cy = h * cyf + ptr.y * 18, spin = (RM ? 0 : T * .2) + lift * 1.6 + ptr.x * .22;
-    for (const p of P) { const th = p.a + spin, z = Math.sin(th), d = (z + 1) / 2;
+    const ph = w <= 900, ex0 = 1 + lift * (WR ? 2.6 : .22) + kick.k, cx = w * .5 + ptr.x * 26, ht = WR ? hero.getBoundingClientRect().top : 0, cy0 = h * cyf + ptr.y * 18 + ht, spin = (RM ? 0 : T * .2) + lift * 1.6 + ptr.x * .22;
+    for (const p of P) { const th = p.a + spin, z = Math.sin(th), d = (z + 1) / 2, keep = WR && p.el.dataset.k, ex = keep ? 1 + lift * .2 : ex0, cy = cy0 + (WR && !keep ? lift * h * .5 : 0);   // the objects open out and drift down; the characters stay to jump
       const wv = WR ? 1 + .075 * Math.sin(3 * th + (RM ? 0 : T * .35)) : 1;   // the wavy circle
       const x = cx + Math.cos(th) * A * ex * p.r * wv * (.9 + .1 * d); let y = cy + z * B * ex * p.r * wv + p.v * h * .2 + (RM ? 0 : Math.sin(T * 1.3 + p.a * 3) * 7);
       if (ph) { const top = h * (WR ? .06 : .16), bot = h * .57; if (Math.abs(x - w / 2) < w * .42 && y > top && y < bot) y = y - top < bot - y ? top - (y - top) * .2 : bot + (bot - y) * .2; }   // keep the headline clear on phones
       const dx = x - mouse.x, dy = y - mouse.y, dist = Math.hypot(dx, dy); let tx = 0, ty = 0; if (dist < 190 && dist > 0) { const f = (190 - dist) / 190 * 46; tx = dx / dist * f; ty = dy / dist * f; }
-      if (!ph) y = Math.max(y, 104);   // keep the nav clear
+      if (!ph && lift < .05) y = Math.max(y, 104);   // keep the nav clear
       p.px += (tx - p.px) * .12; p.py += (ty - p.py) * .12; const s = (.62 + .48 * d) * p.b;
       p.el.style.transform = `translate(${(x + p.px).toFixed(1)}px,${(y + p.py).toFixed(1)}px) translate(-50%,-50%) rotate(${(p.tilt + (RM ? 0 : Math.sin(T * .8 + p.a * 2) * 7)).toFixed(1)}deg) scale(${s.toFixed(3)})`;
       const front = z > -.15; if (front !== p.front) { p.front = front; p.el.classList.toggle("near", front); p.el.classList.toggle("far", !front); } }
     requestAnimationFrame(frame); }
-  new IntersectionObserver((e) => { const on = e[e.length - 1].isIntersecting; if (on && !run) { run = true; frame(); } else if (!on) run = false; }).observe(hero); frame();
+  new IntersectionObserver((e) => { const on = e[e.length - 1].isIntersecting; ring.style.visibility = on ? "" : "hidden"; if (on && !run) { run = true; frame(); } else if (!on) run = false; }).observe(hero); frame();
   window.R13.ringPiece = (k) => ring.querySelector(`.pc[data-k="${k}"]`);   // the travelling crew starts its jump from here
   hero.addEventListener("pointermove", (e) => { const r = hero.getBoundingClientRect(); pt = { x: (e.clientX - r.left) / r.width * 2 - 1, y: (e.clientY - r.top) / r.height * 2 - 1 }; mouse = { x: e.clientX - r.left, y: e.clientY - r.top }; });
   hero.addEventListener("pointerleave", () => { pt = { x: 0, y: 0 }; mouse = { x: -1e4, y: -1e4 }; });
@@ -170,12 +170,12 @@ if (HV === "1") { const hero = $("#hero"), ring = $("#ring"), neon = $("#neon"),
   else { $$(".h1 .rz").forEach((el) => el.classList.add("in")); $(".ppl").classList.add("on"); }
 
   // pieces that carry on out of the banner and mingle with the next title
-  const spill = $("#spill"), ph = PHONE();
+  const spill = CAST ? null : $("#spill"), ph = PHONE();   // the Team and Avatar pages: no separate pieces here, the circle itself flows down
   const S = ph ? [[AS + "assets2/bag_w.webp", -3, -64, 66, -14], [AS + "assets5/cart_k.webp", 76, -118, 80, 8], [AS + "assets5/card_w.webp", 44, -92, 50, 14]]
     : [[AS + "assets2/bag_w.webp", 2, -104, 122, -14], [AS + "assets2/cursor_w.webp", 44, -52, 78, -8], [AS + "assets5/cart_k.webp", 57, -6, 156, 8], [AS + "assets5/browser_w.webp", 73, -98, 176, -7], [AS + "assets5/card_w.webp", 71, 112, 98, 14], [AS + "assets5/clapper_k.webp", 88, 6, 136, 12]];
   // GSAP clears the independent rotate/translate properties on anything it tweens, so the tilt goes through GSAP when it runs
-  spill.innerHTML = S.map(([s, l, t, wd, r]) => `<img class="${RM ? "" : "fl"}" src="${s}" alt="" draggable="false" style="left:${l}%;top:${t}px;width:${ph ? wd + "px" : `clamp(${Math.round(wd * .7)}px,${(wd / 14.4).toFixed(2)}vw,${wd}px)`};${G ? "" : `rotate:${r}deg`}">`).join("");
-  if (G) $$("img", spill).forEach((im, i) => { gsap.set(im, { rotation: S[i][4] }); gsap.from(im, { scale: 0, duration: .9, delay: .9 + i * .08, ease: "back.out(1.6)" });
+  if (spill) spill.innerHTML = S.map(([s, l, t, wd, r]) => `<img class="${RM ? "" : "fl"}" src="${s}" alt="" draggable="false" style="left:${l}%;top:${t}px;width:${ph ? wd + "px" : `clamp(${Math.round(wd * .7)}px,${(wd / 14.4).toFixed(2)}vw,${wd}px)`};${G ? "" : `rotate:${r}deg`}">`).join("");
+  if (G && spill) $$("img", spill).forEach((im, i) => { gsap.set(im, { rotation: S[i][4] }); gsap.from(im, { scale: 0, duration: .9, delay: .9 + i * .08, ease: "back.out(1.6)" });
     gsap.fromTo(im, { y: 0 }, { y: ph ? 14 + i * 8 : 50 + i * 18, ease: "none", scrollTrigger: { trigger: hero, start: "top top", end: "bottom top", scrub: true } }); }); }   // they lag behind the banner, so they linger beside the next title
 
 // ---- logos: square marks in circles, the name beside; two ribbons that speed up with the scroll ----
@@ -193,16 +193,22 @@ if (G) { let ly = scrollY, v = 0; gsap.ticker.add((t, dt) => { const d = Math.mi
   build(); matchMedia("(max-width:900px)").addEventListener("change", build); } }
 
 // ---- services: one red banner; open one and the others fold into coloured tabs ----
-const SVC = D.svc || [
+const SVC4 = [
   { k: "perf", n: "Performance Marketing", tags: ["Lead generation", "Google SEM", "SEO & AI search", "Tactical campaigns"], p: "Stop paying for vanity clicks that don't pick up the phone.", st: ["37%", "lower cost per acquisition"] },
   { k: "ads", n: "Digital Advertising", tags: ["Meta Ads", "TikTok & XHS", "Marketplace Ads", "Google Ads"], p: "Traffic without purchase intent is just a utility bill.", st: ["22×", "return on ad spend"] },
   { k: "video", n: "Creative Design & Video", tags: ["Social media", "Video production", "KOL & UGC", "Branding"], p: "In saturated feeds, creative strategy is your targeting strategy.", st: ["7M+", "organic reach, nationwide"] },
   { k: "web", n: "Web & App Development", tags: ["E-Commerce", "Booking System", "Loyalty Apps", "Ad Landing Page"], p: "Most marketing fails before the ad is clicked: it dies on a slow, confusing website.", st: ["700+", "leads a week after the redesign"] }];
+const SVC3 = [   // three services (24 Nov: performance marketing now includes digital advertising)
+  { k: "perf", n: "Performance Marketing", tags: ["Meta Ads", "Google Ads", "TikTok & XHS", "SEO & AI search", "Lead generation"], p: "Stop paying for vanity clicks that don't pick up the phone." },
+  { k: "video", n: "Creative Design & Video", tags: ["Social media", "Video production", "KOL & UGC", "Branding"], p: "In saturated feeds, creative strategy is your targeting strategy." },
+  { k: "web", n: "Web & App Development", tags: ["E-Commerce", "Booking System", "Loyalty Apps", "Ad Landing Page"], p: "Most marketing fails before the ad is clicked: it dies on a slow, confusing website." }];
+const SVC = D.svc || (CAST ? SVC3 : SVC4);   // the Team and Avatar pages have three services; the reference page keeps the earlier four
+const TAG = (t) => (t && typeof t === "object" ? `<li><a href="${E(t.href)}">${E(t.t)}</a></li>` : `<li>${E(t)}</li>`);
 let openSvc = () => {};
 { const acc = $("#acc"); if (acc) {
   acc.innerHTML = '<i class="arc" aria-hidden="true"></i>' + SVC.map((s, i) => `<article class="pn" data-k="${s.k}"><button class="pb" type="button" id="pb${i}" aria-expanded="false" aria-controls="pd${i}"><span class="pch"><img src="${CH(s.k)}" alt="" draggable="false"></span><span class="pnm">${E(s.n)}</span><span class="pvt" aria-hidden="true">${E(s.n)}</span><span class="pm" aria-hidden="true"></span></button>
-    <div class="pd" id="pd${i}" role="region" aria-labelledby="pb${i}" inert><div class="pdi"><div class="pl"><h3>${E(s.n)}</h3><p class="pline">${E(s.p)}</p><ul class="tags">${(s.tags || []).map((t) => `<li>${E(t)}</li>`).join("")}</ul><a class="btn" href="${E(s.href || "#connect")}">${E(D.svcBtn || "Talk about this")}${AR}</a></div>
-    <div class="pr"><div class="pstage"><img src="${CH(s.k)}" alt="" loading="lazy" draggable="false"><span class="pm pmx" aria-hidden="true"></span></div><div class="pst"><b>${E(s.st[0])}</b><span>${E(s.st[1])}</span></div></div></div></div></article>`).join("");
+    <div class="pd" id="pd${i}" role="region" aria-labelledby="pb${i}" inert><div class="pdi"><div class="pl"><h3>${E(s.n)}</h3><ul class="tags">${(s.tags || []).map(TAG).join("")}</ul><p class="pline">${E(s.p)}</p><a class="btn" href="${E(s.href || "#connect")}">${E(D.svcBtn || (s.href ? "Explore the service" : "Talk about this"))}${AR}</a></div>
+    <div class="pr"><div class="pstage"><img src="${CH(s.k)}" alt="" loading="lazy" draggable="false"><span class="pm pmx" aria-hidden="true"></span></div></div></div></div></article>`).join("");
   const pn = $$(".pn", acc);
   openSvc = (i, reveal, force) => { const was = pn[i].classList.contains("open"), on = force || !was; let t = 0;
     pn.forEach((p, j) => { const o = on && j === i; p.classList.toggle("open", o); p.classList.remove("t0", "t1", "t2"); if (on && !o) p.classList.add("t" + t++); $(".pb", p).setAttribute("aria-expanded", o); $(".pd", p).inert = !o; });
@@ -215,12 +221,13 @@ let openSvc = () => {};
 // ---- headache match (revamped 23 Nov, David: "this section sucks bro. revamp it"): one dark panel. Pick the headache on the left;
 //      on the right it plays out as a chat: your line, Battle typing, then the service that fixes it with one result, and the character for that service steps up.
 //      The red bar under the active line is the autoplay clock: when it fills, the next headache plays. It pauses on hover, on focus and off screen. Nothing fades in: bubbles pop, characters rise.
-const DG = D.dg || [
-  { t: "No walk-ins", q: "We have no walk-in traffic, and there's a lot of new competition in the area.", s: 1, why: "Location-targeted Meta and Google ads that bring people through the door, measured in walk-ins, not likes." },
-  { t: "Dry social media", q: "Our social media is dry, our ads look like generic AI graphics, and people scroll past us.", s: 2, why: "Thumb-stopping content and UGC campaigns that people actually stop for." },
-  { t: "Visitors, no enquiries", q: "We get website visitors, but nobody converts or fills out the form.", s: 3, why: "A fast, mobile-first site and landing pages built to turn visits into enquiries." },
+const DG0 = [
+  { t: "No walk-ins", q: "We have no walk-in traffic, and there's a lot of new competition in the area.", s: 0, why: "Location-targeted Meta and Google ads that bring people through the door, measured in walk-ins, not likes." },
+  { t: "Dry social media", q: "Our social media is dry, our ads look like generic AI graphics, and people scroll past us.", s: 1, why: "Thumb-stopping content and UGC campaigns that people actually stop for." },
+  { t: "Visitors, no enquiries", q: "We get website visitors, but nobody converts or fills out the form.", s: 2, why: "A fast, mobile-first site and landing pages built to turn visits into enquiries." },
   { t: "Customers don't come back", q: "We spend everything getting new customers, but very few of them come back.", s: 0, why: "Automated CRM and WhatsApp nurturing, plus loyalty, that brings buyers back." },
-  { t: "New brand, no trust yet", q: "We're launching a new brand, and competitors look way more legit than us.", s: 2, why: "A brand identity and content that make you look like the leader from day one." }];
+  { t: "New brand, no trust yet", q: "We're launching a new brand, and competitors look way more legit than us.", s: 1, why: "A brand identity and content that make you look like the leader from day one." }];
+const DG = D.dg || (CAST ? DG0 : DG0.map((d, i) => ({ ...d, s: [1, 2, 3, 0, 2][i] })));   // the reference page: four panels
 { const pn = $("#dgp"); if (pn) {
   pn.innerHTML = `<div class="dgl" role="group" aria-label="Common marketing headaches"><p class="dgk">${E(D.dgk || "What's your headache?")}</p>${DG.map((d, i) => `<button type="button" class="dgr" aria-pressed="false"><i>0${i + 1}</i><span>${E(d.t)}</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M8.5 3.5 13 8l-4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>`).join("")}</div>
     <div class="dgs"><div class="dgch" aria-hidden="true">${SVC.map((s) => `<img src="${CH(s.k)}" alt="" loading="lazy" draggable="false">`).join("")}</div>
@@ -228,7 +235,7 @@ const DG = D.dg || [
       <div class="dgre"><div class="dgb bt ty" id="dgty" aria-hidden="true"><i></i><i></i><i></i></div><div class="dgb bt rp" id="dga"><small>${E(D.dgjob || "That's a job for")}</small><b></b><p></p><div class="dgst"><b></b><span></span></div></div></div>
       <div class="dgx" id="dgx"><button type="button" class="btn sm" id="dgsvc">See the service${AR}</button><a class="btn sm gh" href="#connect" id="dgask">Talk about this</a></div></div></div>`;
   const rows = $$(".dgr", pn), chs = $$(".dgch img", pn), q = $("#dgq"), ty = $("#dgty"), a = $("#dga"), ax = $("#dgx"), dots = $$("i", ty); let cur = -1, tl = null, inView = false, hold = false;
-  const fill = (i) => { const d = DG[i], sv = SVC[d.s]; $("span", q).textContent = d.q; $("b", a).textContent = sv.n; $("p", a).textContent = d.why; $(".dgst b", a).textContent = sv.st[0]; $(".dgst span", a).textContent = sv.st[1]; };
+  const fill = (i) => { const d = DG[i], sv = SVC[d.s]; $("span", q).textContent = d.q; $("b", a).textContent = sv.n; $("p", a).textContent = d.why; $(".dgst b", a).textContent = (sv.st || [])[0] || ""; $(".dgst span", a).textContent = (sv.st || [])[1] || ""; };
   // with the travelling crew, the clock waits until the character has arrived.
   // A bar that was created while the clock was held is started afresh when the clock is released: resuming a bar that has never run can end it at once in Chrome, and the next headache would skip in.
   //    As a second guard the script keeps its own count of how long the bar has really run (CLK matches the 6.4s in the stylesheet): a bar that reports its end early is simply started again.
@@ -326,10 +333,16 @@ $$("#icards [data-to]").forEach((v, i) => { if (!G) return; const to = +v.datase
 if (G && !PHONE()) gsap.from("#icards .ic", { y: 60, opacity: 0, duration: 1, stagger: .12, ease: "power3.out", scrollTrigger: { trigger: "#icards", start: "top 88%", once: true } });
 
 // ---- analytics: cards scatter around the title, then stack and show one finding at a time. Driven by the scroll while the stage holds; the wheel is never captured ----
-const MV = D.mv || [{ b: "74%", l: "Bounce rate", s: "of Instagram visitors bounce", h: "Enhance web UX", p: "Fix the leaky bucket: remove what stops visitors buying, before you spend another ringgit on ads.", vz: "line" },
+const MV0 = [{ b: "74%", l: "Bounce rate", s: "of Instagram visitors bounce", h: "Enhance web UX", p: "Fix the leaky bucket: remove what stops visitors buying, before you spend another ringgit on ads.", vz: "line" },
   { b: "RM63", l: "Cost per lead", s: "per Facebook lead. Google brings them at RM30", h: "Strengthen SEM", p: "Show up where buyers are already searching, on Google and in AI answers.", vz: "bars" },
   { b: "0.8%", l: "Click-through", s: "click-through on the social ads", h: "Engaging, trust-building social ads", p: "Stop the scroll, earn trust, then convert.", vz: "donut" }];
-const viz = (k, i) => k === "bars" ? `<div class="bars">${[0, 1, 2, 3, 4, 5].map((j) => `<i style="height:${Math.round((.3 + rnd(i * 7 + j) * .7) * 100)}%"></i>`).join("")}</div>`
+const MV3 = [{ b: "74%", l: "High bounce rate", s: "of Instagram visitors bounce", h: "Enhance web UX", p: "Fix the leaky bucket: remove what stops visitors buying, before you spend another ringgit on ads.", vz: "lineup" },
+  { b: "RM63", l: "High cost per lead", s: "per Facebook lead. Google brings them at RM30", h: "Strengthen SEM", p: "Show up where buyers are already searching, on Google and in AI answers.", vz: "barsup" },
+  { b: "0.8%", l: "Low click-through", s: "click-through on the social ads", h: "Engaging, trust-building social ads", p: "Stop the scroll, earn trust, then convert.", vz: "linedown" }];
+const MV = D.mv || (CAST ? MV3 : MV0);
+const trend = (k) => { const up = /up$/.test(k), bars = /^bars/.test(k), pts = [...Array(9)].map((_, j) => { const t = j / 8, base = up ? .15 + t * .7 : .85 - t * .7; return Math.max(.05, Math.min(.98, base + (rnd(j + (up ? 3 : 9)) - .5) * .14)); });
+  return bars ? `<div class="bars trend">${pts.slice(0, 7).map((v) => `<i style="height:${Math.round(v * 100)}%"></i>`).join("")}</div>` : `<svg viewBox="0 0 100 40" preserveAspectRatio="none"><path d="M0 ${(40 - pts[0] * 36).toFixed(1)} ${pts.map((v, j) => `L${(j * 12.5).toFixed(1)} ${(40 - v * 36).toFixed(1)}`).join(" ")}" fill="none" stroke="#D7000F" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/><path d="M0 40 ${pts.map((v, j) => `L${(j * 12.5).toFixed(1)} ${(40 - v * 36).toFixed(1)}`).join(" ")} L100 40Z" fill="#D7000F" fill-opacity=".1"/></svg>`; };
+const viz = (k, i) => /^(line|bars)(up|down)$/.test(k) ? trend(k) : k === "bars" ? `<div class="bars">${[0, 1, 2, 3, 4, 5].map((j) => `<i style="height:${Math.round((.3 + rnd(i * 7 + j) * .7) * 100)}%"></i>`).join("")}</div>`
   : k === "donut" ? `<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="15" fill="none" stroke="currentColor" stroke-opacity=".16" stroke-width="6"/><circle cx="20" cy="20" r="15" fill="none" stroke="#D7000F" stroke-width="6" stroke-linecap="round" stroke-dasharray="${(30 + rnd(i) * 50).toFixed(0)} 100" transform="rotate(-90 20 20)" pathLength="100"/></svg>`
   : `<svg viewBox="0 0 100 40" preserveAspectRatio="none"><path d="M0 ${(30 - rnd(i) * 10).toFixed(1)} ${[...Array(8)].map((_, j) => `L${(j + 1) * 12.5} ${(8 + rnd(i * 9 + j) * 26).toFixed(1)}`).join(" ")}" fill="none" stroke="#D7000F" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>`;
 { const stage = $("#astage"), sw = $("#swarm"), ft = $("#afeat"), dots = $("#adots"), tt = $("#antt"); if (stage) {
@@ -338,9 +351,9 @@ const viz = (k, i) => k === "bars" ? `<div class="bars">${[0, 1, 2, 3, 4, 5].map
   const EM = { 2: AS + "assets6/eyes_w.webp", 7: AS + "assets2/heart_w.webp", 11: AS + "assets2/thumb_k.webp" };
   const cards = []; DC.forEach(([b, s, v, c], i) => { const el = document.createElement("div"); el.className = "dc " + c; el.innerHTML = `<small>${E(s)}</small><b>${E(b)}</b>${v ? `<div class="vz">${viz(v, i)}</div>` : ""}`; sw.appendChild(el); cards.push({ el });
     if (EM[i]) { const im = document.createElement("img"); im.className = "em"; im.src = EM[i]; im.alt = ""; im.draggable = false; sw.appendChild(im); cards.push({ el: im, em: true }); } });
-  cards.forEach((c, i) => Object.assign(c, { i, a0: rnd(i + 3) * 6.28, rr: c.em ? .72 : .86 + rnd(i + 5) * .3, rot: (rnd(i + 8) - .5) * 14 }));
+  cards.forEach((c, i) => Object.assign(c, { i, a0: rnd(i + 3) * 6.28, rr: c.em ? .72 : CAST ? .6 + i / cards.length * .62 : .86 + rnd(i + 5) * .3, rot: (rnd(i + 8) - .5) * (CAST ? 6 : 14) }));
   // the three findings are a real deck of three cards: the front one tucks behind, the next comes forward
-  ft.innerHTML = `<div class="fdeck">${MV.map((m, i) => `<div class="fc"><small>${E(m.l)}</small><b>${E(m.b)}</b><p>${E(m.s)}</p><div class="vz">${viz(m.vz, i + 20)}</div></div>`).join("")}</div><i class="fline" aria-hidden="true"></i><div class="ft"><span class="n"></span><h3></h3><p></p></div>`;
+  ft.innerHTML = `<div class="fdeck">${MV.map((m, i) => `<div class="fc">${CAST ? `<h4>${E(m.l)}</h4><div class="vz big">${viz(m.vz, i + 20)}</div>` : `<small>${E(m.l)}</small><b>${E(m.b)}</b><p>${E(m.s)}</p><div class="vz">${viz(m.vz, i + 20)}</div>`}</div>`).join("")}</div><i class="fline" aria-hidden="true"></i><div class="ft"><span class="n"></span><h3></h3><p></p></div>`;
   dots.innerHTML = MV.map((_, i) => `<button type="button" aria-label="Finding ${i + 1}"></button>`).join("");
   const fc = $(".fdeck", ft), fcs = $$(".fc", ft), NF = MV.length, fx = $(".ft", ft), fl = $(".fline", ft), db = $$("button", dots); let cur = 0, st = { k: RM || !G ? 2 : 0, spin: 0, dr: 0 }, played = false, tm = null, inView = false, hold = false, swap = null;
   if (st.k === 2) stage.style.setProperty("--tp", 1);
@@ -397,15 +410,24 @@ const viz = (k, i) => k === "bars" ? `<div class="bars">${[0, 1, 2, 3, 4, 5].map
   window.R13.an = { get cur() { return cur; }, get played() { return played; }, get playing() { return !!tm; }, get k() { return st.k; }, get p() { return prog(); }, get endY() { return endY(); } }; } }
 
 // ---- wins: results first; the brand and the photo appear only when opened, each in its own colour ----
-const CS = D.cs || [{ k: "yakisoul", v: "+450%", l: "monthly revenue, single outlet", w: "Yaki Soul", tags: ["F&B", "Walk-in traffic", "Seasonal campaigns"], p: "Seasonal campaigns turned an izakaya off the main street into a KL destination, now serving 7,000+ customers a month." },
+const CS7 = [{ k: "yakisoul", v: "+450%", l: "monthly revenue, single outlet", w: "Yaki Soul", tags: ["F&B", "Walk-in traffic", "Seasonal campaigns"], p: "Seasonal campaigns turned an izakaya off the main street into a KL destination, now serving 7,000+ customers a month." },
   { k: "writeedge", pre: "Almost", v: "4×", l: "growth in under two years", w: "Write-Edge", tags: ["Education", "Client review"], q: "Taking meticulous care on what the organization provides and targeting the right audience has help us to scale almost coming to 4 folds in less than 2 yrs.", who: "Poi Ching, General Manager, Write-Edge" },
   { k: "bhpetrol", v: "7M+", l: "organic reach, nationwide", w: "BHPetrol", tags: ["Energy", "Campaign videos", "Key visuals"], p: "Creative partner for Malaysia's RON95 subsidy rollout: an early educator in a crowded feed." },
   { k: "easyeurope", v: "700+", l: "leads a week, under RM15 each", w: "Easy Europe", tags: ["Travel", "Lead generation"], p: "Travel revival from the pandemic to peak season, with a 65% lower cost per result." },
   { k: "careconcierge", v: "23%", l: "more monthly sales", w: "Care Concierge", tags: ["Senior care", "Meta retargeting"], p: "Senior care beyond Google search: Meta retargeting and a multi-state expansion, at a 37% lower cost per acquisition." },
   { k: "furniture", v: "22×", l: "return on ad spend, against an industry 8 to 12", w: "Luxe Living", tags: ["Furniture", "Shopee & Lazada", "Meta"], p: "Year-round seasonal campaigns, from Shopee and Lazada to Meta, with 2 to 3 times revenue growth." },
   { k: "lalaport", v: "3×", l: "more vendor inclusions", w: "LaLaport BBCC", tags: ["Retail mall", "Social media"], p: "One Japanese narrative for a mall of monthly events." }];
+const CS5 = [{ k: "yakisoul", ind: "Restaurant", goal: "Walk-in traffic", v: "+450%", l: "monthly revenue, single outlet", w: "Yaki Soul", tags: ["F&B", "Seasonal campaigns"], p: "Seasonal campaigns turned an izakaya off the main street into a KL destination, now serving 7,000+ customers a month." },
+  { k: "writeedge", ind: "Education", goal: "Enrolment", pre: "Almost", v: "4×", l: "growth in under two years", w: "Write-Edge", tags: ["Lead generation", "Meta Ads"], q: "Taking meticulous care on what the organization provides and targeting the right audience has help us to scale almost coming to 4 folds in less than 2 yrs.", who: "Poi Ching, General Manager, Write-Edge" },
+  { k: "bhpetrol", ind: "Oil & gas", goal: "Consumer interest", v: "7M+", l: "organic reach, nationwide", w: "BHPetrol", tags: ["Campaign videos", "Key visuals"], p: "Creative partner for Malaysia's RON95 subsidy rollout: an early educator in a crowded feed." },
+  { k: "easyeurope", ind: "Premium travel", goal: "Enquiries", v: "700+", l: "leads a week, under RM15 each", w: "Easy Europe", tags: ["Lead generation"], p: "Travel revival from the pandemic to peak season, with a 65% lower cost per result." },
+  { k: "furniture", ind: "Home & living", goal: "E-commerce", v: "22×", l: "return on ad spend, against an industry 8 to 12", w: "Luxe Living", tags: ["Shopee & Lazada", "Meta"], p: "Year-round seasonal campaigns, from Shopee and Lazada to Meta, with 2 to 3 times revenue growth." }];
+const CS = D.cs || (CAST ? CS5 : CS7);
 { const list = $("#clist"); if (list) {
-  list.innerHTML = CS.map((c, i) => `<li class="wr k${i % 4 + 1}"><div class="wph"><div><img src="${E(c.img || `${AS}assets3/v9c_${c.k}.webp`)}" alt="${E(c.w)}: our work" loading="lazy" draggable="false"></div></div>
+  const NEWW = CS.map((c, i) => `<li class="wr k${i % 5 + 1}" style="--i:${i}"><button type="button" class="wh" aria-expanded="false" aria-controls="crb${i}" id="crh${i}"><span class="ig"><b>${E(c.ind || c.w)}</b><span>${E(c.goal || "")}</span></span><span class="v">${c.pre ? `<small>${E(c.pre)}</small>` : ""}${E(c.v)}</span><span class="pm" aria-hidden="true"></span></button>
+    <div class="wb" id="crb${i}" role="region" aria-labelledby="crh${i}" inert><div><div class="wbg"><div class="wph"><img src="${E(c.img || `${AS}assets3/v9c_${c.k}.webp`)}" alt="${E(c.w)}: our work" loading="lazy" draggable="false"></div><div class="wbi"><p class="wl3"><b>${c.pre ? E(c.pre) + " " : ""}${E(c.v)}</b> ${E(c.l)}</p><span class="brand">${E(c.w)}</span>
+    ${c.q ? `<p>“${E(c.q)}”</p><cite>${E(c.who)}</cite>` : `<p>${E(c.p)}</p>`}<ul class="tags">${(c.tags || []).map(TAG).join("")}</ul>${c.href ? `<a class="wmore" href="${E(c.href)}">Read the case study →</a>` : ""}</div></div></div></div></li>`).join("");
+  list.innerHTML = CAST ? NEWW : CS.map((c, i) => `<li class="wr k${i % 4 + 1}"><div class="wph"><div><img src="${E(c.img || `${AS}assets3/v9c_${c.k}.webp`)}" alt="${E(c.w)}: our work" loading="lazy" draggable="false"></div></div>
     <button type="button" class="wh" aria-expanded="false" aria-controls="crb${i}" id="crh${i}"><span class="v">${c.pre ? `<small>${E(c.pre)}</small>` : ""}${E(c.v)}</span><span class="l">${E(c.l)}</span><span class="pm" aria-hidden="true"></span></button>
     <div class="wb" id="crb${i}" role="region" aria-labelledby="crh${i}" inert><div><div class="wbi"><span class="brand">${E(c.w)}</span>
     ${c.q ? `<p>“${E(c.q)}”</p><cite>${E(c.who)}</cite>` : `<p>${E(c.p)}</p>`}<ul class="tags">${(c.tags || []).map((t) => `<li>${E(t)}</li>`).join("")}</ul></div></div></div></li>`).join("");
@@ -413,11 +435,23 @@ const CS = D.cs || [{ k: "yakisoul", v: "+450%", l: "monthly revenue, single out
   rows.forEach((r, i) => $(".wh", r).addEventListener("click", () => { const on = !r.classList.contains("open");
     rows.forEach((x, j) => { const o = on && j === i; x.classList.toggle("open", o); $(".wh", x).setAttribute("aria-expanded", o); $(".wb", x).inert = !o; });
     if (on) setTimeout(() => { const b = r.getBoundingClientRect(); showBlock(b.top + scrollY, b.height); }, RM ? 30 : 780); }));
-  if (G) gsap.from(rows, { y: 40, opacity: 0, duration: .8, stagger: .07, ease: "power3.out", scrollTrigger: { trigger: list, start: "top 86%", once: true } });
+  if (G) gsap.from(rows, { x: CAST ? -80 : 0, y: CAST ? 0 : 40, opacity: CAST ? 1 : 0, duration: .8, stagger: .08, ease: "power3.out", scrollTrigger: { trigger: list, start: "top 86%", once: true } });   // the steps slide in, solid
   if (G) gsap.fromTo(".ghost span", { yPercent: 40, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 1.1, stagger: .12, ease: "power4.out", scrollTrigger: { trigger: "#cases", start: "top 80%", once: true } }); } }
 
 // ---- team: a curved carousel; the middle photo is large, the sides taper away ----
-{ const fl = $("#tflow"), dots = $("#tdots"); if (fl) { const PH = D.team || ["poiching", "marcus", "swet", "bhp", "cheanu", "belle"], N = PH.length;
+{ const fl = $("#tflow"); if (fl && CAST) { const PH = D.team || ["poiching", "marcus", "swet", "bhp", "cheanu", "belle"], RV = D.reviews || [{ q: "Bentley and the entire BMC team represents world class professionalism in everything they do.", who: "Cheanu Chew", role: "Google review" }, { q: "Battle Mind Creative has been my primary go-to Facebook/Instagram marketing solution each time I have clients asking me for social media help.", who: "Marcus Teoh", role: "Google review" }];
+  const items = []; PH.forEach((p, i) => { items.push(`<figure class="mq"><img src="${E(p.img || `${AS}assets3/v9_g_${p}.webp`)}" alt="${E(p.alt || "The Battle team with clients")}" loading="lazy" draggable="false"></figure>`); if (i % 2 === 1 && RV[(i - 1) / 2]) { const r = RV[(i - 1) / 2]; items.push(`<blockquote class="mq rq"><p class="st">★★★★★</p><p>“${E(r.q)}”</p><footer>${r.img ? `<img src="${E(r.img)}" alt="" loading="lazy">` : ""}<span><b>${E(r.who)}</b><small>${E(r.role || "Google review")}</small></span></footer></blockquote>`); } });
+  fl.classList.add("marq"); fl.innerHTML = `<div class="mqt">${items.join("")}${items.join("").replace(/<(figure|blockquote) class="mq/g, '<$1 aria-hidden="true" class="mq')}</div>`; const tr = $(".mqt", fl);
+  let x = 0, v = 0, drag = null, last = 0, inView = false, hover = false; const BASE = RM ? 0 : 38;
+  const step = (t) => { const dt = Math.min(.05, (t - (last || t)) / 1000); last = t; const half = tr.scrollWidth / 2;
+    if (!drag) { v += ((hover ? BASE * .25 : BASE) - v) * Math.min(1, dt * 2.5); x -= v * dt; } if (half) { if (x <= -half) x += half; if (x > 0) x -= half; } tr.style.transform = `translate3d(${x.toFixed(1)}px,0,0)`; if (inView) requestAnimationFrame(step); else last = 0; };
+  watch(fl, (on) => { const was = inView; inView = on; if (on && !was) requestAnimationFrame(step); });
+  fl.addEventListener("pointerenter", (e) => { if (e.pointerType === "mouse") hover = true; }); fl.addEventListener("pointerleave", () => { hover = false; });
+  fl.addEventListener("pointerdown", (e) => { drag = { x0: e.clientX, x: x, t: performance.now(), lx: e.clientX }; fl.setPointerCapture(e.pointerId); fl.classList.add("drag"); });
+  fl.addEventListener("pointermove", (e) => { if (!drag) return; const now = performance.now(); x = drag.x + (e.clientX - drag.x0); v = -(e.clientX - drag.lx) / Math.max(.008, (now - drag.t) / 1000); drag.t = now; drag.lx = e.clientX; });
+  const end = () => { if (!drag) return; drag = null; fl.classList.remove("drag"); v = Math.max(-1400, Math.min(1400, v)); }; fl.addEventListener("pointerup", end); fl.addEventListener("pointercancel", end);
+  window.R13.team = { get x() { return x; }, get speed() { return v; } }; } }
+{ const fl = $("#tflow"), dots = $("#tdots"); if (fl && !CAST) { const PH = D.team || ["poiching", "marcus", "swet", "bhp", "cheanu", "belle"], N = PH.length;
   fl.innerHTML = PH.map((p, i) => `<figure role="group" aria-roledescription="slide" aria-label="${i + 1} of ${N}"><img src="${E(p.img || `${AS}assets3/v9_g_${p}.webp`)}" alt="${E(p.alt || "The Battle team with clients")}" loading="lazy" draggable="false"></figure>`).join("");
   dots.innerHTML = PH.map((_, i) => `<button type="button" aria-label="Photo ${i + 1}"></button>`).join("");
   const figs = $$("figure", fl), db = $$("button", dots); let cur = 0, tm = null, inView = false, hold = false;
@@ -437,8 +471,13 @@ const CS = D.cs || [{ k: "yakisoul", v: "+450%", l: "monthly revenue, single out
 // ---- connect: one line, a goal, sent on WhatsApp; a few pieces float around the glass ----
 { const ask = $("#ask"); if (ask) { let goal = ""; const btns = $$(".chips button", ask);
   btns.forEach((b) => b.addEventListener("click", () => { goal = goal === b.dataset.g ? "" : b.dataset.g; btns.forEach((x) => x.setAttribute("aria-pressed", String(x.dataset.g === goal))); }));
-  ask.addEventListener("submit", (e) => { e.preventDefault(); const v = $("#askin").value.trim(), g = goal ? `My primary goal: ${goal}. ` : ""; open(WA(`Hi Battle, ${g}${v || "I'd like a 15-minute call about my marketing."}`), "_blank", "noopener"); }); }
-  const box = $("#cnp"); if (box) { const ph = PHONE();
+  ask.addEventListener("submit", (e) => { e.preventDefault(); const v = $("#askin").value.trim(), g = goal ? `My primary goal: ${goal}. ` : "";
+    if (D.contactUrl) { location.href = `${D.contactUrl}?goal=${encodeURIComponent(goal)}&msg=${encodeURIComponent(v)}#form`; return; }   // the full form asks what Battle needs to know
+    open(WA(`Hi Battle, ${g}${v || "I'd like a 15-minute call about my marketing."}`), "_blank", "noopener"); }); }
+  if (CAST && !$(".wafab")) { const a = document.createElement("a"); a.className = "wafab"; a.href = WA("Hi Battle, I'd like a 15-minute call about my marketing."); a.target = "_blank"; a.rel = "noopener"; a.setAttribute("aria-label", "Chat with Battle on WhatsApp");
+    a.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.9 11.9 0 0 0 4.6 4c1.7.7 2.4.8 3.3.7a2.8 2.8 0 0 0 1.8-1.3 2.3 2.3 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3Z"/></svg>';
+    document.body.appendChild(a); }
+  const box = CAST ? null : $("#cnp"); if (box) { const ph = PHONE();   // the Team and Avatar pages keep the box clean (Sue, 24 Nov)
     const C = ph ? [[AS + "assets2/megaphone_w.webp", "left:-5%;top:.8%", 72, -14], [AS + "assets2/bubble_w.webp", "right:-3%;top:1.6%", 58, 10], [AS + "assets2/heart_w.webp", "right:7%;bottom:3%", 54, 12]]
       : [[AS + "assets2/megaphone_w.webp", "left:5%;top:16%", 168, -14], [AS + "assets2/bubble_w.webp", "right:7%;top:13%", 132, 10], [AS + "assets2/heart_w.webp", "left:13%;bottom:13%", 100, -10], [AS + "assets2/cursor_k.webp", "right:13%;bottom:16%", 112, 8], [AS + "assets2/coin_w.webp", "left:27%;top:7%", 62, 16], [AS + "assets2/play_k.webp", "right:27%;bottom:6%", 78, -12]];
     box.innerHTML = C.map(([s, pos, wd, r]) => `<img src="${s}" alt="" loading="lazy" draggable="false" style="${pos};width:${ph ? wd + "px" : `clamp(${Math.round(wd * .6)}px,${(wd / 14.4).toFixed(2)}vw,${wd}px)`};${G ? "" : `rotate:${r}deg`}">`).join("");
