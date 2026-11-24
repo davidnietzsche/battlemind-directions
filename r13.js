@@ -11,9 +11,10 @@ const rnd = (i) => { const g = Math.sin(i * 127.1 + 311.7) * 43758.5453; return 
 const CAST = document.documentElement.dataset.cast || "";
 // Content: when the CMS serves this page it puts every editable word and picture in window.R13_DATA. Anything missing falls back to the copy below.
 // Text from the CMS is written into the page escaped (E), never as markup.
+const AS = window.R13_ASSETS || "";   // where the design pictures live: "" on the review pages, "/" when the CMS serves a page at any depth
 const D = window.R13_DATA || {}, E = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const PIC = {}; (D.svc || []).forEach((x) => { if (x && x.img) PIC[x.k] = x.img; });
-const CH = (k) => CAST === "team" ? (PIC[k] || `assets7/hu_${k}.webp`) : FIN === "c" ? `assets7/ch_${k}.webp` : `assets5/ch_${k}_${FIN}.webp`;
+const CH = (k) => CAST === "team" ? (PIC[k] || `${AS}assets7/hu_${k}.webp`) : FIN === "c" ? `${AS}assets7/ch_${k}.webp` : `${AS}assets5/ch_${k}_${FIN}.webp`;
 const CM = FIN === "c" ? { perf: 1.5, ads: .96, video: 1.26, web: 1.42 } : { perf: 1.6, ads: 1.5, video: 1.55, web: 1.55 };   // ring size by width: the crew are taller and narrower
 window.R13 = { fin: FIN, cast: CAST };
 let TRV = null;   // the travelling crew, set up after the sections it moves between
@@ -84,7 +85,7 @@ if (HV !== "1") { const hero = $("#hero");
   // 7 · film: the crew as one looping studio shot. It plays only while the banner is on screen; reduced motion gets the still.
   //     2 · team gets the same treatment: the campaign photograph as a short loop of small movements (a laugh, a glance, a shift of weight).
   if (HV === "7" || HV === "2") { const f = HV === "7" ? $("#hfilm") : $(".hteam"), nm = HV === "7" ? "crew_film" : "team_film";
-    f.innerHTML = `<video muted loop playsinline preload="auto" poster="assets7/${nm}.webp"${RM ? "" : ` src="assets7/${nm}.mp4"`}></video>`; const v = $("video", f); v.muted = true; window.R13.film = v;
+    f.innerHTML = `<video muted loop playsinline preload="auto" poster="${AS}assets7/${nm}.webp"${RM ? "" : ` src="${AS}assets7/${nm}.mp4"`}></video>`; const v = $("video", f); v.muted = true; window.R13.film = v;
     if (!RM) new IntersectionObserver((e) => { if (e[e.length - 1].isIntersecting) v.play().catch(() => {}); else v.pause(); }, { threshold: .15 }).observe(hero);
     if (G) gsap.from(v, { scale: 1.09, duration: 2.2, ease: "power3.out", transformOrigin: "50% 100%" }); }
   $$(".h1 .rz").forEach((el, i) => setTimeout(() => el.classList.add("in"), G ? 250 + i * 220 : 0));
@@ -118,10 +119,10 @@ if (HV !== "1") { const hero = $("#hero");
 
 // ---- hero 1: the pieces ride a neon ring around the headline; the four service characters are the big ones ----
 if (HV === "1") { const hero = $("#hero"), ring = $("#ring"), neon = $("#neon");
-  const PIECES = [[CH("perf"), CM.perf], ["assets2/heart_w.webp", .8], ["assets5/laptop_k.webp", 1.05], ["assets2/play_k.webp", .85], ["assets2/hashtag_w.webp", .8],
-    [CH("ads"), CM.ads], ["assets2/bubble_w.webp", .9], ["assets5/pen_w.webp", .8], ["assets2/thumb_k.webp", .9], ["assets2/chart_w.webp", .95],
-    [CH("video"), CM.video], ["assets5/swatch_k.webp", .95], ["assets2/envelope_w.webp", .85], ["assets2/coin_w.webp", .75], ["assets2/camera_k.webp", .95],
-    [CH("web"), CM.web], ["assets2/magnifier_k.webp", .9], ["assets2/phone_k.webp", .9], ["assets2/bolt_w.webp", .7]];
+  const PIECES = [[CH("perf"), CM.perf], [AS + "assets2/heart_w.webp", .8], [AS + "assets5/laptop_k.webp", 1.05], [AS + "assets2/play_k.webp", .85], [AS + "assets2/hashtag_w.webp", .8],
+    [CH("ads"), CM.ads], [AS + "assets2/bubble_w.webp", .9], [AS + "assets5/pen_w.webp", .8], [AS + "assets2/thumb_k.webp", .9], [AS + "assets2/chart_w.webp", .95],
+    [CH("video"), CM.video], [AS + "assets5/swatch_k.webp", .95], [AS + "assets2/envelope_w.webp", .85], [AS + "assets2/coin_w.webp", .75], [AS + "assets2/camera_k.webp", .95],
+    [CH("web"), CM.web], [AS + "assets2/magnifier_k.webp", .9], [AS + "assets2/phone_k.webp", .9], [AS + "assets2/bolt_w.webp", .7]];
   const N = PIECES.length;
   const P = PIECES.map(([src, m], i) => { const el = document.createElement("img"); el.className = "pc"; el.src = src; el.alt = ""; el.draggable = false; ring.appendChild(el);
     return { el, m, a: i / N * Math.PI * 2, r: .98 + rnd(i) * .26, v: (rnd(i + 50) - .5) * .12, tilt: (rnd(i + 90) - .5) * 26, px: 0, py: 0, front: null, b: RM ? 1 : 0 }; });
@@ -163,8 +164,8 @@ if (HV === "1") { const hero = $("#hero"), ring = $("#ring"), neon = $("#neon");
 
   // pieces that carry on out of the banner and mingle with the next title
   const spill = $("#spill"), ph = PHONE();
-  const S = ph ? [["assets2/bag_w.webp", -3, -64, 66, -14], ["assets5/cart_k.webp", 76, -118, 80, 8], ["assets5/card_w.webp", 44, -92, 50, 14]]
-    : [["assets2/bag_w.webp", 2, -104, 122, -14], ["assets2/cursor_w.webp", 44, -52, 78, -8], ["assets5/cart_k.webp", 57, -6, 156, 8], ["assets5/browser_w.webp", 73, -98, 176, -7], ["assets5/card_w.webp", 71, 112, 98, 14], ["assets5/clapper_k.webp", 88, 6, 136, 12]];
+  const S = ph ? [[AS + "assets2/bag_w.webp", -3, -64, 66, -14], [AS + "assets5/cart_k.webp", 76, -118, 80, 8], [AS + "assets5/card_w.webp", 44, -92, 50, 14]]
+    : [[AS + "assets2/bag_w.webp", 2, -104, 122, -14], [AS + "assets2/cursor_w.webp", 44, -52, 78, -8], [AS + "assets5/cart_k.webp", 57, -6, 156, 8], [AS + "assets5/browser_w.webp", 73, -98, 176, -7], [AS + "assets5/card_w.webp", 71, 112, 98, 14], [AS + "assets5/clapper_k.webp", 88, 6, 136, 12]];
   // GSAP clears the independent rotate/translate properties on anything it tweens, so the tilt goes through GSAP when it runs
   spill.innerHTML = S.map(([s, l, t, wd, r]) => `<img class="${RM ? "" : "fl"}" src="${s}" alt="" draggable="false" style="left:${l}%;top:${t}px;width:${ph ? wd + "px" : `clamp(${Math.round(wd * .7)}px,${(wd / 14.4).toFixed(2)}vw,${wd}px)`};${G ? "" : `rotate:${r}deg`}">`).join("");
   if (G) $$("img", spill).forEach((im, i) => { gsap.set(im, { rotation: S[i][4] }); gsap.from(im, { scale: 0, duration: .9, delay: .9 + i * .08, ease: "back.out(1.6)" });
@@ -180,7 +181,7 @@ if (G) { let ly = scrollY, v = 0; gsap.ticker.add((t, dt) => { const d = Math.mi
 { const box = $("#lrib"), L = window.R13_LOGOS || []; if (box) { const build = () => { const rows = PHONE() ? 4 : 2, cut = (r) => Math.round(r * L.length / rows); box.dataset.rows = rows;
   for (let i = ribs.length - 1; i >= 0; i--) if (box.contains(ribs[i].row)) ribs.splice(i, 1);
   box.innerHTML = Array.from({ length: rows }, (_, r) => r).map((r) => { const set = L.slice(cut(r), cut(r + 1));
-    return `<div class="lrw">${set.concat(set).map(([f, n, u], i) => `<div class="lcp"${i < set.length ? ' role="listitem"' : ' aria-hidden="true"'}><span class="mk"><img src="${E(u || `assets5/lm_${f}.webp`)}" alt="" loading="lazy" draggable="false"></span><span>${E(n)}</span></div>`).join("")}</div>`; }).join("");
+    return `<div class="lrw">${set.concat(set).map(([f, n, u], i) => `<div class="lcp"${i < set.length ? ' role="listitem"' : ' aria-hidden="true"'}><span class="mk"><img src="${E(u || `${AS}assets5/lm_${f}.webp`)}" alt="" loading="lazy" draggable="false"></span><span>${E(n)}</span></div>`).join("")}</div>`; }).join("");
   $$(".lrw", box).forEach((row, r) => ribbon(row, r % 2 ? -1 : 1, rows > 2 ? 26 + (r % 3) * 5 : 36)); };
   build(); matchMedia("(max-width:900px)").addEventListener("change", build); } }
 
@@ -326,7 +327,7 @@ const viz = (k, i) => k === "bars" ? `<div class="bars">${[0, 1, 2, 3, 4, 5].map
 { const stage = $("#astage"), sw = $("#swarm"), ft = $("#afeat"), dots = $("#adots"), tt = $("#antt"); if (stage) {
   const DC = D.dc || [["+19.3%", "Revenue, MoM", "bars", ""], ["RM25.99", "Next payment, 4 days", "", "rd"], ["32K", "Impressions", "donut", "kk"], ["+34.98%", "Organic sessions", "bars", "pk"], ["RM1,248", "Current balance", "line", ""],
     ["↑72.5%", "Progress to target", "", "pk"], ["+280%", "Leads from search", "bars", "kk"], ["0.9%", "Conversion rate", "line", ""], ["4.8s", "Page load", "donut", "pk"], ["2.1×", "ROAS", "line", "rd"], ["RM410", "Cost per customer", "bars", ""], ["9%", "Returning customers", "donut", "kk"], ["640K", "Reach", "line", "pk"], ["1.1%", "Engagement", "bars", ""]];
-  const EM = { 2: "assets6/eyes_w.webp", 7: "assets2/heart_w.webp", 11: "assets2/thumb_k.webp" };
+  const EM = { 2: AS + "assets6/eyes_w.webp", 7: AS + "assets2/heart_w.webp", 11: AS + "assets2/thumb_k.webp" };
   const cards = []; DC.forEach(([b, s, v, c], i) => { const el = document.createElement("div"); el.className = "dc " + c; el.innerHTML = `<small>${E(s)}</small><b>${E(b)}</b>${v ? `<div class="vz">${viz(v, i)}</div>` : ""}`; sw.appendChild(el); cards.push({ el });
     if (EM[i]) { const im = document.createElement("img"); im.className = "em"; im.src = EM[i]; im.alt = ""; im.draggable = false; sw.appendChild(im); cards.push({ el: im, em: true }); } });
   cards.forEach((c, i) => Object.assign(c, { i, a0: rnd(i + 3) * 6.28, rr: c.em ? .72 : .86 + rnd(i + 5) * .3, rot: (rnd(i + 8) - .5) * 14 }));
@@ -396,7 +397,7 @@ const CS = D.cs || [{ k: "yakisoul", v: "+450%", l: "monthly revenue, single out
   { k: "furniture", v: "22×", l: "return on ad spend, against an industry 8 to 12", w: "Luxe Living", tags: ["Furniture", "Shopee & Lazada", "Meta"], p: "Year-round seasonal campaigns, from Shopee and Lazada to Meta, with 2 to 3 times revenue growth." },
   { k: "lalaport", v: "3×", l: "more vendor inclusions", w: "LaLaport BBCC", tags: ["Retail mall", "Social media"], p: "One Japanese narrative for a mall of monthly events." }];
 { const list = $("#clist"); if (list) {
-  list.innerHTML = CS.map((c, i) => `<li class="wr k${i % 4 + 1}"><div class="wph"><div><img src="${E(c.img || `assets3/v9c_${c.k}.webp`)}" alt="${E(c.w)}: our work" loading="lazy" draggable="false"></div></div>
+  list.innerHTML = CS.map((c, i) => `<li class="wr k${i % 4 + 1}"><div class="wph"><div><img src="${E(c.img || `${AS}assets3/v9c_${c.k}.webp`)}" alt="${E(c.w)}: our work" loading="lazy" draggable="false"></div></div>
     <button type="button" class="wh" aria-expanded="false" aria-controls="crb${i}" id="crh${i}"><span class="v">${c.pre ? `<small>${E(c.pre)}</small>` : ""}${E(c.v)}</span><span class="l">${E(c.l)}</span><span class="pm" aria-hidden="true"></span></button>
     <div class="wb" id="crb${i}" role="region" aria-labelledby="crh${i}" inert><div><div class="wbi"><span class="brand">${E(c.w)}</span>
     ${c.q ? `<p>“${E(c.q)}”</p><cite>${E(c.who)}</cite>` : `<p>${E(c.p)}</p>`}<ul class="tags">${(c.tags || []).map((t) => `<li>${E(t)}</li>`).join("")}</ul></div></div></div></li>`).join("");
@@ -409,7 +410,7 @@ const CS = D.cs || [{ k: "yakisoul", v: "+450%", l: "monthly revenue, single out
 
 // ---- team: a curved carousel; the middle photo is large, the sides taper away ----
 { const fl = $("#tflow"), dots = $("#tdots"); if (fl) { const PH = D.team || ["poiching", "marcus", "swet", "bhp", "cheanu", "belle"], N = PH.length;
-  fl.innerHTML = PH.map((p, i) => `<figure role="group" aria-roledescription="slide" aria-label="${i + 1} of ${N}"><img src="${E(p.img || `assets3/v9_g_${p}.webp`)}" alt="${E(p.alt || "The Battle team with clients")}" loading="lazy" draggable="false"></figure>`).join("");
+  fl.innerHTML = PH.map((p, i) => `<figure role="group" aria-roledescription="slide" aria-label="${i + 1} of ${N}"><img src="${E(p.img || `${AS}assets3/v9_g_${p}.webp`)}" alt="${E(p.alt || "The Battle team with clients")}" loading="lazy" draggable="false"></figure>`).join("");
   dots.innerHTML = PH.map((_, i) => `<button type="button" aria-label="Photo ${i + 1}"></button>`).join("");
   const figs = $$("figure", fl), db = $$("button", dots); let cur = 0, tm = null, inView = false, hold = false;
   const lay = () => { const fw = figs[0].offsetWidth, ph = PHONE();
@@ -430,8 +431,8 @@ const CS = D.cs || [{ k: "yakisoul", v: "+450%", l: "monthly revenue, single out
   btns.forEach((b) => b.addEventListener("click", () => { goal = goal === b.dataset.g ? "" : b.dataset.g; btns.forEach((x) => x.setAttribute("aria-pressed", String(x.dataset.g === goal))); }));
   ask.addEventListener("submit", (e) => { e.preventDefault(); const v = $("#askin").value.trim(), g = goal ? `My primary goal: ${goal}. ` : ""; open(WA(`Hi Battle, ${g}${v || "I'd like a 15-minute call about my marketing."}`), "_blank", "noopener"); }); }
   const box = $("#cnp"); if (box) { const ph = PHONE();
-    const C = ph ? [["assets2/megaphone_w.webp", "left:-5%;top:.8%", 72, -14], ["assets2/bubble_w.webp", "right:-3%;top:1.6%", 58, 10], ["assets2/heart_w.webp", "right:7%;bottom:3%", 54, 12]]
-      : [["assets2/megaphone_w.webp", "left:5%;top:16%", 168, -14], ["assets2/bubble_w.webp", "right:7%;top:13%", 132, 10], ["assets2/heart_w.webp", "left:13%;bottom:13%", 100, -10], ["assets2/cursor_k.webp", "right:13%;bottom:16%", 112, 8], ["assets2/coin_w.webp", "left:27%;top:7%", 62, 16], ["assets2/play_k.webp", "right:27%;bottom:6%", 78, -12]];
+    const C = ph ? [[AS + "assets2/megaphone_w.webp", "left:-5%;top:.8%", 72, -14], [AS + "assets2/bubble_w.webp", "right:-3%;top:1.6%", 58, 10], [AS + "assets2/heart_w.webp", "right:7%;bottom:3%", 54, 12]]
+      : [[AS + "assets2/megaphone_w.webp", "left:5%;top:16%", 168, -14], [AS + "assets2/bubble_w.webp", "right:7%;top:13%", 132, 10], [AS + "assets2/heart_w.webp", "left:13%;bottom:13%", 100, -10], [AS + "assets2/cursor_k.webp", "right:13%;bottom:16%", 112, 8], [AS + "assets2/coin_w.webp", "left:27%;top:7%", 62, 16], [AS + "assets2/play_k.webp", "right:27%;bottom:6%", 78, -12]];
     box.innerHTML = C.map(([s, pos, wd, r]) => `<img src="${s}" alt="" loading="lazy" draggable="false" style="${pos};width:${ph ? wd + "px" : `clamp(${Math.round(wd * .6)}px,${(wd / 14.4).toFixed(2)}vw,${wd}px)`};${G ? "" : `rotate:${r}deg`}">`).join("");
     if (G) $$("img", box).forEach((im, i) => gsap.fromTo(im, { y: 60 + i * 14, rotation: C[i][3] }, { y: -40 - i * 10, rotation: C[i][3] + (i % 2 ? -8 : 8), ease: "none", scrollTrigger: { trigger: "#connect", start: "top bottom", end: "bottom top", scrub: true } })); } }
 
