@@ -9,7 +9,11 @@ const rnd = (i) => { const g = Math.sin(i * 127.1 + 311.7) * 43758.5453; return 
 // the service characters: "c" is the art-toy crew (bull, rabbit, cat, robot); ?ch=a and ?ch=b keep the earlier object mascots for comparison
 // Two split-out versions (David 23 Nov): data-cast="team" uses real people everywhere, each with the tools of the job; data-cast="toy" is the art-toy crew, who travel down the page with the scroll.
 const CAST = document.documentElement.dataset.cast || "";
-const CH = (k) => CAST === "team" ? `assets7/hu_${k}.webp` : FIN === "c" ? `assets7/ch_${k}.webp` : `assets5/ch_${k}_${FIN}.webp`;
+// Content: when the CMS serves this page it puts every editable word and picture in window.R13_DATA. Anything missing falls back to the copy below.
+// Text from the CMS is written into the page escaped (E), never as markup.
+const D = window.R13_DATA || {}, E = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const PIC = {}; (D.svc || []).forEach((x) => { if (x && x.img) PIC[x.k] = x.img; });
+const CH = (k) => CAST === "team" ? (PIC[k] || `assets7/hu_${k}.webp`) : FIN === "c" ? `assets7/ch_${k}.webp` : `assets5/ch_${k}_${FIN}.webp`;
 const CM = FIN === "c" ? { perf: 1.5, ads: .96, video: 1.26, web: 1.42 } : { perf: 1.6, ads: 1.5, video: 1.55, web: 1.55 };   // ring size by width: the crew are taller and narrower
 window.R13 = { fin: FIN, cast: CAST };
 let TRV = null;   // the travelling crew, set up after the sections it moves between
@@ -176,21 +180,21 @@ if (G) { let ly = scrollY, v = 0; gsap.ticker.add((t, dt) => { const d = Math.mi
 { const box = $("#lrib"), L = window.R13_LOGOS || []; if (box) { const build = () => { const rows = PHONE() ? 4 : 2, cut = (r) => Math.round(r * L.length / rows); box.dataset.rows = rows;
   for (let i = ribs.length - 1; i >= 0; i--) if (box.contains(ribs[i].row)) ribs.splice(i, 1);
   box.innerHTML = Array.from({ length: rows }, (_, r) => r).map((r) => { const set = L.slice(cut(r), cut(r + 1));
-    return `<div class="lrw">${set.concat(set).map(([f, n], i) => `<div class="lcp"${i < set.length ? ' role="listitem"' : ' aria-hidden="true"'}><span class="mk"><img src="assets5/lm_${f}.webp" alt="" loading="lazy" draggable="false"></span><span>${n}</span></div>`).join("")}</div>`; }).join("");
+    return `<div class="lrw">${set.concat(set).map(([f, n, u], i) => `<div class="lcp"${i < set.length ? ' role="listitem"' : ' aria-hidden="true"'}><span class="mk"><img src="${E(u || `assets5/lm_${f}.webp`)}" alt="" loading="lazy" draggable="false"></span><span>${E(n)}</span></div>`).join("")}</div>`; }).join("");
   $$(".lrw", box).forEach((row, r) => ribbon(row, r % 2 ? -1 : 1, rows > 2 ? 26 + (r % 3) * 5 : 36)); };
   build(); matchMedia("(max-width:900px)").addEventListener("change", build); } }
 
 // ---- services: one red banner; open one and the others fold into coloured tabs ----
-const SVC = [
+const SVC = D.svc || [
   { k: "perf", n: "Performance Marketing", tags: ["Lead generation", "Google SEM", "SEO & AI search", "Tactical campaigns"], p: "Stop paying for vanity clicks that don't pick up the phone.", st: ["37%", "lower cost per acquisition"] },
   { k: "ads", n: "Digital Advertising", tags: ["Meta Ads", "TikTok & XHS", "Marketplace Ads", "Google Ads"], p: "Traffic without purchase intent is just a utility bill.", st: ["22×", "return on ad spend"] },
   { k: "video", n: "Creative Design & Video", tags: ["Social media", "Video production", "KOL & UGC", "Branding"], p: "In saturated feeds, creative strategy is your targeting strategy.", st: ["7M+", "organic reach, nationwide"] },
   { k: "web", n: "Web & App Development", tags: ["E-Commerce", "Booking System", "Loyalty Apps", "Ad Landing Page"], p: "Most marketing fails before the ad is clicked: it dies on a slow, confusing website.", st: ["700+", "leads a week after the redesign"] }];
 let openSvc = () => {};
 { const acc = $("#acc"); if (acc) {
-  acc.innerHTML = '<i class="arc" aria-hidden="true"></i>' + SVC.map((s, i) => `<article class="pn" data-k="${s.k}"><button class="pb" type="button" id="pb${i}" aria-expanded="false" aria-controls="pd${i}"><span class="pch"><img src="${CH(s.k)}" alt="" draggable="false"></span><span class="pnm">${s.n}</span><span class="pvt" aria-hidden="true">${s.n}</span><span class="pm" aria-hidden="true"></span></button>
-    <div class="pd" id="pd${i}" role="region" aria-labelledby="pb${i}" inert><div class="pdi"><div class="pl"><h3>${s.n}</h3><p class="pline">${s.p}</p><ul class="tags">${s.tags.map((t) => `<li>${t}</li>`).join("")}</ul><a class="btn" href="#connect">Talk about this${AR}</a></div>
-    <div class="pr"><div class="pstage"><img src="${CH(s.k)}" alt="" loading="lazy" draggable="false"><span class="pm pmx" aria-hidden="true"></span></div><div class="pst"><b>${s.st[0]}</b><span>${s.st[1]}</span></div></div></div></div></article>`).join("");
+  acc.innerHTML = '<i class="arc" aria-hidden="true"></i>' + SVC.map((s, i) => `<article class="pn" data-k="${s.k}"><button class="pb" type="button" id="pb${i}" aria-expanded="false" aria-controls="pd${i}"><span class="pch"><img src="${CH(s.k)}" alt="" draggable="false"></span><span class="pnm">${E(s.n)}</span><span class="pvt" aria-hidden="true">${E(s.n)}</span><span class="pm" aria-hidden="true"></span></button>
+    <div class="pd" id="pd${i}" role="region" aria-labelledby="pb${i}" inert><div class="pdi"><div class="pl"><h3>${E(s.n)}</h3><p class="pline">${E(s.p)}</p><ul class="tags">${(s.tags || []).map((t) => `<li>${E(t)}</li>`).join("")}</ul><a class="btn" href="${E(s.href || "#connect")}">${E(D.svcBtn || "Talk about this")}${AR}</a></div>
+    <div class="pr"><div class="pstage"><img src="${CH(s.k)}" alt="" loading="lazy" draggable="false"><span class="pm pmx" aria-hidden="true"></span></div><div class="pst"><b>${E(s.st[0])}</b><span>${E(s.st[1])}</span></div></div></div></div></article>`).join("");
   const pn = $$(".pn", acc);
   openSvc = (i, reveal, force) => { const was = pn[i].classList.contains("open"), on = force || !was; let t = 0;
     pn.forEach((p, j) => { const o = on && j === i; p.classList.toggle("open", o); p.classList.remove("t0", "t1", "t2"); if (on && !o) p.classList.add("t" + t++); $(".pb", p).setAttribute("aria-expanded", o); $(".pd", p).inert = !o; });
@@ -203,17 +207,17 @@ let openSvc = () => {};
 // ---- headache match (revamped 23 Nov, David: "this section sucks bro. revamp it"): one dark panel. Pick the headache on the left;
 //      on the right it plays out as a chat: your line, Battle typing, then the service that fixes it with one result, and the character for that service steps up.
 //      The red bar under the active line is the autoplay clock: when it fills, the next headache plays. It pauses on hover, on focus and off screen. Nothing fades in: bubbles pop, characters rise.
-const DG = [
+const DG = D.dg || [
   { t: "No walk-ins", q: "We have no walk-in traffic, and there's a lot of new competition in the area.", s: 1, why: "Location-targeted Meta and Google ads that bring people through the door, measured in walk-ins, not likes." },
   { t: "Dry social media", q: "Our social media is dry, our ads look like generic AI graphics, and people scroll past us.", s: 2, why: "Thumb-stopping content and UGC campaigns that people actually stop for." },
   { t: "Visitors, no enquiries", q: "We get website visitors, but nobody converts or fills out the form.", s: 3, why: "A fast, mobile-first site and landing pages built to turn visits into enquiries." },
   { t: "Customers don't come back", q: "We spend everything getting new customers, but very few of them come back.", s: 0, why: "Automated CRM and WhatsApp nurturing, plus loyalty, that brings buyers back." },
   { t: "New brand, no trust yet", q: "We're launching a new brand, and competitors look way more legit than us.", s: 2, why: "A brand identity and content that make you look like the leader from day one." }];
 { const pn = $("#dgp"); if (pn) {
-  pn.innerHTML = `<div class="dgl" role="group" aria-label="Common marketing headaches"><p class="dgk">What's your headache?</p>${DG.map((d, i) => `<button type="button" class="dgr" aria-pressed="false"><i>0${i + 1}</i><span>${d.t}</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M8.5 3.5 13 8l-4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>`).join("")}</div>
+  pn.innerHTML = `<div class="dgl" role="group" aria-label="Common marketing headaches"><p class="dgk">${E(D.dgk || "What's your headache?")}</p>${DG.map((d, i) => `<button type="button" class="dgr" aria-pressed="false"><i>0${i + 1}</i><span>${E(d.t)}</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M8.5 3.5 13 8l-4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>`).join("")}</div>
     <div class="dgs"><div class="dgch" aria-hidden="true">${SVC.map((s) => `<img src="${CH(s.k)}" alt="" loading="lazy" draggable="false">`).join("")}</div>
-    <div class="dgc" aria-live="polite"><div class="dgb bt"><span>How can we help you?</span></div><div class="dgb me" id="dgq"><span></span></div>
-      <div class="dgre"><div class="dgb bt ty" id="dgty" aria-hidden="true"><i></i><i></i><i></i></div><div class="dgb bt rp" id="dga"><small>That's a job for</small><b></b><p></p><div class="dgst"><b></b><span></span></div></div></div>
+    <div class="dgc" aria-live="polite"><div class="dgb bt"><span>${E(D.dghi || "How can we help you?")}</span></div><div class="dgb me" id="dgq"><span></span></div>
+      <div class="dgre"><div class="dgb bt ty" id="dgty" aria-hidden="true"><i></i><i></i><i></i></div><div class="dgb bt rp" id="dga"><small>${E(D.dgjob || "That's a job for")}</small><b></b><p></p><div class="dgst"><b></b><span></span></div></div></div>
       <div class="dgx" id="dgx"><button type="button" class="btn sm" id="dgsvc">See the service${AR}</button><a class="btn sm gh" href="#connect" id="dgask">Talk about this</a></div></div></div>`;
   const rows = $$(".dgr", pn), chs = $$(".dgch img", pn), q = $("#dgq"), ty = $("#dgty"), a = $("#dga"), ax = $("#dgx"), dots = $$("i", ty); let cur = -1, tl = null, inView = false, hold = false;
   const fill = (i) => { const d = DG[i], sv = SVC[d.s]; $("span", q).textContent = d.q; $("b", a).textContent = sv.n; $("p", a).textContent = d.why; $(".dgst b", a).textContent = sv.st[0]; $(".dgst span", a).textContent = sv.st[1]; };
@@ -313,21 +317,21 @@ $$("#icards [data-to]").forEach((v, i) => { if (!G) return; const to = +v.datase
 if (G && !PHONE()) gsap.from("#icards .ic", { y: 60, opacity: 0, duration: 1, stagger: .12, ease: "power3.out", scrollTrigger: { trigger: "#icards", start: "top 88%", once: true } });
 
 // ---- analytics: cards scatter around the title, then stack and show one finding at a time. Driven by the scroll while the stage holds; the wheel is never captured ----
-const MV = [{ b: "74%", l: "Bounce rate", s: "of Instagram visitors bounce", h: "Enhance web UX", p: "Fix the leaky bucket: remove what stops visitors buying, before you spend another ringgit on ads.", vz: "line" },
+const MV = D.mv || [{ b: "74%", l: "Bounce rate", s: "of Instagram visitors bounce", h: "Enhance web UX", p: "Fix the leaky bucket: remove what stops visitors buying, before you spend another ringgit on ads.", vz: "line" },
   { b: "RM63", l: "Cost per lead", s: "per Facebook lead. Google brings them at RM30", h: "Strengthen SEM", p: "Show up where buyers are already searching, on Google and in AI answers.", vz: "bars" },
   { b: "0.8%", l: "Click-through", s: "click-through on the social ads", h: "Engaging, trust-building social ads", p: "Stop the scroll, earn trust, then convert.", vz: "donut" }];
 const viz = (k, i) => k === "bars" ? `<div class="bars">${[0, 1, 2, 3, 4, 5].map((j) => `<i style="height:${Math.round((.3 + rnd(i * 7 + j) * .7) * 100)}%"></i>`).join("")}</div>`
   : k === "donut" ? `<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="15" fill="none" stroke="currentColor" stroke-opacity=".16" stroke-width="6"/><circle cx="20" cy="20" r="15" fill="none" stroke="#D7000F" stroke-width="6" stroke-linecap="round" stroke-dasharray="${(30 + rnd(i) * 50).toFixed(0)} 100" transform="rotate(-90 20 20)" pathLength="100"/></svg>`
   : `<svg viewBox="0 0 100 40" preserveAspectRatio="none"><path d="M0 ${(30 - rnd(i) * 10).toFixed(1)} ${[...Array(8)].map((_, j) => `L${(j + 1) * 12.5} ${(8 + rnd(i * 9 + j) * 26).toFixed(1)}`).join(" ")}" fill="none" stroke="#D7000F" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>`;
 { const stage = $("#astage"), sw = $("#swarm"), ft = $("#afeat"), dots = $("#adots"), tt = $("#antt"); if (stage) {
-  const DC = [["+19.3%", "Revenue, MoM", "bars", ""], ["RM25.99", "Next payment, 4 days", "", "rd"], ["32K", "Impressions", "donut", "kk"], ["+34.98%", "Organic sessions", "bars", "pk"], ["RM1,248", "Current balance", "line", ""],
+  const DC = D.dc || [["+19.3%", "Revenue, MoM", "bars", ""], ["RM25.99", "Next payment, 4 days", "", "rd"], ["32K", "Impressions", "donut", "kk"], ["+34.98%", "Organic sessions", "bars", "pk"], ["RM1,248", "Current balance", "line", ""],
     ["↑72.5%", "Progress to target", "", "pk"], ["+280%", "Leads from search", "bars", "kk"], ["0.9%", "Conversion rate", "line", ""], ["4.8s", "Page load", "donut", "pk"], ["2.1×", "ROAS", "line", "rd"], ["RM410", "Cost per customer", "bars", ""], ["9%", "Returning customers", "donut", "kk"], ["640K", "Reach", "line", "pk"], ["1.1%", "Engagement", "bars", ""]];
   const EM = { 2: "assets6/eyes_w.webp", 7: "assets2/heart_w.webp", 11: "assets2/thumb_k.webp" };
-  const cards = []; DC.forEach(([b, s, v, c], i) => { const el = document.createElement("div"); el.className = "dc " + c; el.innerHTML = `<small>${s}</small><b>${b}</b>${v ? `<div class="vz">${viz(v, i)}</div>` : ""}`; sw.appendChild(el); cards.push({ el });
+  const cards = []; DC.forEach(([b, s, v, c], i) => { const el = document.createElement("div"); el.className = "dc " + c; el.innerHTML = `<small>${E(s)}</small><b>${E(b)}</b>${v ? `<div class="vz">${viz(v, i)}</div>` : ""}`; sw.appendChild(el); cards.push({ el });
     if (EM[i]) { const im = document.createElement("img"); im.className = "em"; im.src = EM[i]; im.alt = ""; im.draggable = false; sw.appendChild(im); cards.push({ el: im, em: true }); } });
   cards.forEach((c, i) => Object.assign(c, { i, a0: rnd(i + 3) * 6.28, rr: c.em ? .72 : .86 + rnd(i + 5) * .3, rot: (rnd(i + 8) - .5) * 14 }));
   // the three findings are a real deck of three cards: the front one tucks behind, the next comes forward
-  ft.innerHTML = `<div class="fdeck">${MV.map((m, i) => `<div class="fc"><small>${m.l}</small><b>${m.b}</b><p>${m.s}</p><div class="vz">${viz(m.vz, i + 20)}</div></div>`).join("")}</div><i class="fline" aria-hidden="true"></i><div class="ft"><span class="n"></span><h3></h3><p></p></div>`;
+  ft.innerHTML = `<div class="fdeck">${MV.map((m, i) => `<div class="fc"><small>${E(m.l)}</small><b>${E(m.b)}</b><p>${E(m.s)}</p><div class="vz">${viz(m.vz, i + 20)}</div></div>`).join("")}</div><i class="fline" aria-hidden="true"></i><div class="ft"><span class="n"></span><h3></h3><p></p></div>`;
   dots.innerHTML = MV.map((_, i) => `<button type="button" aria-label="Finding ${i + 1}"></button>`).join("");
   const fc = $(".fdeck", ft), fcs = $$(".fc", ft), NF = MV.length, fx = $(".ft", ft), fl = $(".fline", ft), db = $$("button", dots); let cur = 0, st = { k: RM || !G ? 2 : 0, spin: 0, dr: 0 }, played = false, tm = null, inView = false, hold = false, swap = null;
   if (st.k === 2) stage.style.setProperty("--tp", 1);
@@ -384,7 +388,7 @@ const viz = (k, i) => k === "bars" ? `<div class="bars">${[0, 1, 2, 3, 4, 5].map
   window.R13.an = { get cur() { return cur; }, get played() { return played; }, get playing() { return !!tm; }, get k() { return st.k; }, get p() { return prog(); }, get endY() { return endY(); } }; } }
 
 // ---- wins: results first; the brand and the photo appear only when opened, each in its own colour ----
-const CS = [{ k: "yakisoul", v: "+450%", l: "monthly revenue, single outlet", w: "Yaki Soul", tags: ["F&B", "Walk-in traffic", "Seasonal campaigns"], p: "Seasonal campaigns turned an izakaya off the main street into a KL destination, now serving 7,000+ customers a month." },
+const CS = D.cs || [{ k: "yakisoul", v: "+450%", l: "monthly revenue, single outlet", w: "Yaki Soul", tags: ["F&B", "Walk-in traffic", "Seasonal campaigns"], p: "Seasonal campaigns turned an izakaya off the main street into a KL destination, now serving 7,000+ customers a month." },
   { k: "writeedge", pre: "Almost", v: "4×", l: "growth in under two years", w: "Write-Edge", tags: ["Education", "Client review"], q: "Taking meticulous care on what the organization provides and targeting the right audience has help us to scale almost coming to 4 folds in less than 2 yrs.", who: "Poi Ching, General Manager, Write-Edge" },
   { k: "bhpetrol", v: "7M+", l: "organic reach, nationwide", w: "BHPetrol", tags: ["Energy", "Campaign videos", "Key visuals"], p: "Creative partner for Malaysia's RON95 subsidy rollout: an early educator in a crowded feed." },
   { k: "easyeurope", v: "700+", l: "leads a week, under RM15 each", w: "Easy Europe", tags: ["Travel", "Lead generation"], p: "Travel revival from the pandemic to peak season, with a 65% lower cost per result." },
@@ -392,10 +396,10 @@ const CS = [{ k: "yakisoul", v: "+450%", l: "monthly revenue, single outlet", w:
   { k: "furniture", v: "22×", l: "return on ad spend, against an industry 8 to 12", w: "Luxe Living", tags: ["Furniture", "Shopee & Lazada", "Meta"], p: "Year-round seasonal campaigns, from Shopee and Lazada to Meta, with 2 to 3 times revenue growth." },
   { k: "lalaport", v: "3×", l: "more vendor inclusions", w: "LaLaport BBCC", tags: ["Retail mall", "Social media"], p: "One Japanese narrative for a mall of monthly events." }];
 { const list = $("#clist"); if (list) {
-  list.innerHTML = CS.map((c, i) => `<li class="wr k${i % 4 + 1}"><div class="wph"><div><img src="assets3/v9c_${c.k}.webp" alt="${c.w}: our work" loading="lazy" draggable="false"></div></div>
-    <button type="button" class="wh" aria-expanded="false" aria-controls="crb${i}" id="crh${i}"><span class="v">${c.pre ? `<small>${c.pre}</small>` : ""}${c.v}</span><span class="l">${c.l}</span><span class="pm" aria-hidden="true"></span></button>
-    <div class="wb" id="crb${i}" role="region" aria-labelledby="crh${i}" inert><div><div class="wbi"><span class="brand">${c.w}</span>
-    ${c.q ? `<p>“${c.q}”</p><cite>${c.who}</cite>` : `<p>${c.p}</p>`}<ul class="tags">${c.tags.map((t) => `<li>${t}</li>`).join("")}</ul></div></div></div></li>`).join("");
+  list.innerHTML = CS.map((c, i) => `<li class="wr k${i % 4 + 1}"><div class="wph"><div><img src="${E(c.img || `assets3/v9c_${c.k}.webp`)}" alt="${E(c.w)}: our work" loading="lazy" draggable="false"></div></div>
+    <button type="button" class="wh" aria-expanded="false" aria-controls="crb${i}" id="crh${i}"><span class="v">${c.pre ? `<small>${E(c.pre)}</small>` : ""}${E(c.v)}</span><span class="l">${E(c.l)}</span><span class="pm" aria-hidden="true"></span></button>
+    <div class="wb" id="crb${i}" role="region" aria-labelledby="crh${i}" inert><div><div class="wbi"><span class="brand">${E(c.w)}</span>
+    ${c.q ? `<p>“${E(c.q)}”</p><cite>${E(c.who)}</cite>` : `<p>${E(c.p)}</p>`}<ul class="tags">${(c.tags || []).map((t) => `<li>${E(t)}</li>`).join("")}</ul></div></div></div></li>`).join("");
   const rows = $$(".wr", list);
   rows.forEach((r, i) => $(".wh", r).addEventListener("click", () => { const on = !r.classList.contains("open");
     rows.forEach((x, j) => { const o = on && j === i; x.classList.toggle("open", o); $(".wh", x).setAttribute("aria-expanded", o); $(".wb", x).inert = !o; });
@@ -404,8 +408,8 @@ const CS = [{ k: "yakisoul", v: "+450%", l: "monthly revenue, single outlet", w:
   if (G) gsap.fromTo(".ghost span", { yPercent: 40, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 1.1, stagger: .12, ease: "power4.out", scrollTrigger: { trigger: "#cases", start: "top 80%", once: true } }); } }
 
 // ---- team: a curved carousel; the middle photo is large, the sides taper away ----
-{ const fl = $("#tflow"), dots = $("#tdots"); if (fl) { const PH = ["poiching", "marcus", "swet", "bhp", "cheanu", "belle"], N = PH.length;
-  fl.innerHTML = PH.map((p, i) => `<figure role="group" aria-roledescription="slide" aria-label="${i + 1} of ${N}"><img src="assets3/v9_g_${p}.webp" alt="The Battle team with clients" loading="lazy" draggable="false"></figure>`).join("");
+{ const fl = $("#tflow"), dots = $("#tdots"); if (fl) { const PH = D.team || ["poiching", "marcus", "swet", "bhp", "cheanu", "belle"], N = PH.length;
+  fl.innerHTML = PH.map((p, i) => `<figure role="group" aria-roledescription="slide" aria-label="${i + 1} of ${N}"><img src="${E(p.img || `assets3/v9_g_${p}.webp`)}" alt="${E(p.alt || "The Battle team with clients")}" loading="lazy" draggable="false"></figure>`).join("");
   dots.innerHTML = PH.map((_, i) => `<button type="button" aria-label="Photo ${i + 1}"></button>`).join("");
   const figs = $$("figure", fl), db = $$("button", dots); let cur = 0, tm = null, inView = false, hold = false;
   const lay = () => { const fw = figs[0].offsetWidth, ph = PHONE();
