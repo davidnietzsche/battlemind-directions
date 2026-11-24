@@ -239,7 +239,7 @@ const DGPH = DG.length > 0 && DG.every((d) => d.img);   // photos: the chat sits
     <div class="dgc" aria-live="polite"><div class="dgb bt"><span>${E(D.dghi || "How can we help you?")}</span></div><div class="dgb me" id="dgq"><span></span></div>
       <div class="dgre"><div class="dgb bt ty" id="dgty" aria-hidden="true"><i></i><i></i><i></i></div><div class="dgb bt rp" id="dga"><small>${E(D.dgjob || "That's a job for")}</small><b></b><p></p><div class="dgst"><b></b><span></span></div></div></div>
       <div class="dgx" id="dgx"><button type="button" class="btn sm" id="dgsvc">See the service${AR}</button><a class="btn sm gh" href="#connect" id="dgask">Talk about this</a></div></div></div>`;
-  if (DGPH) pn.classList.add("ph");
+  if (DGPH) { pn.classList.add("ph"); const sec = pn.closest(".dg"); if (sec) sec.classList.add("phm"); }
   const rows = $$(".dgr", pn), chs = $$(".dgch img", pn), q = $("#dgq"), ty = $("#dgty"), a = $("#dga"), ax = $("#dgx"), dots = $$("i", ty); let cur = -1, tl = null, inView = false, hold = false;
   const fill = (i) => { const d = DG[i], sv = SVC[d.s]; $("span", q).textContent = d.q; $("b", a).textContent = sv.n; $("p", a).textContent = d.why; $(".dgst b", a).textContent = (sv.st || [])[0] || ""; $(".dgst span", a).textContent = (sv.st || [])[1] || ""; };
   // with the travelling crew, the clock waits until the character has arrived.
@@ -445,7 +445,7 @@ const CS = D.cs || (CAST ? CS5 : CS7);
   if (G) gsap.fromTo(".ghost span", { yPercent: 40, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 1.1, stagger: .12, ease: "power4.out", scrollTrigger: { trigger: "#cases", start: "top 80%", once: true } }); } }
 
 // ---- team: a curved carousel; the middle photo is large, the sides taper away ----
-{ const fl = $("#tflow"); if (fl && CAST) { const PH = D.team || ["poiching", "marcus", "swet", "bhp", "cheanu", "belle"], RV = D.reviews || [{ q: "Bentley and the entire BMC team represents world class professionalism in everything they do.", who: "Cheanu Chew", role: "Google review" }, { q: "Battle Mind Creative has been my primary go-to Facebook/Instagram marketing solution each time I have clients asking me for social media help.", who: "Marcus Teoh", role: "Google review" }];
+{ const fl = $("#tflow"); if (fl && false) {   // the moving strip (24 Nov afternoon), replaced by the carousel again on Sue's note const PH = D.team || ["poiching", "marcus", "swet", "bhp", "cheanu", "belle"], RV = D.reviews || [{ q: "Bentley and the entire BMC team represents world class professionalism in everything they do.", who: "Cheanu Chew", role: "Google review" }, { q: "Battle Mind Creative has been my primary go-to Facebook/Instagram marketing solution each time I have clients asking me for social media help.", who: "Marcus Teoh", role: "Google review" }];
   const items = []; PH.forEach((p, i) => { items.push(`<figure class="mq"><img src="${E(p.img || `${AS}assets3/v9_g_${p}.webp`)}" alt="${E(p.alt || "The Battle team with clients")}" loading="lazy" draggable="false"></figure>`); if (i % 2 === 1 && RV[(i - 1) / 2]) { const r = RV[(i - 1) / 2]; items.push(`<blockquote class="mq rq"><p class="st">★★★★★</p><p>“${E(r.q)}”</p><footer>${r.img ? `<img src="${E(r.img)}" alt="" loading="lazy">` : ""}<span><b>${E(r.who)}</b><small>${E(r.role || "Google review")}</small></span></footer></blockquote>`); } });
   fl.classList.add("marq"); fl.innerHTML = `<div class="mqt">${items.join("")}${items.join("").replace(/<(figure|blockquote) class="mq/g, '<$1 aria-hidden="true" class="mq')}</div>`; const tr = $(".mqt", fl);
   let x = 0, v = 0, drag = null, last = 0, inView = false, hover = false; const BASE = RM ? 0 : 38;
@@ -457,8 +457,14 @@ const CS = D.cs || (CAST ? CS5 : CS7);
   fl.addEventListener("pointermove", (e) => { if (!drag) return; const now = performance.now(); x = drag.x + (e.clientX - drag.x0); v = -(e.clientX - drag.lx) / Math.max(.008, (now - drag.t) / 1000); drag.t = now; drag.lx = e.clientX; });
   const end = () => { if (!drag) return; drag = null; fl.classList.remove("drag"); v = Math.max(-1400, Math.min(1400, v)); }; fl.addEventListener("pointerup", end); fl.addEventListener("pointercancel", end);
   window.R13.team = { get x() { return x; }, get speed() { return v; } }; } }
-{ const fl = $("#tflow"), dots = $("#tdots"); if (fl && !CAST) { const PH = D.team || ["poiching", "marcus", "swet", "bhp", "cheanu", "belle"], N = PH.length;
-  fl.innerHTML = PH.map((p, i) => `<figure role="group" aria-roledescription="slide" aria-label="${i + 1} of ${N}"><img src="${E(p.img || `${AS}assets3/v9_g_${p}.webp`)}" alt="${E(p.alt || "The Battle team with clients")}" loading="lazy" draggable="false"></figure>`).join("");
+{ const fl = $("#tflow"), dots = $("#tdots"); if (fl) { const PH0 = D.team || ["poiching", "marcus", "swet", "bhp", "cheanu", "belle"];
+  // a review card after every second photo: one or two of the most important sentences
+  const snip = (q) => { const ss = String(q || "").replace(/\s+/g, " ").trim().split(/(?<=[.!?])\s+/); let o = ss[0] || ""; if (o.length < 70 && ss[1]) o += " " + ss[1]; return o.length > 170 ? o.slice(0, 165).replace(/\s+\S*$/, "") + "…" : o; };
+  const RV = CAST ? D.reviews || [{ q: "Bentley and the entire BMC team represents world class professionalism in everything they do.", who: "Cheanu Chew", role: "Google review" }, { q: "Battle Mind Creative has been my primary go-to Facebook/Instagram marketing solution each time I have clients asking me for social media help.", who: "Marcus Teoh", role: "Google review" }] : [];
+  const PH = []; PH0.forEach((p, i) => { PH.push(p); const r = i % 2 === 1 ? RV[(i - 1) / 2] : null; if (r) PH.push({ review: r }); }), N = PH.length;
+  fl.innerHTML = PH.map((p, i) => p.review ? `<figure class="rq" role="group" aria-roledescription="slide" aria-label="${i + 1} of ${N}"><p class="st">★★★★★</p><blockquote>“${E(snip(p.review.q))}”</blockquote><figcaption>${p.review.img ? `<img src="${E(p.review.img)}" alt="" loading="lazy">` : ""}<span><b>${E(p.review.who)}</b><small>${E(p.review.role || "Google review")}</small></span></figcaption></figure>`
+    : `<figure role="group" aria-roledescription="slide" aria-label="${i + 1} of ${N}"><img src="${E(p.img || `${AS}assets3/v9_g_${p}.webp`)}" alt="${E(p.alt || "The Battle team with clients")}" loading="lazy" draggable="false"></figure>`).join("");
+  if (CAST) { const tma = $(".tma"), tmf = $(".tmf"); if (tma && tmf) tmf.prepend(tma); }   // the slide: buttons centred under the carousel
   dots.innerHTML = PH.map((_, i) => `<button type="button" aria-label="Photo ${i + 1}"></button>`).join("");
   const figs = $$("figure", fl), db = $$("button", dots); let cur = 0, tm = null, inView = false, hold = false;
   const lay = () => { const fw = figs[0].offsetWidth, ph = PHONE();
