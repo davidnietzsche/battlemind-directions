@@ -118,16 +118,21 @@ if (HV !== "1") { const hero = $("#hero");
     new IntersectionObserver((e) => { const v = e[e.length - 1].isIntersecting; hero.classList.toggle("live", v); if (v && !on) { on = true; frame(); } else if (!v) on = false; }).observe(hero); } }
 
 // ---- hero 1: the pieces ride a neon ring around the headline; the four service characters are the big ones ----
-if (HV === "1") { const hero = $("#hero"), ring = $("#ring"), neon = $("#neon");
-  const PIECES = [[CH("perf"), CM.perf], [AS + "assets2/heart_w.webp", .8], [AS + "assets5/laptop_k.webp", 1.05], [AS + "assets2/play_k.webp", .85], [AS + "assets2/hashtag_w.webp", .8],
+//      The Team and Avatar pages use it as "the circle" (Sue, 24 Nov): no glowing ring, the pieces packed closer on a gently wavy circle round the headline.
+//      Avatar keeps its four characters in the circle (they jump down into the services from there); Team has objects only, with the two people leaning in.
+if (HV === "1") { const hero = $("#hero"), ring = $("#ring"), neon = $("#neon"), WR = !!CAST;
+  const ALL = [[CH("perf"), CM.perf], [AS + "assets2/heart_w.webp", .8], [AS + "assets5/laptop_k.webp", 1.05], [AS + "assets2/play_k.webp", .85], [AS + "assets2/hashtag_w.webp", .8],
     [CH("ads"), CM.ads], [AS + "assets2/bubble_w.webp", .9], [AS + "assets5/pen_w.webp", .8], [AS + "assets2/thumb_k.webp", .9], [AS + "assets2/chart_w.webp", .95],
     [CH("video"), CM.video], [AS + "assets5/swatch_k.webp", .95], [AS + "assets2/envelope_w.webp", .85], [AS + "assets2/coin_w.webp", .75], [AS + "assets2/camera_k.webp", .95],
     [CH("web"), CM.web], [AS + "assets2/magnifier_k.webp", .9], [AS + "assets2/phone_k.webp", .9], [AS + "assets2/bolt_w.webp", .7]];
+  const MORE = [[AS + "assets2/bag_w.webp", .8], [AS + "assets2/cursor_w.webp", .7], [AS + "assets5/cart_k.webp", .85], [AS + "assets5/clapper_k.webp", .85], [AS + "assets5/browser_w.webp", .9]];
+  const KEYS = ["perf", "ads", "video", "web"], PIECES = CAST === "team" ? ALL.filter((x, i) => i % 5 !== 0).concat(MORE) : CAST === "toy" ? ALL.concat(MORE) : ALL;   // Team: no cut-out people in the circle
   const N = PIECES.length;
   const P = PIECES.map(([src, m], i) => { const el = document.createElement("img"); el.className = "pc"; el.src = src; el.alt = ""; el.draggable = false; ring.appendChild(el);
-    return { el, m, a: i / N * Math.PI * 2, r: .98 + rnd(i) * .26, v: (rnd(i + 50) - .5) * .12, tilt: (rnd(i + 90) - .5) * 26, px: 0, py: 0, front: null, b: RM ? 1 : 0 }; });
+    const ck = KEYS.find((kk) => CH(kk) === src); if (CAST === "toy" && ck) el.dataset.k = ck;   // a character: the crew's jump starts here
+    return { el, m, a: i / N * Math.PI * 2, r: WR ? .95 + rnd(i) * .1 : .98 + rnd(i) * .26, v: (rnd(i + 50) - .5) * (WR ? .04 : .12), tilt: (rnd(i + 90) - .5) * 26, px: 0, py: 0, front: null, b: RM ? 1 : 0 }; });
   let w = 0, h = 0, A = 0, B = 0, cyf = .46;
-  const fit = () => { w = hero.clientWidth; h = hero.clientHeight; const ph = w <= 900; cyf = ph ? .36 : .46; A = ph ? w * .6 : Math.min(w * .41, h * .8); B = ph ? h * .3 : h * .335;
+  const fit = () => { w = hero.clientWidth; h = hero.clientHeight; const ph = w <= 900; cyf = ph ? .36 : WR ? .43 : .46; A = ph ? w * (WR ? .56 : .6) : Math.min(w * (WR ? .4 : .41), h * (WR ? .78 : .8)); B = ph ? h * (WR ? .29 : .3) : h * (WR ? .345 : .335);
     const base = Math.min(w, h) * (w < 700 ? .15 : .122); P.forEach((p, i) => { p.el.style.width = (base * p.m) + "px"; p.el.hidden = w < 700 && i % 2 === 1 && p.m < 1.2; });
     neon.style.width = (ph ? w * 1.12 : A * 2) + "px"; neon.style.height = (ph ? h * .54 : B * 2) + "px"; neon.style.top = (cyf * 100) + "%"; };
   fit(); addEventListener("resize", fit);
@@ -135,8 +140,9 @@ if (HV === "1") { const hero = $("#hero"), ring = $("#ring"), neon = $("#neon");
   function frame() { if (!run) return; const T = (performance.now() - t0) / 1000; ptr.x += (pt.x - ptr.x) * .06; ptr.y += (pt.y - ptr.y) * .06;
     const ph = w <= 900, ex = 1 + lift * .22 + kick.k, cx = w * .5 + ptr.x * 26, cy = h * cyf + ptr.y * 18, spin = (RM ? 0 : T * .2) + lift * 1.6 + ptr.x * .22;
     for (const p of P) { const th = p.a + spin, z = Math.sin(th), d = (z + 1) / 2;
-      const x = cx + Math.cos(th) * A * ex * p.r * (.9 + .1 * d); let y = cy + z * B * ex * p.r + p.v * h * .2 + (RM ? 0 : Math.sin(T * 1.3 + p.a * 3) * 7);
-      if (ph) { const top = h * .16, bot = h * .57; if (Math.abs(x - w / 2) < w * .42 && y > top && y < bot) y = y - top < bot - y ? top - (y - top) * .2 : bot + (bot - y) * .2; }   // keep the headline clear on phones
+      const wv = WR ? 1 + .075 * Math.sin(3 * th + (RM ? 0 : T * .35)) : 1;   // the wavy circle
+      const x = cx + Math.cos(th) * A * ex * p.r * wv * (.9 + .1 * d); let y = cy + z * B * ex * p.r * wv + p.v * h * .2 + (RM ? 0 : Math.sin(T * 1.3 + p.a * 3) * 7);
+      if (ph) { const top = h * (WR ? .06 : .16), bot = h * .57; if (Math.abs(x - w / 2) < w * .42 && y > top && y < bot) y = y - top < bot - y ? top - (y - top) * .2 : bot + (bot - y) * .2; }   // keep the headline clear on phones
       const dx = x - mouse.x, dy = y - mouse.y, dist = Math.hypot(dx, dy); let tx = 0, ty = 0; if (dist < 190 && dist > 0) { const f = (190 - dist) / 190 * 46; tx = dx / dist * f; ty = dy / dist * f; }
       if (!ph) y = Math.max(y, 104);   // keep the nav clear
       p.px += (tx - p.px) * .12; p.py += (ty - p.py) * .12; const s = (.62 + .48 * d) * p.b;
@@ -144,6 +150,7 @@ if (HV === "1") { const hero = $("#hero"), ring = $("#ring"), neon = $("#neon");
       const front = z > -.15; if (front !== p.front) { p.front = front; p.el.classList.toggle("near", front); p.el.classList.toggle("far", !front); } }
     requestAnimationFrame(frame); }
   new IntersectionObserver((e) => { const on = e[e.length - 1].isIntersecting; if (on && !run) { run = true; frame(); } else if (!on) run = false; }).observe(hero); frame();
+  window.R13.ringPiece = (k) => ring.querySelector(`.pc[data-k="${k}"]`);   // the travelling crew starts its jump from here
   hero.addEventListener("pointermove", (e) => { const r = hero.getBoundingClientRect(); pt = { x: (e.clientX - r.left) / r.width * 2 - 1, y: (e.clientY - r.top) / r.height * 2 - 1 }; mouse = { x: e.clientX - r.left, y: e.clientY - r.top }; });
   hero.addEventListener("pointerleave", () => { pt = { x: 0, y: 0 }; mouse = { x: -1e4, y: -1e4 }; });
   const rise = () => $$(".h1 .rz").forEach((el, i) => setTimeout(() => el.classList.add("in"), 250 + i * 220));
@@ -298,10 +305,11 @@ if (CAST === "toy" && G) { const hero = $("#hero"), acc = $("#acc"), dgch = $(".
         if (c && f.b > 0 && f.b < 2) { const ht = c.height * (ph ? 1.15 : .62), wd = ht * c.width / c.height, P = { left: c.left + (c.width - wd) / 2, top: pt - ht + 7, width: wd, height: ht };   // the perch: standing on the panel's top edge, above its place
           const src = t || { left: P.left - P.width * .3, top: -P.height - 80, width: P.width, height: P.height }, o = f.b < 1 ? jump(f.b, src, P, false, vh * .1) : jump(f.b - 1, P, c, true, vh * .11);
           x = o.x; y = o.y; w = o.w; h = o.h; rot = o.rot; sx = o.sx; sy = o.sy; org = o.org; sh = f.b < 1 ? 1 : 1 - o.u; show = true; }
-        else if (t && f.b <= 0 && f.a > 0 && f.a < 1) { const e = f.a, h0 = Math.max(t.height * .7, Math.min(fr.height * .56, t.height * 2.6)), w0 = h0 * t.width / t.height, inFilm = hb > nh + 40; show = true;
-          if (e < FALL) { const u = e / FALL; w = mix(w0, t.width, u); h = mix(h0, t.height, u); x = mix(inFilm ? fr.left + FX[f.i] * fr.width - w0 / 2 : t.left + (f.i % 2 ? 26 : -26), t.left, 1 - (1 - u) * (1 - u));       // fall, gathering speed
-            y = mix(Math.max(hb, 0) - h0 - 10, t.top, u * u); rot = (1 - u) * (f.i % 2 ? 9 : -9); sy = 1 + .06 * Math.sin(Math.PI * u); sx = 1 - .03 * Math.sin(Math.PI * u); }
+        else if (t && f.b <= 0 && f.a > 0 && f.a < 1) { const e = f.a, rp = f.rp && hb > nh + 40 ? f.rp.getBoundingClientRect() : null, h0 = rp ? rp.height : Math.max(t.height * .7, Math.min(fr.height * .56, t.height * 2.6)), w0 = rp ? rp.width : h0 * t.width / t.height, inFilm = hb > nh + 40; show = true;
+          if (e < FALL) { const u = e / FALL; w = mix(w0, t.width, u); h = mix(h0, t.height, u); x = mix(rp ? rp.left : inFilm ? fr.left + FX[f.i] * fr.width - w0 / 2 : t.left + (f.i % 2 ? 26 : -26), t.left, 1 - (1 - u) * (1 - u));       // fall, gathering speed
+            y = mix(rp ? rp.top : Math.max(hb, 0) - h0 - 10, t.top, u * u); rot = (1 - u) * (f.i % 2 ? 9 : -9); sy = 1 + .06 * Math.sin(Math.PI * u); sx = 1 - .03 * Math.sin(Math.PI * u); }
           else { x = t.left; y = t.top; w = t.width; h = t.height; sy = squash((e - FALL) / (1 - FALL)); sx = 1 + (1 - sy) * .6; } }                                                  // land
+        if (f.rp === undefined) f.rp = (window.R13.ringPiece && window.R13.ringPiece(SVC[f.i].k)) || null; if (f.rp) f.rp.classList.toggle("away", f.a > 0);
         const s = f.im.style; if (show) { s.width = w.toFixed(1) + "px"; s.height = h.toFixed(1) + "px"; s.transformOrigin = org; s.transform = `translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0) rotate(${rot.toFixed(2)}deg) scale(${sx.toFixed(4)},${sy.toFixed(4)})`; s.setProperty("--sh", sh.toFixed(2)); }
         if (show !== f.show) { f.show = show; s.visibility = show ? "visible" : "hidden"; }
         // the character's own place is empty until it has arrived, and again once it has left for the chat

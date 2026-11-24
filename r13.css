@@ -694,3 +694,9 @@ html:not([data-hero="1"]) .ring,html:not([data-hero="1"]) .ppl,html:not([data-he
   [data-cast="team"] .dgch{top:0}[data-cast="team"] .dgch img{max-height:95%}
 }
 @media (hover:hover) and (min-width:901px){[data-cast="team"] .acc:not(.has) .pn:hover .pch img{transform:scale(1.04)}}
+
+/* the circle hero on the Team and Avatar pages (Sue, 24 Nov): no glowing ring, a warmer red that drifts to orange-red and purple-red */
+[data-cast][data-hero="1"] .neon{display:none}
+[data-cast][data-hero="1"] .hbg{background:radial-gradient(62% 56% at 30% 24%,#FF3F1F 0%,rgba(255,63,31,0) 62%),radial-gradient(70% 70% at 88% 92%,#76002E 0%,rgba(118,0,46,0) 64%),radial-gradient(64% 58% at 50% 46%,#E8121A 0%,rgba(232,18,26,0) 78%),radial-gradient(120% 90% at 50% 120%,#5A0012,rgba(90,0,18,0) 60%),#C2000D}
+[data-cast="toy"] .ppl{display:none}
+.pc.away{visibility:hidden!important}
