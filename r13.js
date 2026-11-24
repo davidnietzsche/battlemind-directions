@@ -126,31 +126,39 @@ if (HV === "1") { const hero = $("#hero"), ring = $("#ring"), neon = $("#neon"),
     [CH("video"), CM.video], [AS + "assets5/swatch_k.webp", .95], [AS + "assets2/envelope_w.webp", .85], [AS + "assets2/coin_w.webp", .75], [AS + "assets2/camera_k.webp", .95],
     [CH("web"), CM.web], [AS + "assets2/magnifier_k.webp", .9], [AS + "assets2/phone_k.webp", .9], [AS + "assets2/bolt_w.webp", .7]];
   const MORE = [[AS + "assets2/bag_w.webp", .8], [AS + "assets2/cursor_w.webp", .7], [AS + "assets5/cart_k.webp", .85], [AS + "assets5/clapper_k.webp", .85], [AS + "assets5/browser_w.webp", .9]];
-  const KEYS = CAST === "toy" ? ["perf", "video", "web"] : ["perf", "ads", "video", "web"], PIECES = CAST === "team" ? ALL.filter((x, i) => i % 5 !== 0).concat(MORE) : CAST === "toy" ? ALL.filter((x, i) => i !== 5).concat(MORE) : ALL;   // Avatar: three services, three characters (24 Nov)   // Team: no cut-out people in the circle
+  const KEYS = CAST === "toy" ? ["perf", "video", "web"] : ["perf", "ads", "video", "web"], OBJ = ALL.filter((x, i) => i % 5 !== 0).concat(MORE);
+  // Team and Avatar: objects only in the circle, packed tight: the set twice over at different sizes; the characters stand big outside it
+  const PIECES = WR ? OBJ.concat(OBJ.map(([sr, m], i) => [sr, m * (.72 + rnd(i + 70) * .2)])).sort((a, b) => rnd(a[0].length + a[1] * 31) - rnd(b[0].length + b[1] * 17)) : ALL;   // Team: no cut-out people in the circle
   const N = PIECES.length; if (WR) ring.classList.add("fx");
+  let hcx = null; if (CAST === "toy") { hcx = document.createElement("div"); hcx.className = "hcx"; hcx.setAttribute("aria-hidden", "true");
+    hcx.innerHTML = KEYS.map((k, i) => `<img class="hc${["l", "c", "r"][i] || "c"}" data-k="${k}" src="${CH(k)}" alt="" draggable="false">`).join(""); hero.appendChild(hcx); }
   const P = PIECES.map(([src, m], i) => { const el = document.createElement("img"); el.className = "pc"; el.src = src; el.alt = ""; el.draggable = false; ring.appendChild(el);
     const ck = KEYS.find((kk) => CH(kk) === src); if (CAST === "toy" && ck) el.dataset.k = ck;   // a character: the crew's jump starts here
-    return { el, m: WR && el.dataset.k ? m * 1.32 : m, a: i / N * Math.PI * 2, r: WR ? .95 + rnd(i) * .1 : .98 + rnd(i) * .26, v: (rnd(i + 50) - .5) * (WR ? .04 : .12), tilt: (rnd(i + 90) - .5) * 26, px: 0, py: 0, front: null, b: RM ? 1 : 0 }; });
+    return { el, m: WR ? m * (.82 + rnd(i + 40) * .4) : m, a: i / N * Math.PI * 2 + (WR ? (rnd(i + 9) - .5) * .12 : 0), r: WR ? .97 + rnd(i) * .08 : .98 + rnd(i) * .26, v: (rnd(i + 50) - .5) * (WR ? .04 : .12), tilt: (rnd(i + 90) - .5) * 26, px: 0, py: 0, front: null, b: RM ? 1 : 0 }; });
   let w = 0, h = 0, A = 0, B = 0, cyf = .46;
-  const fit = () => { w = hero.clientWidth; h = hero.clientHeight; const ph = w <= 900; cyf = ph ? .36 : WR ? .43 : .46; A = ph ? w * (WR ? .56 : .6) : Math.min(w * (WR ? .4 : .41), h * (WR ? .78 : .8)); B = ph ? h * (WR ? .29 : .3) : h * (WR ? .345 : .335);
-    const base = Math.min(w, h) * (w < 700 ? .15 : .122); P.forEach((p, i) => { p.el.style.width = (base * p.m) + "px"; p.el.hidden = w < 700 && i % 2 === 1 && p.m < 1.2; });
+  const fit = () => { w = hero.clientWidth; h = hero.clientHeight; const ph = w <= 900; cyf = ph ? .33 : WR ? .42 : .46;
+    if (WR) { const R = ph ? Math.min(w * .5, h * .27) : Math.min(h * .36, w * .3); A = R * (ph ? 1 : 1.06); B = R; }   // a true circle round the headline
+    else { A = ph ? w * .6 : Math.min(w * .41, h * .8); B = ph ? h * .3 : h * .335; }
+    const base = Math.min(w, h) * (WR ? (w < 700 ? .135 : .1) : w < 700 ? .15 : .122); P.forEach((p, i) => { p.el.style.width = (base * p.m) + "px"; p.el.hidden = !WR && w < 700 && i % 2 === 1 && p.m < 1.2; });
     neon.style.width = (ph ? w * 1.12 : A * 2) + "px"; neon.style.height = (ph ? h * .54 : B * 2) + "px"; neon.style.top = (cyf * 100) + "%"; };
   fit(); addEventListener("resize", fit);
   let ptr = { x: 0, y: 0 }, pt = { x: 0, y: 0 }, mouse = { x: -1e4, y: -1e4 }, lift = 0, t0 = performance.now(), run = true; const kick = { k: 0 };
   function frame() { if (!run) return; const T = (performance.now() - t0) / 1000; ptr.x += (pt.x - ptr.x) * .06; ptr.y += (pt.y - ptr.y) * .06;
-    const ph = w <= 900, ex0 = 1 + lift * (WR ? 2.6 : .22) + kick.k, cx = w * .5 + ptr.x * 26, ht = WR ? hero.getBoundingClientRect().top : 0, cy0 = h * cyf + ptr.y * 18 + ht, spin = (RM ? 0 : T * .2) + lift * 1.6 + ptr.x * .22;
-    for (const p of P) { const th = p.a + spin, z = Math.sin(th), d = (z + 1) / 2, keep = WR && p.el.dataset.k, ex = keep ? 1 + lift * .2 : ex0, cy = cy0 + (WR && !keep ? lift * h * .5 : 0);   // the objects open out and drift down; the characters stay to jump
+    const ph = w <= 900, ex0 = 1 + lift * (WR ? 2.6 : .22) + kick.k, cx = w * .5 + ptr.x * 26, ht = WR ? hero.getBoundingClientRect().top : 0, cy0 = h * cyf + ptr.y * 18 + ht, spin = (RM ? 0 : T * (WR ? .05 : .2)) + lift * (WR ? .5 : 1.6) + ptr.x * (WR ? .08 : .22);
+    for (const p of P) { const th = p.a + spin, z = WR ? .6 : Math.sin(th), d = (z + 1) / 2, ex = ex0, cy = cy0 + (WR ? lift * h * .38 : 0);   // flat circle (no depth) like the reference; on scroll it opens out and drifts down
       const wv = WR ? 1 + .075 * Math.sin(3 * th + (RM ? 0 : T * .35)) : 1;   // the wavy circle
-      const x = cx + Math.cos(th) * A * ex * p.r * wv * (.9 + .1 * d); let y = cy + z * B * ex * p.r * wv + p.v * h * .2 + (RM ? 0 : Math.sin(T * 1.3 + p.a * 3) * 7);
-      if (ph) { const top = h * (WR ? .06 : .16), bot = h * .57; if (Math.abs(x - w / 2) < w * .42 && y > top && y < bot) y = y - top < bot - y ? top - (y - top) * .2 : bot + (bot - y) * .2; }   // keep the headline clear on phones
+      const x = cx + Math.cos(th) * A * ex * p.r * wv * (.9 + .1 * d); let y = cy + (WR ? Math.sin(th) : z) * B * ex * p.r * wv + p.v * h * .2 + (RM ? 0 : Math.sin(T * 1.3 + p.a * 3) * 7);
+      if (ph && !WR) { const top = h * .16, bot = h * .57; if (Math.abs(x - w / 2) < w * .42 && y > top && y < bot) y = y - top < bot - y ? top - (y - top) * .2 : bot + (bot - y) * .2; }   // keep the headline clear on phones
       const dx = x - mouse.x, dy = y - mouse.y, dist = Math.hypot(dx, dy); let tx = 0, ty = 0; if (dist < 190 && dist > 0) { const f = (190 - dist) / 190 * 46; tx = dx / dist * f; ty = dy / dist * f; }
       if (!ph && lift < .05) y = Math.max(y, 104);   // keep the nav clear
-      p.px += (tx - p.px) * .12; p.py += (ty - p.py) * .12; const s = (.62 + .48 * d) * p.b;
-      p.el.style.transform = `translate(${(x + p.px).toFixed(1)}px,${(y + p.py).toFixed(1)}px) translate(-50%,-50%) rotate(${(p.tilt + (RM ? 0 : Math.sin(T * .8 + p.a * 2) * 7)).toFixed(1)}deg) scale(${s.toFixed(3)})`;
-      const front = z > -.15; if (front !== p.front) { p.front = front; p.el.classList.toggle("near", front); p.el.classList.toggle("far", !front); } }
+      p.px += (tx - p.px) * .12; p.py += (ty - p.py) * .12; const s = (WR ? 1 + lift * 1.1 : .62 + .48 * d) * p.b;   // the fish-eye: they grow as the circle opens
+      const rot = WR ? p.tilt * .7 + Math.cos(th) * 16 + lift * Math.sign(Math.cos(th)) * 30 : p.tilt;   // the curviness: pieces lean with the circle
+      p.el.style.transform = `translate(${(x + p.px).toFixed(1)}px,${(y + p.py).toFixed(1)}px) translate(-50%,-50%) rotate(${(rot + (RM ? 0 : Math.sin(T * .8 + p.a * 2) * (WR ? 3 : 7))).toFixed(1)}deg) scale(${s.toFixed(3)})`;
+      const front = WR || z > -.15; if (front !== p.front) { p.front = front; p.el.classList.toggle("near", front); p.el.classList.toggle("far", !front); } }
     requestAnimationFrame(frame); }
   new IntersectionObserver((e) => { const on = e[e.length - 1].isIntersecting; ring.style.visibility = on ? "" : "hidden"; if (on && !run) { run = true; frame(); } else if (!on) run = false; }).observe(hero); frame();
-  window.R13.ringPiece = (k) => ring.querySelector(`.pc[data-k="${k}"]`);   // the travelling crew starts its jump from here
+  window.R13.ringPiece = (k) => (hcx && hcx.querySelector(`img[data-k="${k}"]`)) || ring.querySelector(`.pc[data-k="${k}"]`);   // the travelling crew starts its jump from here
+  if (hcx && G) gsap.from($$("img", hcx), { yPercent: 70, duration: 1, stagger: .12, delay: .5, ease: "back.out(1.2)" });   // they rise into place, solid
   hero.addEventListener("pointermove", (e) => { const r = hero.getBoundingClientRect(); pt = { x: (e.clientX - r.left) / r.width * 2 - 1, y: (e.clientY - r.top) / r.height * 2 - 1 }; mouse = { x: e.clientX - r.left, y: e.clientY - r.top }; });
   hero.addEventListener("pointerleave", () => { pt = { x: 0, y: 0 }; mouse = { x: -1e4, y: -1e4 }; });
   const rise = () => $$(".h1 .rz").forEach((el, i) => setTimeout(() => el.classList.add("in"), 250 + i * 220));
@@ -489,7 +497,7 @@ const CS = D.cs || (CAST ? CS5 : CS7);
   if (CAST && !$(".wafab")) { const a = document.createElement("a"); a.className = "wafab"; a.href = WA("Hi Battle, I'd like a 15-minute call about my marketing."); a.target = "_blank"; a.rel = "noopener"; a.setAttribute("aria-label", "Chat with Battle on WhatsApp");
     a.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.9 11.9 0 0 0 4.6 4c1.7.7 2.4.8 3.3.7a2.8 2.8 0 0 0 1.8-1.3 2.3 2.3 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3Z"/></svg>';
     document.body.appendChild(a); }
-  const box = CAST ? null : $("#cnp"); if (box) { const ph = PHONE();   // the Team and Avatar pages keep the box clean (Sue, 24 Nov)
+  const box = $("#cnp"); if (box) { const ph = PHONE();
     const C = ph ? [[AS + "assets2/megaphone_w.webp", "left:-5%;top:.8%", 72, -14], [AS + "assets2/bubble_w.webp", "right:-3%;top:1.6%", 58, 10], [AS + "assets2/heart_w.webp", "right:7%;bottom:3%", 54, 12]]
       : [[AS + "assets2/megaphone_w.webp", "left:5%;top:16%", 168, -14], [AS + "assets2/bubble_w.webp", "right:7%;top:13%", 132, 10], [AS + "assets2/heart_w.webp", "left:13%;bottom:13%", 100, -10], [AS + "assets2/cursor_k.webp", "right:13%;bottom:16%", 112, 8], [AS + "assets2/coin_w.webp", "left:27%;top:7%", 62, 16], [AS + "assets2/play_k.webp", "right:27%;bottom:6%", 78, -12]];
     box.innerHTML = C.map(([s, pos, wd, r]) => `<img src="${s}" alt="" loading="lazy" draggable="false" style="${pos};width:${ph ? wd + "px" : `clamp(${Math.round(wd * .6)}px,${(wd / 14.4).toFixed(2)}vw,${wd}px)`};${G ? "" : `rotate:${r}deg`}">`).join("");
