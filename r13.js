@@ -2,7 +2,7 @@
 (() => {
 const RM = matchMedia("(prefers-reduced-motion: reduce)").matches, q = new URLSearchParams(location.search), $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
 if (window.gsap) gsap.registerPlugin(ScrollTrigger);
-const G = !RM && !!window.gsap, FIN = /^[ab]$/.test(q.get("ch") || "") ? q.get("ch") : "c", PHONE = () => innerWidth <= 900;
+const G = !RM && !!window.gsap, FIN = /^[abd]$/.test(q.get("ch") || "") ? q.get("ch") : "c", PHONE = () => innerWidth <= 900;
 const AR = '<span class="ar" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M4 12 12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><svg viewBox="0 0 16 16"><path d="M4 12 12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>';
 const WA = (t) => "https://wa.me/60197707927?text=" + encodeURIComponent(t);
 const rnd = (i) => { const g = Math.sin(i * 127.1 + 311.7) * 43758.5453; return g - Math.floor(g); };
@@ -14,8 +14,8 @@ const CAST = document.documentElement.dataset.cast || "";
 const AS = window.R13_ASSETS || "";   // where the design pictures live: "" on the review pages, "/" when the CMS serves a page at any depth
 const D = window.R13_DATA || {}, E = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const PIC = {}; (D.svc || []).forEach((x) => { if (x && x.img) PIC[x.k] = x.img; });
-const CH = (k) => CAST === "team" ? (PIC[k] || `${AS}assets7/hu_${k}.webp`) : FIN === "c" ? `${AS}assets7/ch_${k}.webp` : `${AS}assets5/ch_${k}_${FIN}.webp`;
-const CM = FIN === "c" ? { perf: 1.5, ads: .96, video: 1.26, web: 1.42 } : { perf: 1.6, ads: 1.5, video: 1.55, web: 1.55 };   // ring size by width: the crew are taller and narrower
+const CH = (k) => CAST === "team" ? (PIC[k] || `${AS}assets7/hu_${k}.webp`) : FIN === "c" ? `${AS}assets7/ch_${k}.webp` : FIN === "d" ? `${AS}assets7/${{ perf: "m16_bull_b", video: "m16_clap_a" }[k] || "ch_" + k}.webp` : `${AS}assets5/ch_${k}_${FIN}.webp`;   // ?ch=d: the 24 Nov mascot drafts (simpler bull, clapperboard head)
+const CM = FIN === "c" || FIN === "d" ? { perf: 1.5, ads: .96, video: 1.26, web: 1.42 } : { perf: 1.6, ads: 1.5, video: 1.55, web: 1.55 };   // ring size by width: the crew are taller and narrower
 window.R13 = { fin: FIN, cast: CAST };
 let TRV = null;   // the travelling crew, set up after the sections it moves between
 
@@ -227,13 +227,19 @@ const DG0 = [
   { t: "Visitors, no enquiries", q: "We get website visitors, but nobody converts or fills out the form.", s: 2, why: "A fast, mobile-first site and landing pages built to turn visits into enquiries." },
   { t: "Customers don't come back", q: "We spend everything getting new customers, but very few of them come back.", s: 0, why: "Automated CRM and WhatsApp nurturing, plus loyalty, that brings buyers back." },
   { t: "New brand, no trust yet", q: "We're launching a new brand, and competitors look way more legit than us.", s: 1, why: "A brand identity and content that make you look like the leader from day one." }];
-const DG = D.dg || (CAST ? DG0 : DG0.map((d, i) => ({ ...d, s: [1, 2, 3, 0, 2][i] })));   // the reference page: four panels
+const DG3 = [   // slide 5: no walk-ins, dry social media, no trust
+  { t: "No walk-ins", q: "We have no walk-in traffic, and there's a lot of new competition in the area.", s: 0, why: "Location-targeted Meta and Google ads that bring people through the door, measured in walk-ins, not likes.", img: AS + "assets7/hp_walkin.webp" },
+  { t: "Dry social media", q: "Our social media is dry. People are scrolling past us despite our efforts.", s: 1, why: "Thumb-stopping content and UGC campaigns that people actually stop for.", img: AS + "assets7/hp_social.webp" },
+  { t: "New brand, no trust yet", q: "We're launching a new brand, and competitors look way more legit than us.", s: 1, why: "A brand identity and content that make you look like the leader from day one.", img: AS + "assets7/hp_trust.webp" }];
+const DG = D.dg || (CAST ? DG3 : DG0.map((d, i) => ({ ...d, s: [1, 2, 3, 0, 2][i] })));
+const DGPH = DG.length > 0 && DG.every((d) => d.img);   // photos: the chat sits on a picture, and no character comes into this section   // the reference page: four panels
 { const pn = $("#dgp"); if (pn) {
   pn.innerHTML = `<div class="dgl" role="group" aria-label="Common marketing headaches"><p class="dgk">${E(D.dgk || "What's your headache?")}</p>${DG.map((d, i) => `<button type="button" class="dgr" aria-pressed="false"><i>0${i + 1}</i><span>${E(d.t)}</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M8.5 3.5 13 8l-4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>`).join("")}</div>
-    <div class="dgs"><div class="dgch" aria-hidden="true">${SVC.map((s) => `<img src="${CH(s.k)}" alt="" loading="lazy" draggable="false">`).join("")}</div>
+    <div class="dgs"><div class="dgch${DGPH ? " dgph" : ""}" aria-hidden="true">${DGPH ? DG.map((d) => `<img src="${E(d.img)}" alt="" loading="lazy" draggable="false">`).join("") : SVC.map((s) => `<img src="${CH(s.k)}" alt="" loading="lazy" draggable="false">`).join("")}</div>
     <div class="dgc" aria-live="polite"><div class="dgb bt"><span>${E(D.dghi || "How can we help you?")}</span></div><div class="dgb me" id="dgq"><span></span></div>
       <div class="dgre"><div class="dgb bt ty" id="dgty" aria-hidden="true"><i></i><i></i><i></i></div><div class="dgb bt rp" id="dga"><small>${E(D.dgjob || "That's a job for")}</small><b></b><p></p><div class="dgst"><b></b><span></span></div></div></div>
       <div class="dgx" id="dgx"><button type="button" class="btn sm" id="dgsvc">See the service${AR}</button><a class="btn sm gh" href="#connect" id="dgask">Talk about this</a></div></div></div>`;
+  if (DGPH) pn.classList.add("ph");
   const rows = $$(".dgr", pn), chs = $$(".dgch img", pn), q = $("#dgq"), ty = $("#dgty"), a = $("#dga"), ax = $("#dgx"), dots = $$("i", ty); let cur = -1, tl = null, inView = false, hold = false;
   const fill = (i) => { const d = DG[i], sv = SVC[d.s]; $("span", q).textContent = d.q; $("b", a).textContent = sv.n; $("p", a).textContent = d.why; $(".dgst b", a).textContent = (sv.st || [])[0] || ""; $(".dgst span", a).textContent = (sv.st || [])[1] || ""; };
   // with the travelling crew, the clock waits until the character has arrived.
@@ -243,16 +249,16 @@ const DG = D.dg || (CAST ? DG0 : DG0.map((d, i) => ({ ...d, s: [1, 2, 3, 0, 2][i
   const rebar = (r) => { r.classList.remove("on"); void pn.offsetWidth; r.classList.add("on"); ran = 0; t0 = pn.classList.contains("run") ? performance.now() : 0; fresh = !t0; };
   const clock = () => { const on = inView && !hold && !RM && (!TRV || TRV.docked), was = pn.classList.contains("run"); pn.classList.toggle("run", on);
     if (on && !was) t0 = performance.now(); if (!on && was && t0) { ran += performance.now() - t0; t0 = 0; } if (on && fresh && cur >= 0) rebar(rows[cur]); };
-  function go(i) { i = (i + DG.length) % DG.length; if (i === cur) return; if (tl) tl.progress(1); const from = cur < 0 ? -1 : DG[cur].s, to = DG[i].s; cur = i;
+  function go(i) { i = (i + DG.length) % DG.length; if (i === cur) return; if (tl) tl.progress(1); const from = cur < 0 ? -1 : DGPH ? cur : DG[cur].s, to = DGPH ? i : DG[i].s; cur = i;   // photos follow the headache, characters follow the service
     rows.forEach((r, j) => { r.setAttribute("aria-pressed", String(j === i)); r.classList.remove("on"); }); rebar(rows[i]);   // restarts the clock bar
     if (!G) { fill(i); chs.forEach((c, j) => c.classList.toggle("on", j === to)); return; }
     tl = gsap.timeline({ onComplete: () => { tl = null; } });
     tl.to([ax, a, q], { scale: 0, duration: .16, ease: "power2.in", stagger: .03 }, 0).add(() => fill(i), .26)
       .fromTo(q, { scale: 0 }, { scale: 1, duration: .42, ease: "back.out(1.6)" }, .28).fromTo(ty, { scale: 0 }, { scale: 1, duration: .24, ease: "back.out(2)" }, .6).to(ty, { scale: 0, duration: .14, ease: "power2.in" }, 1.06).fromTo(dots, { y: 0 }, { y: -4, duration: .15, stagger: .09, yoyo: true, repeat: 1, ease: "sine.inOut" }, .7)
       .fromTo(a, { scale: 0 }, { scale: 1, duration: .5, ease: "back.out(1.4)" }, 1.18).fromTo(ax, { scale: 0 }, { scale: 1, duration: .4, ease: "back.out(1.6)" }, 1.38);
-    if (from !== to) { if (from >= 0) tl.to(chs[from], { yPercent: 106, duration: .34, ease: "power2.in" }, 0); if (from < 0 && TRV && !TRV.docked) tl.set(chs[to], { yPercent: 0 }, 0);   // the first character is carried in by the scroll, so it does not also rise
+    if (from !== to) { if (from >= 0) tl.to(chs[from], { yPercent: 106, duration: .34, ease: "power2.in" }, 0); if (from < 0 && TRV && !TRV.docked && !DGPH) tl.set(chs[to], { yPercent: 0 }, 0);   // the first character is carried in by the scroll, so it does not also rise
       // people are cut at the thigh, so they rise without a bounce: an overshoot would lift the cut edge off the floor and push the head out of the top
-      else tl.fromTo(chs[to], { yPercent: 106 }, { yPercent: 0, duration: CAST === "team" ? .7 : .8, ease: CAST === "team" ? "power3.out" : "back.out(1.3)" }, from >= 0 ? .36 : .1); } }
+      else tl.fromTo(chs[to], { yPercent: 106 }, { yPercent: 0, duration: CAST === "team" || DGPH ? .7 : .8, ease: CAST === "team" || DGPH ? "power3.out" : "back.out(1.3)" }, from >= 0 ? .36 : .1); } }
   if (G) { gsap.set(chs, { yPercent: 106, visibility: "visible" }); gsap.set([q, a, ax, ty], { scale: 0 }); }
   rows.forEach((r, i) => { r.addEventListener("click", () => go(i)); r.addEventListener("animationend", (e) => { if (e.target !== r || i !== cur) return; if (ran + (t0 ? performance.now() - t0 : 0) < CLK * .9) rebar(r); else go(cur + 1); }); });
   pn.addEventListener("pointerenter", (e) => { if (e.pointerType === "mouse") { hold = true; clock(); } }); pn.addEventListener("pointerleave", () => { hold = false; clock(); });
@@ -261,7 +267,7 @@ const DG = D.dg || (CAST ? DG0 : DG0.map((d, i) => ({ ...d, s: [1, 2, 3, 0, 2][i
   $("#dgask").addEventListener("click", () => { const inp = $("#askin"); if (inp && !inp.value) inp.value = DG[cur].q; });
   let seen = false; watch(pn, (on) => { inView = on; if (on && !seen) { seen = true; go(0); } clock(); }, .3);   // the first one plays when the panel is first seen
   if (!G) { seen = true; go(0); }
-  window.R13.chat = { go, sync: clock, get cur() { return cur; }, get svc() { return DG[Math.max(cur, 0)].s; }, get playing() { return pn.classList.contains("run"); }, get busy() { return !!tl; } }; } }
+  window.R13.dgPhotos = DGPH; window.R13.chat = { go, sync: clock, get cur() { return cur; }, get svc() { return DG[Math.max(cur, 0)].s; }, get playing() { return pn.classList.contains("run"); }, get busy() { return !!tl; } }; } }
 
 // ---- avatar version: the crew travels down the page (David 23 Nov: "the avatar is on hero, service, marketing headache. anyways to let them transition smoothly to the next section?",
 //      then "able to do like they jumped down and landed?" and "can the bunny do a front flip jump to the bottom?").
@@ -291,7 +297,7 @@ if (CAST === "toy" && G) { const hero = $("#hero"), acc = $("#acc"), dgch = $(".
     function frame(dt) { const vh = innerHeight, hb = hero.getBoundingClientRect().bottom, fr = ((filmBox && $("video", filmBox)) || hero).getBoundingClientRect(), sv = window.R13.chat ? window.R13.chat.svc : 1, swap = first || sv !== last, ph = PHONE(), floor = ph ? vh - 84 : vh - 8, nh = navH(), pt = dgp.getBoundingClientRect().top;
       // under the film the page is a white mist, so the layer is masked with a short soft edge there: the characters come out of the mist, not out of a hard line
       const mk = hb > -70 ? `linear-gradient(transparent ${Math.round(hb - 26)}px,#000 ${Math.round(hb + 46)}px)` : "none"; if (mk !== layer._mk) { layer._mk = mk; layer.style.webkitMaskImage = layer.style.maskImage = mk; } moving = false;
-      F.forEach((f) => { const t = tileOf(f), isB = f.i === sv, c = isB ? chatRect(f) : null, a0 = f.a, b0 = f.b;
+      F.forEach((f) => { const t = tileOf(f), isB = !window.R13.dgPhotos && f.i === sv, c = isB ? chatRect(f) : null, a0 = f.a, b0 = f.b;
         // jump A is set off when the whole tile picture is on screen (so the landing is seen), or after a moment if only part of it ever is; it is undone when the tile has all but left by the bottom
         if (!t) { f.A = true; f.a = 1; } else { const seen = (vh - t.top) / t.height, full = t.bottom <= floor || t.top <= nh + 30; f.seenA = seen > .4 && !f.A ? f.seenA + dt : 0;
           if (first) { f.A = seen > .5; f.a = f.A ? 1 : 0; }
@@ -321,7 +327,7 @@ if (CAST === "toy" && G) { const hero = $("#hero"), acc = $("#acc"), dgch = $(".
         if (show !== f.show) { f.show = show; s.visibility = show ? "visible" : "hidden"; }
         // the character's own place is empty until it has arrived, and again once it has left for the chat
         const gone = !!t && (f.a < 1 || (isB && f.b > 0 && (f.b < 2 || t.bottom > nh))); f.tile.classList.toggle("away", gone); f.big.classList.toggle("away", gone); });
-      const d = F[sv].b >= 2; dgch.classList.toggle("away", !d); if (d !== docked || first) { docked = d; if (window.R13.chat) window.R13.chat.sync(); }
+      const d = !!window.R13.dgPhotos || F[sv].b >= 2; dgch.classList.toggle("away", !d); if (d !== docked || first) { docked = d; if (window.R13.chat) window.R13.chat.sync(); }
       last = sv; first = false; }
     gsap.ticker.add((time, delta) => { const sv = window.R13.chat ? window.R13.chat.svc : 1; if (scrollY === ly && !moving && dirty <= 0 && sv === last) return; ly = scrollY; if (dirty > 0) dirty--; frame(Math.min(50, delta || 16) / 1000); });
     const poke = () => { dirty = 90; }; ["resize", "load", "click", "pointerup", "keyup", "orientationchange"].forEach((ev) => addEventListener(ev, poke, { passive: true }));
@@ -341,7 +347,7 @@ const MV3 = [{ b: "74%", l: "High bounce rate", s: "of Instagram visitors bounce
   { b: "0.8%", l: "Low click-through", s: "click-through on the social ads", h: "Engaging, trust-building social ads", p: "Stop the scroll, earn trust, then convert.", vz: "linedown" }];
 const MV = D.mv || (CAST ? MV3 : MV0);
 const trend = (k) => { const up = /up$/.test(k), bars = /^bars/.test(k), pts = [...Array(9)].map((_, j) => { const t = j / 8, base = up ? .15 + t * .7 : .85 - t * .7; return Math.max(.05, Math.min(.98, base + (rnd(j + (up ? 3 : 9)) - .5) * .14)); });
-  return bars ? `<div class="bars trend">${pts.slice(0, 7).map((v) => `<i style="height:${Math.round(v * 100)}%"></i>`).join("")}</div>` : `<svg viewBox="0 0 100 40" preserveAspectRatio="none"><path d="M0 ${(40 - pts[0] * 36).toFixed(1)} ${pts.map((v, j) => `L${(j * 12.5).toFixed(1)} ${(40 - v * 36).toFixed(1)}`).join(" ")}" fill="none" stroke="#D7000F" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/><path d="M0 40 ${pts.map((v, j) => `L${(j * 12.5).toFixed(1)} ${(40 - v * 36).toFixed(1)}`).join(" ")} L100 40Z" fill="#D7000F" fill-opacity=".1"/></svg>`; };
+  return bars ? `<div class="bars trend">${pts.slice(0, 7).map((v, j) => `<i style="height:${Math.round(v * 100)}%;--j:${j}"></i>`).join("")}</div>` : `<svg viewBox="0 0 100 40" preserveAspectRatio="none"><path d="M0 ${(40 - pts[0] * 36).toFixed(1)} ${pts.map((v, j) => `L${(j * 12.5).toFixed(1)} ${(40 - v * 36).toFixed(1)}`).join(" ")}" fill="none" stroke="#D7000F" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/><path d="M0 40 ${pts.map((v, j) => `L${(j * 12.5).toFixed(1)} ${(40 - v * 36).toFixed(1)}`).join(" ")} L100 40Z" fill="#D7000F" fill-opacity=".1"/></svg>`; };
 const viz = (k, i) => /^(line|bars)(up|down)$/.test(k) ? trend(k) : k === "bars" ? `<div class="bars">${[0, 1, 2, 3, 4, 5].map((j) => `<i style="height:${Math.round((.3 + rnd(i * 7 + j) * .7) * 100)}%"></i>`).join("")}</div>`
   : k === "donut" ? `<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="15" fill="none" stroke="currentColor" stroke-opacity=".16" stroke-width="6"/><circle cx="20" cy="20" r="15" fill="none" stroke="#D7000F" stroke-width="6" stroke-linecap="round" stroke-dasharray="${(30 + rnd(i) * 50).toFixed(0)} 100" transform="rotate(-90 20 20)" pathLength="100"/></svg>`
   : `<svg viewBox="0 0 100 40" preserveAspectRatio="none"><path d="M0 ${(30 - rnd(i) * 10).toFixed(1)} ${[...Array(8)].map((_, j) => `L${(j + 1) * 12.5} ${(8 + rnd(i * 9 + j) * 26).toFixed(1)}`).join(" ")}" fill="none" stroke="#D7000F" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>`;
@@ -371,7 +377,7 @@ const viz = (k, i) => /^(line|bars)(up|down)$/.test(k) ? trend(k) : k === "bars"
       let x, y, r, s; if (k <= 1) { const t = e(k); x = sx + (ringX - sx) * t; y = sy + (ringY - sy) * t; r = c.rot * 6 * (1 - t) + ringR * t; s = 1; }
       else { const t = e(Math.min(1, k - 1)); x = ringX + (stkX - ringX) * t; y = ringY + (stkY - ringY) * t; r = ringR + (c.rot - ringR) * t; s = c.em ? 1 - t : 1 + (fr.width / cw * .92 - 1) * t; }
       c.el.style.transform = `translate(${(x - cw / 2).toFixed(1)}px,${(y - chh / 2).toFixed(1)}px) rotate(${r.toFixed(1)}deg) scale(${s.toFixed(3)})`; } };
-  const show = (i, first) => { const to = (i + NF) % NF;
+  const show = (i, first) => { const to = (i + NF) % NF; if (CAST) fcs.forEach((el, j) => { el.classList.remove("drawn"); if (j === to) { void el.offsetWidth; el.classList.add("drawn"); } });   // slide 8: the chart draws itself
     if (!G) { cur = to; rest(); fill(cur); sw.style.opacity = 0; fc.style.opacity = fx.style.opacity = fl.style.opacity = 1; return; }
     if (first) { cur = to; rest(); fill(cur); gsap.killTweensOf([sw, fc, fl, fx]); gsap.to(sw, { opacity: 0, duration: .5, delay: .15 }); gsap.fromTo(fc, { opacity: 0, scale: .92 }, { opacity: 1, scale: 1, duration: .55, ease: "power3.out" }); gsap.fromTo(fl, { opacity: 0, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: .5, delay: .2, ease: "power3.out" }); gsap.fromTo(fx, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: .6, delay: .3, ease: "power3.out" }); return; }
     if (to === cur) return;
